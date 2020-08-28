@@ -14,62 +14,72 @@ struct solvation{
 };
 
 
-struct solvation SolveSqrEquation(double a = 0, double b = 0, double c = 0){
+void SolveLnrEquation(double a = 0, double b = 0, solvation *out){
 
-    solvation solved;
-    /* ÍÅ ÐÀÁÎÒÀÅÒ, ÍÅ ÇÍÀÞ ÏÎ×ÅÌÓ
-    assert(std::isfinite (a));
-    assert(std::isfinite (b));
-    assert(std::isfinite (c));
-    */
-    int D = -1;
-
-    if (a==0) {
-
-        if (b!=0) {  /* bx+c = 0 */
-            solved.x1 = -c/b;
-            solved.rootQuantity = 1;
+        if (a!=0) {  /* ax + b = 0 */
+            out->x1 = -b / a;
+            out->rootQuantity = 1;
         }
 
-        else if (c!=0) {  /* c = 0 */
-            solved.rootQuantity = 0;
+        else if (b!=0) {  /* b = 0 */
+            out->rootQuantity = 0;
         }
 
         else {  /* 0 = 0 */
-           solved.rootQuantity = INFINITY_ROOTS;
+           out->rootQuantity = INFINITY_ROOTS;
         }
 
+}
+
+
+void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out){
+
+    int D = -1;
+
+    if (a==0) {
+        SolveLnrEquation(b, c, out);
     }
 
     else if (b==0 & c ==0) { /* ax^2 = 0 */
-        solved.x1 = 0;
-        solved.rootQuantity = 1;
+        out->x1 = 0;
+        out->rootQuantity = 1;
     }
 
-    else {  /*ax^2+bx+c=0*/
+    else {  /*ax^2 + bx + c = 0*/
 
-        D = (b*b)-(4*a*c);
+        D = (b * b)-(4 * a * c);
 
-        if (D>0) {
-            solved.x1 = (-b+sqrt(D))/(2*a);
-            solved.x2 = (-b-sqrt(D))/(2*a);
-            solved.rootQuantity = 2;
+        if (D > 0) {
+            out->x1 = (-b + sqrt(D)) / (2 * a);
+            out->x2 = (-b - sqrt(D)) / (2 * a);
+            out->rootQuantity = 2;
         }
 
 
-        else if(D<0) {
-            solved.rootQuantity = 0;
+        else if(D < 0) {
+            out->rootQuantity = 0;
 
         }
 
 
         else {
-            solved.x1 = -b/(2*a);
-            solved.rootQuantity = 1;
+            out->x1 = -b / (2 * a);
+            out->rootQuantity = 1;
         }
     }
 
-    return solved;
+}
+
+void Input(double* a, double* b, double* c){
+
+    scanf("%lg %lg %lg", a, b, c);
+
+    while (isnan(*a) ||  isnan(*b) ||  isnan(*c)){
+
+        printf("\nIncorrect input, try again\n");
+        scanf("%lg %lg %lg", a, b, c);
+
+    }
 
 }
 
@@ -81,10 +91,11 @@ int main(){
 
     printf("\n\nEnter a, b, c coefficients, pls:\n");
 
-    double a = 0, b = 0, c = 0;
-    scanf("%lg %lg %lg", &a, &b, &c);
+    double a = nan("1"), b = nan("1"), c = nan("1");
+    Input(&a, &b, &c);
 
-    struct solvation solved = SolveSqrEquation(a, b, c);
+    solvation solved;
+    SolveSqrEquation(a, b, c, &solved);
 
     switch(solved.rootQuantity) {
 
