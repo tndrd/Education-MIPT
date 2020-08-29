@@ -1,0 +1,94 @@
+\hypertarget{_square_equation_solver_8cpp}{}\doxysection{Education-\/\+M\+I\+P\+T/\+Sum\+School2020/\+Square\+Equation\+Solver.cpp File Reference}
+\label{_square_equation_solver_8cpp}\index{Education-\/MIPT/SumSchool2020/SquareEquationSolver.cpp@{Education-\/MIPT/SumSchool2020/SquareEquationSolver.cpp}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structsolvation}{solvation}}
+\begin{DoxyCompactList}\small\item\em Structure to store roots and their quantity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_square_equation_solver_8cpp_a928b8c37ec9c63bf66055ebc62e64b9d}\label{_square_equation_solver_8cpp_a928b8c37ec9c63bf66055ebc62e64b9d}} 
+\#define {\bfseries I\+N\+F\+I\+N\+I\+T\+Y\+\_\+\+R\+O\+O\+TS}~8
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_square_equation_solver_8cpp_a2be4e6709acaf7dd6387b6a36549dfd4}{Solve\+Lnr\+Equation}} (double a=0, double b=0, \mbox{\hyperlink{structsolvation}{solvation}} $\ast$out=nullptr)
+\item 
+void \mbox{\hyperlink{_square_equation_solver_8cpp_a1fb78625cf3b7dd0d266194ad2e553f8}{Solve\+Sqr\+Equation}} (double a=0, double b=0, double c=0, \mbox{\hyperlink{structsolvation}{solvation}} $\ast$out=nullptr)
+\item 
+int \mbox{\hyperlink{_square_equation_solver_8cpp_a43173b40278b3353755b6b386a63f2d0}{Input}} (double $\ast$a, double $\ast$b, double $\ast$c)
+\item 
+\mbox{\Hypertarget{_square_equation_solver_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{_square_equation_solver_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_square_equation_solver_8cpp_af98abfdda8a0415f6bcc63b29fb5234d}\label{_square_equation_solver_8cpp_af98abfdda8a0415f6bcc63b29fb5234d}} 
+const double \mbox{\hyperlink{_square_equation_solver_8cpp_af98abfdda8a0415f6bcc63b29fb5234d}{Tolerance}} \{1E-\/6\}
+\begin{DoxyCompactList}\small\item\em Discriminant less than this value will be cosidered as zero. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_square_equation_solver_8cpp_a43173b40278b3353755b6b386a63f2d0}\label{_square_equation_solver_8cpp_a43173b40278b3353755b6b386a63f2d0}} 
+\index{SquareEquationSolver.cpp@{SquareEquationSolver.cpp}!Input@{Input}}
+\index{Input@{Input}!SquareEquationSolver.cpp@{SquareEquationSolver.cpp}}
+\doxysubsubsection{\texorpdfstring{Input()}{Input()}}
+{\footnotesize\ttfamily int Input (\begin{DoxyParamCaption}\item[{double $\ast$}]{a,  }\item[{double $\ast$}]{b,  }\item[{double $\ast$}]{c }\end{DoxyParamCaption})}
+
+Reads from console. Verificates the correctness of input data. 
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to variable containing first coefficient \\
+\hline
+{\em b} & Pointer to variable containing first coefficient \\
+\hline
+{\em c} & Pointer to variable containing first coefficient \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Will ask for new data if previous is incorrect.
+\end{DoxyNote}
+\mbox{\Hypertarget{_square_equation_solver_8cpp_a2be4e6709acaf7dd6387b6a36549dfd4}\label{_square_equation_solver_8cpp_a2be4e6709acaf7dd6387b6a36549dfd4}} 
+\index{SquareEquationSolver.cpp@{SquareEquationSolver.cpp}!SolveLnrEquation@{SolveLnrEquation}}
+\index{SolveLnrEquation@{SolveLnrEquation}!SquareEquationSolver.cpp@{SquareEquationSolver.cpp}}
+\doxysubsubsection{\texorpdfstring{SolveLnrEquation()}{SolveLnrEquation()}}
+{\footnotesize\ttfamily void Solve\+Lnr\+Equation (\begin{DoxyParamCaption}\item[{double}]{a = {\ttfamily 0},  }\item[{double}]{b = {\ttfamily 0},  }\item[{\mbox{\hyperlink{structsolvation}{solvation}} $\ast$}]{out = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+Solves linear equation ax + b. 
+\begin{DoxyParams}{Parameters}
+{\em a} & a -\/ coefficient \\
+\hline
+{\em b} & b -\/ coefficient \\
+\hline
+{\em out} & Pointer to the solvation structure (see solvation) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Changes containment of out structure
+\end{DoxyNote}
+\mbox{\Hypertarget{_square_equation_solver_8cpp_a1fb78625cf3b7dd0d266194ad2e553f8}\label{_square_equation_solver_8cpp_a1fb78625cf3b7dd0d266194ad2e553f8}} 
+\index{SquareEquationSolver.cpp@{SquareEquationSolver.cpp}!SolveSqrEquation@{SolveSqrEquation}}
+\index{SolveSqrEquation@{SolveSqrEquation}!SquareEquationSolver.cpp@{SquareEquationSolver.cpp}}
+\doxysubsubsection{\texorpdfstring{SolveSqrEquation()}{SolveSqrEquation()}}
+{\footnotesize\ttfamily void Solve\+Sqr\+Equation (\begin{DoxyParamCaption}\item[{double}]{a = {\ttfamily 0},  }\item[{double}]{b = {\ttfamily 0},  }\item[{double}]{c = {\ttfamily 0},  }\item[{\mbox{\hyperlink{structsolvation}{solvation}} $\ast$}]{out = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+Solves square equation ax$^\wedge$2 + bx + c. 
+\begin{DoxyParams}{Parameters}
+{\em a} & a -\/ coefficient \\
+\hline
+{\em b} & b -\/ coefficient \\
+\hline
+{\em c} & c -\/ coefficient \\
+\hline
+{\em out} & Pointer to the solvation structure (see solvation) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Changes containment of out structure.
+\end{DoxyNote}
