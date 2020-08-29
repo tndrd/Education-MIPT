@@ -3,7 +3,7 @@ var indexSectionsWithContent =
   0: "irstx",
   1: "s",
   2: "s",
-  3: "is",
+  3: "ist",
   4: "rtx"
 };
 

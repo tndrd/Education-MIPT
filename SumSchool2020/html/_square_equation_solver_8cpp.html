@@ -92,6 +92,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a928b8c37ec9c63bf66055ebc62e64b9d"><td class="memItemLeft" align="right" valign="top"><a id="a928b8c37ec9c63bf66055ebc62e64b9d"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>INFINITY_ROOTS</b>&#160;&#160;&#160;8</td></tr>
 <tr class="separator:a928b8c37ec9c63bf66055ebc62e64b9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a953f667fb27fb68dd74a487d002b19b5"><td class="memItemLeft" align="right" valign="top"><a id="a953f667fb27fb68dd74a487d002b19b5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>NaN</b>&#160;&#160;&#160;nan(&quot;&quot;)</td></tr>
+<tr class="separator:a953f667fb27fb68dd74a487d002b19b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -99,6 +102,8 @@ Functions</h2></td></tr>
 <tr class="separator:a2be4e6709acaf7dd6387b6a36549dfd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fb78625cf3b7dd0d266194ad2e553f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_square_equation_solver_8cpp.html#a1fb78625cf3b7dd0d266194ad2e553f8">SolveSqrEquation</a> (double a=0, double b=0, double c=0, <a class="el" href="structsolvation.html">solvation</a> *out=nullptr)</td></tr>
 <tr class="separator:a1fb78625cf3b7dd0d266194ad2e553f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9343a927b3732db8ad4dd5a9c6e8e16"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_square_equation_solver_8cpp.html#ad9343a927b3732db8ad4dd5a9c6e8e16">Test_SolveSqrEquation</a> ()</td></tr>
+<tr class="separator:ad9343a927b3732db8ad4dd5a9c6e8e16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43173b40278b3353755b6b386a63f2d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_square_equation_solver_8cpp.html#a43173b40278b3353755b6b386a63f2d0">Input</a> (double *a, double *b, double *c)</td></tr>
 <tr class="separator:a43173b40278b3353755b6b386a63f2d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top"><a id="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
@@ -109,8 +114,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> ()</td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:af98abfdda8a0415f6bcc63b29fb5234d"><td class="memItemLeft" align="right" valign="top"><a id="af98abfdda8a0415f6bcc63b29fb5234d"></a>
 const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_square_equation_solver_8cpp.html#af98abfdda8a0415f6bcc63b29fb5234d">Tolerance</a> {1E-6}</td></tr>
-<tr class="memdesc:af98abfdda8a0415f6bcc63b29fb5234d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discriminant less than this value will be cosidered as zero. <br /></td></tr>
+<tr class="memdesc:af98abfdda8a0415f6bcc63b29fb5234d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discriminant less than this value will be considered as zero. <br /></td></tr>
 <tr class="separator:af98abfdda8a0415f6bcc63b29fb5234d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa58dc3c0ee78923b6f057bb6baea145b"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_square_equation_solver_8cpp.html#aa58dc3c0ee78923b6f057bb6baea145b">Tests</a> [11][2][3]</td></tr>
+<tr class="memdesc:aa58dc3c0ee78923b6f057bb6baea145b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test conditions.  <a href="_square_equation_solver_8cpp.html#aa58dc3c0ee78923b6f057bb6baea145b">More...</a><br /></td></tr>
+<tr class="separator:aa58dc3c0ee78923b6f057bb6baea145b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a43173b40278b3353755b6b386a63f2d0"></a>
@@ -187,15 +195,15 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Solves linear equation ax + b. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Solves linear equation ax + b = 0. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">a</td><td>a - coefficient </td></tr>
     <tr><td class="paramname">b</td><td>b - coefficient </td></tr>
-    <tr><td class="paramname">out</td><td>Pointer to the solvation structure (see solvation) </td></tr>
+    <tr><td class="paramname">out</td><td>Pointer to the <a class="el" href="structsolvation.html">solvation</a> structure </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Changes containment of out structure</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Changes containment of <b>out</b> structure</dd></dl>
 
 </div>
 </div>
@@ -236,16 +244,64 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Solves square equation ax^2 + bx + c. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Solves square equation ax^2 + bx + c = 0. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">a</td><td>a - coefficient </td></tr>
     <tr><td class="paramname">b</td><td>b - coefficient </td></tr>
     <tr><td class="paramname">c</td><td>c - coefficient </td></tr>
-    <tr><td class="paramname">out</td><td>Pointer to the solvation structure (see solvation) </td></tr>
+    <tr><td class="paramname">out</td><td>Pointer to the <a class="el" href="structsolvation.html">solvation</a> structure (see solvation) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Changes containment of out structure.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Changes containment of <b>out</b> structure.</dd></dl>
+
+</div>
+</div>
+<a id="ad9343a927b3732db8ad4dd5a9c6e8e16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9343a927b3732db8ad4dd5a9c6e8e16">&#9670;&nbsp;</a></span>Test_SolveSqrEquation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Test_SolveSqrEquation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Runs program tests (see <a class="el" href="_square_equation_solver_8cpp.html#aa58dc3c0ee78923b6f057bb6baea145b">Tests</a>). </p><dl class="section return"><dt>Returns</dt><dd>Test result: <b>true</b> if positive or <b>false</b> if negative.</dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="aa58dc3c0ee78923b6f057bb6baea145b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa58dc3c0ee78923b6f057bb6baea145b">&#9670;&nbsp;</a></span>Tests</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double Tests[11][2][3]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    { {6, 0, 0},   {0, NaN, 1} },</div>
+<div class="line">    { {6, 0, 2},   {NaN, NaN, 0} },</div>
+<div class="line">    { {1, 0, -1},  {1, -1, 2} },</div>
+<div class="line">    { {1, 3, 0},   {0, -3, 2} },</div>
+<div class="line">    { {1, -7, 12}, {4, 3, 2} },</div>
+<div class="line">    { {1, 2, 3},   {NaN, NaN, 0} },</div>
+<div class="line">    { {1, 2, 1},   {-1, NaN, 1} },</div>
+<div class="line">    { {0, 0, 0}, {NaN, NaN, INFINITY_ROOTS} },</div>
+<div class="line">    { {0, 0, 2}, {NaN, NaN, 0} },</div>
+<div class="line">    { {0, 5, 0}, {0, NaN, 1} },</div>
+<div class="line">    { {0, 5, 2}, {-0.4, NaN, 1} }</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>Test conditions. </p>
 
 </div>
 </div>
