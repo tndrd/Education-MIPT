@@ -6,36 +6,72 @@
 
 const double Tolerance {1E-6};
 
+
 struct solvation{
 
-    double x1 = -1;
+    /**
+    * A structure to store roots and their quantity
+    */
 
-    double x2 = -1;
+    /*@{*/
+    double x1 = -1; /**< first root (-1 if doesn't exist) */
 
-    int rootQuantity = -1;  /* May be 2, 1, 0 or INFINITY_ROOTS*/
+    double x2 = -1;/**< second root (-1 if doesn't exist) */
 
+    int rootQuantity = -1;  /**< quantity of roots */
+    /*@}*/
+
+    /**@note Quantity may be 2, 1, 0 of INFINITY_ROOTS */
 };
 
+/*! Solves linear equation ax + b.
+    !@param a a - coefficient
+    !@param b b - coefficient
+    !@param out Pointer to the solvation structure (see solvation)
+    !@note Changes containment of out structure.
+    */
 
 void SolveLnrEquation(double a = 0, double b = 0, solvation *out = nullptr){
 
-        if (a!=0) {  /* ax + b = 0 */
+    if (a!=0) {  /* ax + b = 0 */
             out->x1 = -b / a;
             out->rootQuantity = 1;
         }
 
-        else if (b!=0) {  /* b = 0 */
+    else if (b!=0) {  /* b = 0 */
             out->rootQuantity = 0;
         }
 
-        else {  /* 0 = 0 */
+    else {  /* 0 = 0 */
            out->rootQuantity = INFINITY_ROOTS;
         }
 
 }
 
+//------------------------------------------------
+//! Solves a square equation ax2 + bx + c =0
+//!
+//! @param [in] a a-coefficient
+//! @param [in] b b-coefficient
+//! @param [in] c c-coefficient
+//! @param [out] x1 Pointer to the 1st root
+//! @param [out] x2 Pointer to the 2nd root
+//!
+//! @return Number of roots
+//!
+//! @note In case of infinite number of roots,
+//! returns SS_INF_ROOTS.
+//------------------------------------------------
 
 void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out = nullptr){
+
+    /*! Solves square equation ax^2 + bx + c.
+    @param a a - coefficient
+    @param b b - coefficient
+    @param c c - coefficient
+    @param out Pointer to the solvation structure (see solvation)
+    @note Changes containment of out structure.
+    */
 
     int D = -1;
 
@@ -74,6 +110,13 @@ void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out =
 }
 
 int Input(double* a, double* b, double* c) {
+
+    /*! Reads from console. Verificates the correctness of input data.
+    @param a Pointer to variable containing firs coefficient
+    @param b Pointer to variable containing firs coefficient
+    @param c Pointer to variable containing firs coefficient
+    @note Will ask for new data if previous is incorrect.
+    */
 
     assert(a != NULL); //
     assert(b != NULL); //Checking does pointers exists
