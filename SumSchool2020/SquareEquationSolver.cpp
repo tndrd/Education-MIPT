@@ -52,7 +52,7 @@ void SolveLnrEquation(double a = 0, double b = 0, solvation *out = nullptr){
     /*! Solves linear equation ax + b = 0.
     @param a a - coefficient
     @param b b - coefficient
-    @param out Pointer to the \link solvation \endlink structure
+    @param out Pointer to the output structure
     @note Changes containment of __out__ structure
     */
 
@@ -78,7 +78,7 @@ void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out =
     @param a a - coefficient
     @param b b - coefficient
     @param c c - coefficient
-    @param out Pointer to the \link solvation \endlink structure (see solvation)
+    @param out Pointer to the output structure (see solvation)
     @note Changes containment of __out__ structure.
     */
 
@@ -159,8 +159,8 @@ int Input(double* a, double* b, double* c) {
 
     /*! Reads from console. Verificates the correctness of input data.
     @param a Pointer to variable containing first coefficient
-    @param b Pointer to variable containing first coefficient
-    @param c Pointer to variable containing first coefficient
+    @param b Pointer to variable containing second coefficient
+    @param c Pointer to variable containing third coefficient
     @note Will ask for new data if previous is incorrect.
     */
 
