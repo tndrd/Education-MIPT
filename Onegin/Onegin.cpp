@@ -68,6 +68,34 @@ printf("\n%s\n", lines[2]);
 */
 
 
+void readFile(char* name, char*** out_pointer){
+
+    FILE* fp = fopen(name, "r");
+    char current = getc(fp);
+    char* line;
+    //char** lines;
+    *out_pointer = (char**)malloc(0);
+    line = (char*)malloc(0);
+    int char_counter = 0;
+    int line_counter = 0;
+    while (current != EOF){
+
+        if (current == '\n'){
+            *out_pointer = (char**)realloc(*out_pointer, (line_counter+1) * sizeof(char*));
+            *out_pointer[line_counter] = line;
+            line = (char*)malloc(0);
+            char_counter = 0;
+            line_counter++;
+        }
+
+        line = (char*)realloc(line, char_counter+1);
+        line[char_counter] = current;
+        char_counter++;
+        current = getc(fp);
+    }
+
+}
+
 int main(){
 
     FILE* fp = fopen("test.txt", "r");
@@ -81,12 +109,16 @@ int main(){
     while (current != EOF){
 
         if (current == '\n'){
-            lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
-            lines[line_counter] = line;
-            line_counter++;
-            line = (char*)realloc(line,0);
+            if (char_counter > 1){
+                lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
+                lines[line_counter] = line;
+                printf(lines[line_counter]);
+                line_counter++;
+            }
+
+            line = (char*)malloc(0);
             char_counter = 0;
-            printf("%s",lines[line_counter]);
+
         }
 
         line = (char*)realloc(line, char_counter+1);
@@ -94,5 +126,11 @@ int main(){
         char_counter++;
         current = getc(fp);
     }
-return 0;
+
+    return 0;
+
+
+    //char **lines;
+    //readFile("test.txt", &lines);
+    //printf(lines[0]);
 }
