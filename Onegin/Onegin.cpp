@@ -187,10 +187,10 @@ int main(){
 
     for (int i = 0; i < line_counter; i++){
         for(int j = 0; j < line_counter-1; j++){
-            int comparison = lexicographicalCompare(lines[j], lines[j+1]);
+            int comparison = lexicographicalCompare(lines[indexes[j]], lines[indexes[j+1]]);
             //printf("%d\n", comparison);
             if (comparison == GREATER){
-                printf("%s < %s\n", lines[j], lines[j+1]);
+                //printf("%s < %s: %d, expected %d\n",lines[j], lines[j+1], comparison, lines[j][0]<lines[j+1][0]);
 
 
                 int t = indexes[j];
@@ -199,7 +199,7 @@ int main(){
 
             }
             else if (comparison == GREATER){
-                printf("%s > %s\n", lines[j], lines[j+1]);
+                //printf("%s > %s\n", lines[j], lines[j+1]);
             }
         }
         //printf("----------\n");
