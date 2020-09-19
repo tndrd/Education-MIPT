@@ -6,18 +6,20 @@
 #include <math.h>
 #include <stdio.h>
 #include <assert.h>
-#define INFINITY_ROOTS 8
-#define NaN nan("")
+#define NaN NAN
+
+const int INFINITY_ROOTS = 8;
 
 /** @brief Discriminant less than this value will be considered as zero */
-const double Tolerance {1E-6};
+const double Threshold {1E-6};
 
 /** @brief Test conditions */
 const double Tests[11][2][3] = {
+
     { {6, 0, 0},   {0, NaN, 1} },
     { {6, 0, 2},   {NaN, NaN, 0} },
     { {1, 0, -1},  {1, -1, 2} },
-    { {1, 3, 0},   {0, -3, 2} },
+    { {1, 3, 0},   {-3, 0, 2} },
     { {1, -7, 12}, {4, 3, 2} },
     { {1, 2, 3},   {NaN, NaN, 0} },
     { {1, 2, 1},   {-1, NaN, 1} },
@@ -25,12 +27,11 @@ const double Tests[11][2][3] = {
     { {0, 0, 2}, {NaN, NaN, 0} },
     { {0, 5, 0}, {0, NaN, 1} },
     { {0, 5, 2}, {-0.4, NaN, 1} }
-};
 
+};
 
 /** @brief Structure to store roots and their quantity. */
 struct solvation{
-
 
     /*@{*/
     /** @brief First root. Is NaN if root doesn't exist. */
@@ -42,12 +43,14 @@ struct solvation{
     /** @brief Root Quantity. May be 0, 1, 2 or INFINITY_ROOTS */
     int rootQuantity = NaN;
     /*@}*/
-
-
 };
 
+void SolveLnrEquation(double a = 0, double b = 0, solvation* out = nullptr);
+void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out = nullptr);
+int Input(double* a, double* b, double* c);
+bool Test_SolveSqrEquation();
 
-void SolveLnrEquation(double a = 0, double b = 0, solvation *out = nullptr){
+void SolveLnrEquation(double a, double b, solvation *out){
 
     /*! Solves linear equation ax + b = 0.
     @param a a - coefficient
@@ -66,13 +69,12 @@ void SolveLnrEquation(double a = 0, double b = 0, solvation *out = nullptr){
         }
 
     else {  /* 0 = 0 */
-           out->rootQuantity = INFINITY_ROOTS;
+            out->rootQuantity = INFINITY_ROOTS;
         }
-
 }
 
 
-void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out = nullptr){
+void SolveSqrEquation(double a, double b, double c, solvation* out){
 
     /*! Solves square equation ax^2 + bx + c = 0.
     @param a a - coefficient
@@ -84,37 +86,44 @@ void SolveSqrEquation(double a = 0, double b = 0, double c = 0, solvation* out =
 
     int D = -1;
 
-    if (a==0) {
+    if (a==0) { /* equation is linear*/
         SolveLnrEquation(b, c, out);
     }
 
-    else if (b==0 & c ==0) { /* ax^2 = 0 */
-        out->x1 = 0;
-        out->rootQuantity = 1;
+    else if (c==0){
+
+        if (b==0) { /* ax^2 = 0 */
+            out->x1 = 0;
+            out->rootQuantity = 1;
+        }
+
+        else{ /*ax^2 + bx = 0*/
+            out -> x1 = (-b)/a;
+            out -> x2 = 0;
+            out -> rootQuantity = 2;
+        }
+
     }
 
     else {  /*ax^2 + bx + c = 0*/
 
         D = (b * b) - (4 * a * c);
 
-        if (D == 0 || abs(D) < Tolerance){
+        if (D == 0 || abs(D) < Threshold){ // D = 0
             out->x1 = -b / (2 * a);
             out->rootQuantity = 1;
         }
 
-        else if (D > 0) {
+        else if (D > 0) { // D > 0
             out->x1 = (-b + sqrt(D)) / (2 * a);
             out->x2 = (-b - sqrt(D)) / (2 * a);
             out->rootQuantity = 2;
         }
 
-
-        else if(D < 0) {
+        else if(D < 0) { // D < 0
             out->rootQuantity = 0;
         }
-
     }
-
 }
 
 
@@ -127,13 +136,16 @@ bool Test_SolveSqrEquation(){
     solvation test;
     bool result = true;
     printf("\n\nStarting SolveSqrEquation test:\n");
+
     for (int i = 0; i < 11; i++){
+
         SolveSqrEquation(Tests[i][0][0], Tests[i][0][1], Tests[i][0][2], &test);
+
         if ( (test.x1 == Tests[i][1][0] || isnan(test.x1) && isnan(Tests[i][1][0]) )  &&
              (test.x2 == Tests[i][1][1] || isnan(test.x2) && isnan(Tests[i][1][1]) )  &&
               test.rootQuantity == Tests[i][1][2])
         {
-            printf("\nTest #%d OK\n", i+1);
+            printf("Test #%d OK\n", i+1);
         }
 
         else{
@@ -165,19 +177,19 @@ int Input(double* a, double* b, double* c) {
     */
 
     assert(a != NULL); //
-    assert(b != NULL); //Checking does pointers exists
+    assert(b != NULL); //Checking if pointers exist
     assert(c != NULL); //
 
     assert(a != b); //
-    assert(b != c); //Checking does pointers has different values
-
+    assert(b != c); //Checking if pointer have different values
+    //rewind(stdin);
     printf("\n\nEnter a, b, c coefficients, pls:\n");
 
-    rewind(stdin);
     int check = scanf(" %lg %lg %lg", a, b, c);
     if (check != 3){
         printf("You entered wrong type\n");
-        return Input(a, b, c);
+        exit(1);
+        //return Input(a, b, c);
     }
 }
 
@@ -210,7 +222,7 @@ int main(){
             case INFINITY_ROOTS:  printf("\nToo many roots (infinite, to be honest)\n");
                                   break;
 
-            default: printf ("\nAn error occured. Contact us (phone 88005552535) for help\n");
+            default: printf ("\nAn error occured. Contact us for help\n");
                      return 1;
         }
 
