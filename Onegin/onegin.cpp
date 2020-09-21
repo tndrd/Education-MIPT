@@ -8,9 +8,9 @@
 #define EQUAL 0
 
 
-char* readFile(char* name, char* buffer){
+char* readFile(char* name){
     FILE* fp = fopen(name, "r");
-
+    char* buffer = nullptr;
     if (fp==nullptr){
         printf("Error: unable to open file");
         exit(1);
@@ -152,11 +152,11 @@ char* reversed(char* str){
 }
 
 
-int reversedLGCompare(char* a, char*b){
-    return lexicographicalCompare(reversed(a), reversed(b));
+int reversedLGComparator(const void* a, const void* b){
+    return lexicographicalCompare(reversed((char*)a), reversed((char*)b));
 }
 
-int lgComparator(const void* a, const void* b){
+int LGComparator(const void* a, const void* b){
     return lexicographicalCompare((char*)a, (char*)b);
 }
 
@@ -219,9 +219,9 @@ char** concat(char** a, char** b, char** c, int a_size, int b_size, int c_size){
     return out;
 }
 
-void myQSort(char*** lines_ptr, int(*compare)(char* a, char* b), int length){
+void myQSort(void* lines_ptr, int length, int(*compare)(const void* a, const void* b)){
 
-    char** lines = *lines_ptr;
+    char** lines = *((char***)lines_ptr); //Как изменить тип этих переменных так, чтобы он менялся в зависимости от типа входного массива?
     char** ltp;
     char** gtp;
     char** etp;
@@ -233,13 +233,13 @@ void myQSort(char*** lines_ptr, int(*compare)(char* a, char* b), int length){
     char* pivot = lines[length-1];
     for (int i = 0; i<length; i++){
         char* element = lines[i];
-        if ((*compare)(element, pivot) < 0){
+        if ((*compare)((const void*)element, (const void*)pivot) < 0){
             ltp_length++;
         }
-        if ((*compare)(element, pivot) == 0){
+        if ((*compare)((const void*)element, (const void*)pivot) == 0){
             etp_length++;
         }
-        if ((*compare)(element, pivot) > 0){
+        if ((*compare)((const void*)element, (const void*)pivot) > 0){
             gtp_length++;
         }
     }
@@ -253,39 +253,39 @@ void myQSort(char*** lines_ptr, int(*compare)(char* a, char* b), int length){
 
     for(int i = 0; i<length; i++){
     char* element = lines[i];
-        if ((*compare)(element, pivot) < 0){
+        if ((*compare)((const void*)element, (const void*)pivot) < 0){
             ltp[ltp_counter] = lines[i];
             ltp_counter++;
         }
-        if ((*compare)(element, pivot) == 0){
+        if ((*compare)((const void*)element, (const void*)pivot) == 0){
             etp[etp_counter] = lines[i];
             etp_counter++;
         }
-        if ((*compare)(element, pivot) > 0){
+        if ((*compare)((const void*)element, (const void*)pivot) > 0){
             gtp[gtp_counter] = lines[i];
             gtp_counter++;
         }
     }
 
     if (gtp_length != 0 || ltp_length != 0){
-    myQSort(&ltp, (*compare), ltp_length);
-    myQSort(&gtp, (*compare), gtp_length);
+    myQSort(&ltp, ltp_length, (*compare));
+    myQSort(&gtp, gtp_length, (*compare));
     }
 
-    *lines_ptr = concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
+    *((char***)lines_ptr) = concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
 
 }
 
 int main(){
 
-    char* buffer = nullptr;
-    buffer = readFile("hamlet.txt", buffer);
+
+    char* buffer = readFile("hamlet.txt");
     int number;
     char** lines = getLines(buffer, &number);
     printf("Processing started, wait please\n");
-    //bubbleSort(lines, number, number*sizeof(lines), reversedLGCompare);
-    //qsort(lines, number, sizeof(*lines), lexicographicalCompare);
-    myQSort(&lines, lexicographicalCompare, number);
+    //bubbleSort(lines, number, number*sizeof(lines), reversedLGComparator);
+    //qsort((void*)lines, number, sizeof(*lines), LGComparator);
+    myQSort((void*)&lines, number, reversedLGComparator);
     //arrayPrint(lines,number);
     printf("Processing ended, writing to a file\n");
     printFile("out.txt", lines, number);
