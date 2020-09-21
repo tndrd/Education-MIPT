@@ -202,7 +202,7 @@ void printFile(char* name, char** lines, int length){
 }
 
 
-char** concat(char** a, char** b, char** c, int a_size, int b_size, int c_size){
+void* concat(char** a, char** b, char** c, int a_size, int b_size, int c_size){
 
     char** out = (char**)calloc(1, sizeof(char*)*(a_size+b_size+c_size));
 
@@ -272,7 +272,7 @@ void myQSort(void* lines_ptr, int length, int(*compare)(const void* a, const voi
     myQSort(&gtp, gtp_length, (*compare));
     }
 
-    *((char***)lines_ptr) = concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
+    *((char***)lines_ptr) = (char**)concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
 
 }
 
