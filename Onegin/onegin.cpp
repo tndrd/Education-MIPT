@@ -39,9 +39,9 @@ char** getLines(char* buffer, int* number_of_lines){
     while (current != '\0'){
         if (current == '\n'){
             if (char_counter > 0){
-            lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
-            lines[line_counter] = line;
-            line_counter++;
+                lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
+                lines[line_counter] = line;
+                line_counter++;
             }
             line = nullptr;
             char_counter = 0;
@@ -118,7 +118,7 @@ char* reversed(char* str){
         length++;
     }while (current != '\0');
 
-    char rev_str[length];
+    char* rev_str = (char*)calloc(length,1);
     int i = 0;
     do{
     current = str[i];
@@ -129,7 +129,6 @@ char* reversed(char* str){
     }while (current != '\0');
 
     rev_str[length-1] = '\0';
-
     //Внутри функции перевернутую строку можно распечатать, однако при возвращении функцией происходит херня
     //Попробуй распечать ее внутри этой функции и внутри main
     //printf("%p",rev_str);
@@ -138,50 +137,7 @@ char* reversed(char* str){
 
 
 int reversedLGCompare(char* a, char*b){
-    int length=0;
-    char current = '\0';
-    //тут должно быть return lexicographicalCompre(reversed(a),reversed(b));
-    //однако reversed стремно работает, см. reverse()
-
-    do{
-        current = a[length];
-        length++;
-    }while (current != '\0');
-
-    char rev_a[length];
-    int i = 0;
-    do{
-    current = a[i];
-        if(i>0){
-            rev_a[i-1] = a[length - i -1];
-        }
-        i++;
-    }while (current != '\0');
-
-    rev_a[length-1] = '\0';
-
-    length=0;
-    current = '\0';
-
-    do{
-        current = b[length];
-        length++;
-    }while (current != '\0');
-
-    char rev_b[length];
-    i = 0;
-    do{
-    current = b[i];
-        if(i>0){
-            rev_b[i-1] = b[length - i -1];
-        }
-        i++;
-    }while (current != '\0');
-
-    rev_b[length-1] = '\0';
-
-
-    return lexicographicalCompare(rev_a, rev_b);
+    return lexicographicalCompare(reversed(a), reversed(b));
 }
 
 int lgComparator(const void* a, const void* b){
@@ -220,19 +176,104 @@ void arrayPrint(char** arr, int length){
     }
 }
 
+void printFile(char* name, char** lines, int length){
+    FILE* fp;
+    fp = fopen(name, "w");
+    for (int i = 0; i<length; i++){
+        fprintf(fp, "%s\n", lines[i]);
+    }
+    fclose(fp);
+}
+
+
+char** concat(char** a, char** b, char** c, int a_size, int b_size, int c_size){
+
+    char** out = (char**)calloc(1, sizeof(char*)*(a_size+b_size+c_size));
+
+
+    for (int m = 0; m < a_size; m++){
+        out[m] = a[m];
+    }
+    for (int m = 0; m < b_size; m++){
+        out[m+a_size] = b[m];
+    }
+    for (int m = 0; m < c_size; m++){
+        out[m+a_size+b_size] = c[m];
+    }
+    return out;
+}
+
+void myQSort(char*** lines_ptr, int(*compare)(char* a, char* b), int length){
+
+    char** lines = *lines_ptr;
+    char** ltp;
+    char** gtp;
+    char** etp;
+
+    int ltp_length = 0;
+    int gtp_length = 0;
+    int etp_length = 0;
+
+    char* pivot = lines[length-1];
+    for (int i = 0; i<length; i++){
+        char* element = lines[i];
+        if ((*compare)(element, pivot) < 0){
+            ltp_length++;
+        }
+        if ((*compare)(element, pivot) == 0){
+            etp_length++;
+        }
+        if ((*compare)(element, pivot) > 0){
+            gtp_length++;
+        }
+    }
+    ltp = (char**)calloc(ltp_length, sizeof(char*));
+    etp = (char**)calloc(etp_length, sizeof(char*));
+    gtp = (char**)calloc(gtp_length, sizeof(char*));
+
+    int ltp_counter = 0;
+    int etp_counter = 0;
+    int gtp_counter = 0;
+
+    for(int i = 0; i<length; i++){
+    char* element = lines[i];
+        if ((*compare)(element, pivot) < 0){
+            ltp[ltp_counter] = lines[i];
+            ltp_counter++;
+        }
+        if ((*compare)(element, pivot) == 0){
+            etp[etp_counter] = lines[i];
+            etp_counter++;
+        }
+        if ((*compare)(element, pivot) > 0){
+            gtp[gtp_counter] = lines[i];
+            gtp_counter++;
+        }
+    }
+
+    if (gtp_length != 0 || ltp_length != 0){
+    myQSort(&ltp, (*compare), ltp_length);
+    myQSort(&gtp, (*compare), gtp_length);
+    }
+
+    *lines_ptr = concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
+
+}
+
 int main(){
 
     char* buffer = nullptr;
     buffer = readFile("hamlet.txt", buffer);
     int number;
     char** lines = getLines(buffer, &number);
-    bubbleSort(lines, number, number*sizeof(lines), reversedLGCompare);
-
-    //arrayPrint(lines, number);
-
-    //printf(reversed("sdfsdf"));
-    // rev не печатается, хотя внутри функции (см.reverse) она это делает
-
+    printf("Processing started, wait please\n");
+    //bubbleSort(lines, number, number*sizeof(lines), reversedLGCompare);
+    //qsort(lines, number, sizeof(*lines), lexicographicalCompare);
+    myQSort(&lines, lexicographicalCompare, number);
+    //arrayPrint(lines,number);
+    printf("Processing ended, writing to a file\n");
+    printFile("out.txt", lines, number);
+    printf("Writed successfully");
     return 0;
 
 }
