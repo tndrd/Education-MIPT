@@ -26,6 +26,14 @@ char* readFile(char* name, char* buffer){
     return buffer;
 }
 
+void addChar(char** line_ptr, int* length_ptr, char to_add){ //Не работает(
+
+    *line_ptr = (char*)realloc(*line_ptr, *length_ptr+1);
+    *line_ptr[*length_ptr] = to_add;
+    *length_ptr++;
+
+}
+
 char** getLines(char* buffer, int* number_of_lines){
 
     char* line = nullptr;
@@ -39,6 +47,11 @@ char** getLines(char* buffer, int* number_of_lines){
     while (current != '\0'){
         if (current == '\n'){
             if (char_counter > 0){
+
+                line = (char*)realloc(line, char_counter+1);
+                line[char_counter] = '\0';
+                char_counter++;
+
                 lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
                 lines[line_counter] = line;
                 line_counter++;
@@ -48,9 +61,12 @@ char** getLines(char* buffer, int* number_of_lines){
         }
 
         else {
+
             line = (char*)realloc(line, char_counter+1);
             line[char_counter] = current;
             char_counter++;
+
+            //addChar(&line, &char_counter, current);
         }
 
         i++;
