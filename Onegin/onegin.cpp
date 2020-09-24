@@ -29,7 +29,8 @@ char* readFile(char* name){
 void addChar(char** line_ptr, int* length_ptr, char to_add){ //Не работает(
 
     *line_ptr = (char*)realloc(*line_ptr, *length_ptr+1);
-    *line_ptr[*length_ptr] = to_add;
+    //(char*)realloc(*line_ptr, *length_ptr+1);
+    (*line_ptr)[*length_ptr] = to_add;
     *length_ptr++;
 
 }
@@ -62,11 +63,12 @@ char** getLines(char* buffer, int* number_of_lines){
 
         else {
 
-            line = (char*)realloc(line, char_counter+1);
-            line[char_counter] = current;
-            char_counter++;
+            //line = (char*)realloc(line, char_counter+1);
+            //line[char_counter] = current;
+            //char_counter++;
 
-            //addChar(&line, &char_counter, current);
+            addChar(&line, &char_counter, current);
+            //new_addChar(line, &char_counter, current);
         }
 
         i++;
@@ -286,7 +288,7 @@ int main(){
     //bubbleSort(lines, number, number*sizeof(lines), reversedLGComparator);
     //qsort((void*)lines, number, sizeof(*lines), LGComparator);
     myQSort((void*)&lines, number, reversedLGComparator);
-    //arrayPrint(lines,number);
+    arrayPrint(lines,number);
     printf("Processing ended, writing to a file\n");
     printFile("out.txt", lines, number);
     printf("Writed successfully");
