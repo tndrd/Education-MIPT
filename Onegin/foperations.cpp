@@ -1,7 +1,7 @@
 #include "onegin.h"
 
 
-void printFile(char* name, char** lines, int length){
+void printFile(const char* name, char** lines, int length){
 
     FILE* fp;
     fp = fopen(name, "w");
@@ -22,7 +22,7 @@ void arrayPrint(char** arr, int length){
 }
 
 
-char** getLines(char* buffer, int* number_of_lines){
+char** getLines(char* buffer,  int* number_of_lines){
 
     char* line = nullptr;
     char** lines  = nullptr;
@@ -78,7 +78,7 @@ char* readFile(const char* name){
 }
 
 
-void addChar(char** line_ptr, int* length_ptr, char to_add){ //Не работает(
+void addChar(char** line_ptr, int* length_ptr, const char to_add){ //Не работает(
 
     *line_ptr = (char*)realloc(*line_ptr, (*length_ptr)+1);
     (*line_ptr)[*length_ptr] = to_add;

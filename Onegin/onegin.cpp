@@ -4,6 +4,25 @@
 #define LESS -1
 #define EQUAL 0
 
+
+int main(){
+
+    runTests();
+    char* buffer = readFile("hamlet.txt");
+    int number_of_lines;
+    char** lines = getLines(buffer, &number_of_lines);
+    printf("File read successfully\n");
+    printf("Processing started, wait please\n");
+    myQSort((void*)&lines, number_of_lines, reversedLGComparator);
+    printf("Processing ended, writing to a file\n");
+    printFile("out.txt", lines, number_of_lines);
+    printf("Writed successfully\n");
+
+    return 0;
+
+}
+
+
 char* next_letter(char* a){
 
     if (*a == '\0'){
@@ -95,7 +114,7 @@ int LGComparator(const void* a, const void* b){
 }
 
 
-void* concat(char** a, char** b, char** c, int a_size, int b_size, int c_size){
+void* concat(char** a, char** b, char** c, size_t a_size, size_t b_size, size_t c_size){
 
     char** out = (char**)calloc(1, (sizeof(char*) * (a_size+b_size+c_size)) );
 
@@ -185,24 +204,6 @@ void runTests(){
         printf("TEST #1 OK\n");
     }
     else{
-        printf("Something went wrong, check t-named log on char %d\n", res);
+        printf("myQsort test failed!: check t-named log on char %d\n", res);
     }
-}
-
-
-int main(){
-
-    runTests();
-    char* buffer = readFile("hamlet.txt");
-    int number_of_lines;
-    char** lines = getLines(buffer, &number_of_lines);
-    printf("File read successfully\n");
-    printf("Processing started, wait please\n");
-    myQSort((void*)&lines, number_of_lines, reversedLGComparator);
-    printf("Processing ended, writing to a file\n");
-    printFile("out.txt", lines, number_of_lines);
-    printf("Writed successfully\n");
-
-    return 0;
-
 }
