@@ -25,6 +25,8 @@ int main(){
 
 char* next_letter(char* a){
 
+    assert(a);
+
     if (*a == '\0'){
         return nullptr;
     }
@@ -39,6 +41,10 @@ char* next_letter(char* a){
 
 
 int lexicographicalCompare(char* a, char* b){
+
+    assert(a);
+    assert(b);
+    assert(a!=b);
 
     a = next_letter(a);
     b = next_letter(b);
@@ -74,6 +80,8 @@ int lexicographicalCompare(char* a, char* b){
 
 
 char* reversed(char* str){
+
+    assert(str);
 
     int length=0;
     char current = '\0';
@@ -116,6 +124,13 @@ int LGComparator(const void* a, const void* b){
 
 void* concat(char** a, char** b, char** c, size_t a_size, size_t b_size, size_t c_size){
 
+    assert(a);
+    assert(b);
+    assert(c);
+    assert(a!=b);
+    assert(b!=c);
+    assert(a!=c);
+
     char** out = (char**)calloc(1, (sizeof(char*) * (a_size+b_size+c_size)) );
 
     for (int m = 0; m < a_size; m++){
@@ -133,6 +148,8 @@ void* concat(char** a, char** b, char** c, size_t a_size, size_t b_size, size_t 
 
 
 void myQSort(void* lines_ptr, int length, int(*compare)(const void* a, const void* b)){
+
+    assert(lines_ptr);
 
     char** lines = *((char***)lines_ptr);
     char** ltp;
