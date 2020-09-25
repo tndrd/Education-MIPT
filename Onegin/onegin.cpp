@@ -1,31 +1,10 @@
-#include <stdlib.h>
-#include <math.h>
-#include <stdio.h>
-#include <assert.h>
-#include <ctype.h>
+#include "onegin.h"
+
 #define GREATER 1
 #define LESS -1
 #define EQUAL 0
 
-
-//------------------------------------------------------------------------------------
-char* readFile(char* name);
-void addChar(char** line_ptr, int* length_ptr, char to_add);
-char** getLines(char* buffer, int* number_of_lines);
-char* next_letter(char* a);
-int lexicographicalCompare(char* a, char* b);
-char* reversed(char* str);
-int reversedLGComparator(const void* a, const void* b);
-int LGComparator(const void* a, const void* b);
-void bubbleSort (char** base, size_t num, size_t sz, int(*compare)(char* a, char* b));
-void arrayPrint(char** arr, int length);
-void printFile(char* name, char** lines, int length);
-void* concat(char** a, char** b, char** c, int a_size, int b_size, int c_size);
-void myQSort(void* lines_ptr, int length, int(*compare)(const void* a, const void* b));
-//------------------------------------------------------------------------------------
-
-
-char* readFile(char* name){
+char* readFile(const char* name){
 
     FILE* fp = fopen(name, "r");
     char* buffer = nullptr;
@@ -41,8 +20,6 @@ char* readFile(char* name){
     rewind(fp);
     int read = fread(buffer, sizeof(char), filesize, fp);
     fclose(fp);
-
-    printf("File read successfully\n");
     return buffer;
 }
 
@@ -284,16 +261,33 @@ void myQSort(void* lines_ptr, int length, int(*compare)(const void* a, const voi
 }
 
 
-int main(){
+void runTests(){
 
+    printf("Starting tests...\n");
+    int res = TEST_myQsort();
+
+    if (res < 0){
+        printf("TEST #1 OK\n");
+    }
+    else{
+        printf("Something went wrong, check t-named log on char %d\n", res);
+    }
+
+
+}
+
+int main(){
+    runTests();
     char* buffer = readFile("hamlet.txt");
     int number_of_lines;
     char** lines = getLines(buffer, &number_of_lines);
+    printf("File read successfully\n");
     printf("Processing started, wait please\n");
     myQSort((void*)&lines, number_of_lines, reversedLGComparator);
     printf("Processing ended, writing to a file\n");
     printFile("out.txt", lines, number_of_lines);
-    printf("Writed successfully");
+    printf("Writed successfully\n");
+
     return 0;
 
 }
