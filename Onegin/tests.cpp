@@ -69,7 +69,7 @@ int TEST_myQsort(){
 
 
         }
-        printf("\n%d\n", i);
+
         name[3] = 't';
         remove(name);
 
