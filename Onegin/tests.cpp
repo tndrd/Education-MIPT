@@ -14,12 +14,14 @@ char TESTS_lexicographical_compare[6][3][5] = {
 { "zzzz",    "-__-",    GREATER },
 { "DING",    "DING",      EQUAL }};
 
+
 char TESTS_reversed[4][2][5] = {
 
 { "abcd",    "dcba" },
 { "I go",    "og I" },
 { "meow",    "woem" },
 { "o__-",    "-__o" }};
+
 
 int TEST_myQsort(){
 
@@ -38,6 +40,7 @@ int TEST_myQsort(){
     name[6] = 'x';
     name[7] = 't';
     name[8] = '\0';
+
     for(int i = 0; i < 2; i++){
 
         name[2] = (char)(i+48);
@@ -67,8 +70,6 @@ int TEST_myQsort(){
             j++;
             current_1 = buffer_1[j];
             current_2 = buffer_2[j];
-
-
         }
 
         name[3] = 't';
@@ -76,5 +77,4 @@ int TEST_myQsort(){
 
     }
     return result;
-
 }

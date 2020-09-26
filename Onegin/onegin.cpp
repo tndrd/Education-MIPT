@@ -11,8 +11,8 @@ int main(){
         printf("Stopping program\n");
         exit(-1);
     }
-    printf("All tests OK\n");
 
+    printf("All tests OK\n");
     char* buffer = readFile("hamlet.txt");
     int number_of_lines;
     MyStr* lines = getLines(buffer, &number_of_lines);
@@ -24,7 +24,6 @@ int main(){
     printf("Writed successfully\n");
 
     return 0;
-
 }
 
 
@@ -49,7 +48,6 @@ int lexicographicalCompare(char* a, char* b){
 
     assert(a);
     assert(b);
-
     a = next_letter(a);
     b = next_letter(b);
 
@@ -95,7 +93,6 @@ MyStr reversed(MyStr to_reverse){
     }
 
     (rev_MyStr.pointer)[ rev_MyStr.length - 1 ] = '\0';
-
     return rev_MyStr;
 }
 
