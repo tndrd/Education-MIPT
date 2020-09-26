@@ -7,10 +7,15 @@
 
 int main(){
 
-    runTests();
+    if(runTests() > 0){
+        printf("Stopping program\n");
+        exit(-1);
+    }
+    printf("All tests OK\n");
+
     char* buffer = readFile("hamlet.txt");
     int number_of_lines;
-    my_str* lines = getLines(buffer, &number_of_lines);
+    MyStr* lines = getLines(buffer, &number_of_lines);
     printf("File read successfully\n");
     printf("Processing started, wait please\n");
     myQSort((void*)&lines, number_of_lines, LGComparator);
@@ -78,34 +83,41 @@ int lexicographicalCompare(char* a, char* b){
 }
 
 
-my_str reversed(my_str to_reverse){
+MyStr reversed(MyStr to_reverse){
 
     assert(to_reverse.pointer);
-    my_str rev_my_str;
-    rev_my_str.length = to_reverse.length;
-    rev_my_str.pointer = (char*)calloc(1, sizeof(char) * to_reverse.length);
+    MyStr rev_MyStr;
+    rev_MyStr.length = to_reverse.length;
+    rev_MyStr.pointer = (char*)calloc(1, sizeof(char) * to_reverse.length);
 
     for (int i = to_reverse.length - 2; i >= 0; i--){
-        (rev_my_str.pointer)[ rev_my_str.length - i - 2 ] = to_reverse.pointer[i];
+        (rev_MyStr.pointer)[ rev_MyStr.length - i - 2 ] = to_reverse.pointer[i];
     }
 
-    (rev_my_str.pointer)[ rev_my_str.length - 1 ] = '\0';
+    (rev_MyStr.pointer)[ rev_MyStr.length - 1 ] = '\0';
 
-    return rev_my_str;
+    return rev_MyStr;
 }
 
 
-int reversedLGComparator(my_str a, my_str b){
-    return lexicographicalCompare(reversed(a).pointer, reversed(b).pointer);
+int reversedLGComparator(MyStr a, MyStr b){
+
+    MyStr rev_a = reversed(a);
+    MyStr rev_b = reversed(b);
+    int result = lexicographicalCompare(rev_a.pointer, rev_b.pointer);
+    free(rev_a.pointer);
+    free(rev_b.pointer);
+
+    return result;
 }
 
 
-int LGComparator(my_str a, my_str b){
+int LGComparator(MyStr a, MyStr b){
     return lexicographicalCompare(a.pointer, b.pointer);
 }
 
 
-void* concat(my_str* a, my_str* b, my_str* c, size_t a_size, size_t b_size, size_t c_size){
+void* concat(MyStr* a, MyStr* b, MyStr* c, size_t a_size, size_t b_size, size_t c_size){
 
     assert(a);
     assert(b);
@@ -114,7 +126,7 @@ void* concat(my_str* a, my_str* b, my_str* c, size_t a_size, size_t b_size, size
     assert(b!=c);
     assert(a!=c);
 
-    my_str* out = (my_str*)calloc(1, (sizeof(my_str) * (a_size+b_size+c_size)) );
+    MyStr* out = (MyStr*)calloc(1, (sizeof(MyStr) * (a_size+b_size+c_size)) );
 
     for (int m = 0; m < a_size; m++){
         out[m] = a[m];
@@ -130,24 +142,24 @@ void* concat(my_str* a, my_str* b, my_str* c, size_t a_size, size_t b_size, size
 }
 
 
-void myQSort(void* lines_ptr, int length, int(*comparator)(my_str a, my_str b)){ //ТУТ БЫ ЧЕРЕЗ typedef
+void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b)){ //ТУТ БЫ ЧЕРЕЗ typedef
 
     assert(lines_ptr);
 
-    my_str* lines = *((my_str**)lines_ptr);
-    my_str* ltp;
-    my_str* gtp;
-    my_str* etp;
+    MyStr* lines = *((MyStr**)lines_ptr);
+    MyStr* ltp;
+    MyStr* gtp;
+    MyStr* etp;
 
     int ltp_length = 0;
     int gtp_length = 0;
     int etp_length = 0;
 
-    my_str pivot = lines[length-1];
+    MyStr pivot = lines[length-1];
 
     for (int i = 0; i<length; i++){
 
-        my_str element = lines[i];
+        MyStr element = lines[i];
 
         if ((*comparator)(element, pivot) < 0){
             ltp_length++;
@@ -160,9 +172,9 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(my_str a, my_str b)){
         }
     }
 
-    ltp = (my_str*)calloc(ltp_length, sizeof(my_str));
-    etp = (my_str*)calloc(etp_length, sizeof(my_str));
-    gtp = (my_str*)calloc(gtp_length, sizeof(my_str));
+    ltp = (MyStr*)calloc(ltp_length, sizeof(MyStr));
+    etp = (MyStr*)calloc(etp_length, sizeof(MyStr));
+    gtp = (MyStr*)calloc(gtp_length, sizeof(MyStr));
 
     int ltp_counter = 0;
     int etp_counter = 0;
@@ -170,7 +182,7 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(my_str a, my_str b)){
 
     for(int i = 0; i<length; i++){
 
-        my_str element = lines[i];
+        MyStr element = lines[i];
 
         if ((*comparator)(element, pivot) < 0){
             ltp[ltp_counter] = lines[i];
@@ -191,20 +203,14 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(my_str a, my_str b)){
     myQSort(&gtp, gtp_length, (*comparator));
     }
 
-    *((my_str**)lines_ptr) = (my_str*)concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
+    *((MyStr**)lines_ptr) = (MyStr*)concat(ltp, etp, gtp, ltp_length, etp_length, gtp_length);
 }
 
 
-void runTests(){
+int runTests(){
 
     printf("Starting tests...\n");
     int res = TEST_myQsort();
-
-    if (res < 0){
-        printf("TEST #1 OK\n");
-    }
-    else{
-        printf("myQsort test failed!: check t-named log on char %d\n", res);
-    }
+    return res;
 }
 

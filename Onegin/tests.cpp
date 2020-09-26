@@ -21,14 +21,13 @@ char TESTS_reversed[4][2][5] = {
 { "meow",    "woem" },
 { "o__-",    "-__o" }};
 
-
 int TEST_myQsort(){
 
     char* name = (char*)calloc(9, sizeof(char));
-
+    int result = 0;
     int number_of_lines;
 
-    comparator* comparators = (comparator*)calloc(2,sizeof(comparator));
+    Comparator* comparators = (Comparator*)calloc(2,sizeof(Comparator));
     comparators[0] = reversedLGComparator;
     comparators[1] = LGComparator;
 
@@ -45,7 +44,7 @@ int TEST_myQsort(){
         name[3] = 'i';
 
         char* buffer = readFile(name);
-        my_str* lines = getLines(buffer, &number_of_lines);
+        MyStr* lines = getLines(buffer, &number_of_lines);
         myQSort((void*)&lines, number_of_lines, comparators[i]);
         name[3] = 't';
         printFile(name, lines, number_of_lines);
@@ -61,7 +60,9 @@ int TEST_myQsort(){
         while (current_1 != '\0' && current_2 != '\0') {
 
             if (current_1 != current_2){
-                return j+1;
+                result++;
+                printf("First mismatch in test #%d at char #%d\n", i+1, j+1);
+                continue;
             }
             j++;
             current_1 = buffer_1[j];
@@ -74,6 +75,6 @@ int TEST_myQsort(){
         remove(name);
 
     }
-    return -1;
+    return result;
 
 }

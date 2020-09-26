@@ -1,6 +1,6 @@
 #include "onegin.h"
 
-void printFile(const char* name, my_str* lines, int length){
+void printFile(const char* name, MyStr* lines, int length){
 
     assert(name);
     assert(lines);
@@ -21,7 +21,7 @@ void printFile(const char* name, my_str* lines, int length){
 }
 
 
-void arrayPrint(my_str* arr, int length){
+void arrayPrint(MyStr* arr, int length){
 
     assert(arr);
 
@@ -31,13 +31,13 @@ void arrayPrint(my_str* arr, int length){
 }
 
 
-my_str* getLines(char* buffer,  int* number_of_lines){
+MyStr* getLines(char* buffer,  int* number_of_lines){
 
     assert(buffer);
     assert(number_of_lines);
 
     char* line = nullptr;
-    my_str* lines  = nullptr;
+    MyStr* lines  = nullptr;
     int char_counter = 0;
     int line_counter = 0;
 
@@ -49,7 +49,7 @@ my_str* getLines(char* buffer,  int* number_of_lines){
             if (char_counter > 0){
 
                 addChar(&line, &char_counter, '\0');
-                lines = (my_str*)realloc(lines, (line_counter+1) * sizeof(my_str));
+                lines = (MyStr*)realloc(lines, (line_counter+1) * sizeof(MyStr));
                 (lines[line_counter]).pointer = line;
                 (lines[line_counter]).length = char_counter;
                 line_counter++;
@@ -67,7 +67,7 @@ my_str* getLines(char* buffer,  int* number_of_lines){
     }
 
     *number_of_lines = line_counter;
-    //free(buffer);
+    free(buffer);
     return lines;
 }
 
