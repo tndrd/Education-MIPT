@@ -5,15 +5,27 @@
 #define EQUAL 0
 
 
-int main(){
+int main(int argc, char* argv[]){
 
     if(runTests() > 0){
         printf("Stopping program\n");
         exit(-1);
     }
-
     printf("All tests OK\n");
-    char* buffer = readFile("hamlet.txt");
+
+    char* buffer;
+
+    if (argc == 1){
+        buffer = readFile("hamlet.txt");
+    }
+    else if (argc > 2){
+        printf("Too many arguments");
+        exit(2);
+    }
+    else{
+        buffer = readFile(argv[1]);
+    }
+
     int number_of_lines;
     MyStr* lines = getLines(buffer, &number_of_lines);
     printf("File read successfully\n");
