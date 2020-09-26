@@ -80,7 +80,7 @@ char* readFile(const char* name){
     char* buffer = nullptr;
 
     if (fp==nullptr){
-        printf("Error: unable to open file");
+        printf("Error: unable to open file\n");
         exit(1);
     }
 
