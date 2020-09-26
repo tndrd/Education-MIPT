@@ -11,10 +11,9 @@ struct MyStr{
 
 };
 
-//------------------------------------------------------------------------------------
-
 typedef int(*Comparator)(MyStr a, MyStr b);
 
+//------------------------------------------------------------------------------------
 char* readFile(const char* name);
 void addChar(char** line_ptr, int* length_ptr, char to_add);
 MyStr* getLines(char* buffer, int* number_of_lines);
