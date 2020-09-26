@@ -1,7 +1,6 @@
 #include "onegin.h"
 
-
-void printFile(const char* name, char** lines, int length){
+void printFile(const char* name, my_str* lines, int length){
 
     assert(name);
     assert(lines);
@@ -15,30 +14,30 @@ void printFile(const char* name, char** lines, int length){
     }
 
     for (int i = 0; i < length; i++){
-        fprintf(fp, "%s\n", lines[i]);
+        fprintf(fp, "%s\n", (lines[i]).pointer);
     }
 
     fclose(fp);
 }
 
 
-void arrayPrint(char** arr, int length){
+void arrayPrint(my_str* arr, int length){
 
     assert(arr);
 
     for (int i = 0; i<length; i++){
-        printf("%s\n", arr[i]);
+        printf("%s\n", (arr[i]).pointer);
     }
 }
 
 
-char** getLines(char* buffer,  int* number_of_lines){
+my_str* getLines(char* buffer,  int* number_of_lines){
 
     assert(buffer);
     assert(number_of_lines);
 
     char* line = nullptr;
-    char** lines  = nullptr;
+    my_str* lines  = nullptr;
     int char_counter = 0;
     int line_counter = 0;
 
@@ -50,8 +49,9 @@ char** getLines(char* buffer,  int* number_of_lines){
             if (char_counter > 0){
 
                 addChar(&line, &char_counter, '\0');
-                lines = (char**)realloc(lines, (line_counter+1) * sizeof(char*));
-                lines[line_counter] = line;
+                lines = (my_str*)realloc(lines, (line_counter+1) * sizeof(my_str));
+                (lines[line_counter]).pointer = line;
+                (lines[line_counter]).length = char_counter;
                 line_counter++;
             }
             line = nullptr;
@@ -67,6 +67,7 @@ char** getLines(char* buffer,  int* number_of_lines){
     }
 
     *number_of_lines = line_counter;
+    //free(buffer);
     return lines;
 }
 

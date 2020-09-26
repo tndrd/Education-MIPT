@@ -184,21 +184,12 @@ int Input(double* a, double* b, double* c) {
 
     printf("\n\nEnter a, b, c coefficients, pls:\n");
 
-    double a_temp;
-    double b_temp;
-    double c_temp;
-    a
-    int check = scanf(" %lg %lg %lg", &a_temp, &b_temp, &c_temp);
+    int check = scanf("%lg %lg %lg", a, b, c);
     rewind(stdin);
 
     if (check != 3){
         printf("You entered wrong type\n");
         return Input(a, b, c);
-    }
-    else{
-        *a = a_temp;
-        *b = b_temp;
-        *c = c_temp;
     }
 }
 

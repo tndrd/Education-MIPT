@@ -28,6 +28,10 @@ int TEST_myQsort(){
 
     int number_of_lines;
 
+    comparator* comparators = (comparator*)calloc(2,sizeof(comparator));
+    comparators[0] = reversedLGComparator;
+    comparators[1] = LGComparator;
+
     name[0] = 't';
     name[1] = '/';
     name[4] = '.';
@@ -35,14 +39,14 @@ int TEST_myQsort(){
     name[6] = 'x';
     name[7] = 't';
     name[8] = '\0';
-    for(int i = 0; i < 1; i++){
+    for(int i = 0; i < 2; i++){
 
         name[2] = (char)(i+48);
         name[3] = 'i';
 
         char* buffer = readFile(name);
-        char** lines = getLines(buffer, &number_of_lines);
-        myQSort((void*)&lines, number_of_lines, reversedLGComparator);
+        my_str* lines = getLines(buffer, &number_of_lines);
+        myQSort((void*)&lines, number_of_lines, comparators[i]);
         name[3] = 't';
         printFile(name, lines, number_of_lines);
 
@@ -50,21 +54,22 @@ int TEST_myQsort(){
         name[3] = 'r';
         char* buffer_2 = readFile(name);
 
-        i = 0;
-        char current_1 = buffer_1[i];
-        char current_2 = buffer_2[i];
+        int j = 0;
+        char current_1 = buffer_1[j];
+        char current_2 = buffer_2[j];
 
         while (current_1 != '\0' && current_2 != '\0') {
 
             if (current_1 != current_2){
-                return i+1;
+                return j+1;
             }
-            i++;
-            current_1 = buffer_1[i];
-            current_2 = buffer_2[i];
+            j++;
+            current_1 = buffer_1[j];
+            current_2 = buffer_2[j];
 
 
         }
+        printf("\n%d\n", i);
         name[3] = 't';
         remove(name);
 
