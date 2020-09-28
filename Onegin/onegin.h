@@ -4,6 +4,12 @@
 #include <assert.h>
 #include <ctype.h>
 
+#define GREATER 1
+#define LESS -1
+#define EQUAL 0
+
+
+/** Struct to store line and its length */
 struct MyStr{
 
     char* pointer;
@@ -14,19 +20,115 @@ struct MyStr{
 typedef int(*Comparator)(MyStr a, MyStr b);
 
 //------------------------------------------------------------------------------------
+
+/*! Reads file to a string buffer
+    @param name name of file
+    @return pointer to the buffer
+*/
 char* readFile(const char* name);
+
+/*! Adds char to a string
+    @param line_ptr pointer to the string
+    @param length_ptr pointer to length-storing variable
+    @param to_add char that should be added to string
+*/
 void addChar(char** line_ptr, int* length_ptr, char to_add);
+
+/*! Creates an array of \link MyStr \endlink structs from buffer
+    @param buffer pointer to the buffer
+    @param number_of_lines pointer to number of lines - storing variable
+    @return \link MyStr \endlink array
+*/
 MyStr* getLines(char* buffer, int* number_of_lines);
+
+/*! Function to get first letter of string
+    @param a string
+    @return pointer to the found letter
+*/
 char* next_letter(char* a);
+
+/*! Lexicographically compares two strings
+    @param a first string
+    @param b second string
+    @return result of comparison
+    @note returns 1 if a > b, 2 if a < b or 0 if a = b
+*/
 int lexicographicalCompare(char* a, char* b);
+
+/*! Creates reversed \link MyStr \endlink string
+    @param to_reverse \link MyStr \endlink for reversing
+    @return reversed \link MyStr \endlink string
+*/
 MyStr reversed(MyStr to_reverse);
+
+/*! Lexicographically compares two \link MyStr \endlink strings starting from their ends
+    @param a first \link MyStr \endlink string
+    @param b second \link MyStr \endlink string
+    @return result of comparison
+    @note returns 1 if a > b, 2 if a < b or 0 if a = b
+*/
 int reversedLGComparator(MyStr a, MyStr b);
+
+
+/*! Lexicographically compares two \link MyStr \endlink strings
+    @param a first \link MyStr \endlink string
+    @param b second \link MyStr \endlink string
+    @return result of comparison
+    @note returns 1 if a > b, 2 if a < b or 0 if a = b
+*/
 int LGComparator(MyStr a, MyStr b);
+
+
+/*! Prints \link MyStr \endlink array
+    @param arr \link MyStr \endlink array
+    @param length length of array
+*/
 void arrayPrint(MyStr* arr, int length);
+
+
+/*! Prints \link MyStr \endlink array to a file
+    @param name name of the output file
+    @param lines \link MyStr \endlink array
+    @param length length of array
+*/
 void printFile(const char* name, MyStr* lines, int length);
-void* concat(char** a, char** b, char** c, size_t a_size, size_t b_size, size_t c_size);
-void myQSort(void* lines_ptr, int length, int(*compare)(MyStr a, MyStr b));
+
+
+/*! Concatenates 3 \link MyStr \endlink arrays
+    @param a first array
+    @param b second array
+    @param c third array
+    @param a_size first array length
+    @param b_size second array length
+    @param c_size third array length
+    @return pointer to the new array
+*/
+void* concat(MyStr* a, MyStr* b, MyStr* c, size_t a_size, size_t b_size, size_t c_size);
+
+
+/*! Does the quick-sort of \link MyStr \endlink array
+    @param lines_ptr pointer to \link MyStr \endlink array
+    @param length \link MyStr \endlink array length
+    @param comparator pointer to the comparator function
+*/
+void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b));
+
+
+/*! Tests \link myQSort \endlink function
+    @note takes tests from "t" folder. The ones ended with i are input data, r-ended are expected results. If test fails, prints number of tests and number orfirst mismatched char. Creates failed tests output files.
+*/
 int TEST_myQsort();
+
+
+/*! Tests \link lexicographicalCompare \endlink function */
+int TEST_lexicographicalCompare();
+
+
+/*! Tests \link reversed \endlink function */
+int TEST_reversed();
+
+
+/*! Runs all the tests */
 int runTests();
 //------------------------------------------------------------------------------------
 

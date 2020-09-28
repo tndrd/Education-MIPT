@@ -1,0 +1,114 @@
+\hypertarget{foperations_8cpp}{}\section{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/foperations.cpp File Reference}
+\label{foperations_8cpp}\index{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/foperations.\+cpp@{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/foperations.\+cpp}}
+{\ttfamily \#include \char`\"{}onegin.\+h\char`\"{}}\newline
+Include dependency graph for foperations.\+cpp\+:
+% FIG 0
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}{print\+File} (const char $\ast$name, \hyperlink{struct_my_str}{My\+Str} $\ast$lines, int length)
+\item 
+void \hyperlink{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}{array\+Print} (\hyperlink{struct_my_str}{My\+Str} $\ast$arr, int length)
+\item 
+\hyperlink{struct_my_str}{My\+Str} $\ast$ \hyperlink{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}{get\+Lines} (char $\ast$buffer, int $\ast$number\+\_\+of\+\_\+lines)
+\item 
+char $\ast$ \hyperlink{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}{read\+File} (const char $\ast$name)
+\item 
+void \hyperlink{foperations_8cpp_ac60c084b2609830dff220be155326d5c}{add\+Char} (char $\ast$$\ast$line\+\_\+ptr, int $\ast$length\+\_\+ptr, const char to\+\_\+add)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{foperations_8cpp_ac60c084b2609830dff220be155326d5c}\label{foperations_8cpp_ac60c084b2609830dff220be155326d5c}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!add\+Char@{add\+Char}}
+\index{add\+Char@{add\+Char}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{add\+Char()}{addChar()}}
+{\footnotesize\ttfamily void add\+Char (\begin{DoxyParamCaption}\item[{char $\ast$$\ast$}]{line\+\_\+ptr,  }\item[{int $\ast$}]{length\+\_\+ptr,  }\item[{char}]{to\+\_\+add }\end{DoxyParamCaption})}
+
+Adds char to a string 
+\begin{DoxyParams}{Parameters}
+{\em line\+\_\+ptr} & pointer to the string \\
+\hline
+{\em length\+\_\+ptr} & pointer to length-\/storing variable \\
+\hline
+{\em to\+\_\+add} & char that should be added to string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}\label{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!array\+Print@{array\+Print}}
+\index{array\+Print@{array\+Print}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{array\+Print()}{arrayPrint()}}
+{\footnotesize\ttfamily void array\+Print (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{arr,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+Prints \hyperlink{struct_my_str}{My\+Str} array 
+\begin{DoxyParams}{Parameters}
+{\em arr} & \hyperlink{struct_my_str}{My\+Str} array \\
+\hline
+{\em length} & length of array \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 24 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}\label{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!get\+Lines@{get\+Lines}}
+\index{get\+Lines@{get\+Lines}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{get\+Lines()}{getLines()}}
+{\footnotesize\ttfamily \hyperlink{struct_my_str}{My\+Str}$\ast$ get\+Lines (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{int $\ast$}]{number\+\_\+of\+\_\+lines }\end{DoxyParamCaption})}
+
+Creates an array of \hyperlink{struct_my_str}{My\+Str} structs from buffer 
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer \\
+\hline
+{\em number\+\_\+of\+\_\+lines} & pointer to number of lines -\/ storing variable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{struct_my_str}{My\+Str} array 
+\end{DoxyReturn}
+
+
+Definition at line 34 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}\label{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!print\+File@{print\+File}}
+\index{print\+File@{print\+File}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{print\+File()}{printFile()}}
+{\footnotesize\ttfamily void print\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{lines,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+Prints \hyperlink{struct_my_str}{My\+Str} array to a file 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of the output file \\
+\hline
+{\em lines} & \hyperlink{struct_my_str}{My\+Str} array \\
+\hline
+{\em length} & length of array \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 3 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}\label{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!read\+File@{read\+File}}
+\index{read\+File@{read\+File}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{read\+File()}{readFile()}}
+{\footnotesize\ttfamily char$\ast$ read\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})}
+
+Reads file to a string buffer 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the buffer 
+\end{DoxyReturn}
+
+
+Definition at line 75 of file foperations.\+cpp.
+

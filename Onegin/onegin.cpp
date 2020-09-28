@@ -1,14 +1,12 @@
 #include "onegin.h"
 
-#define GREATER 1
-#define LESS -1
-#define EQUAL 0
-
 
 int main(int argc, char* argv[]){
 
-    if(runTests() > 0){
-        printf("Stopping program\n");
+    int err_quantity = runTests();
+
+    if(err_quantity > 0){
+        printf("Failed %d test(s), stopping program\n", err_quantity);
         exit(-1);
     }
     printf("All tests OK\n");
@@ -218,8 +216,15 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b)){ /
 
 int runTests(){
 
+    int err_quantity = 0;
     printf("Starting tests...\n");
-    int res = TEST_myQsort();
-    return res;
+    printf("Testing myQSort\n");
+    err_quantity += TEST_myQsort();
+    printf("Testing lexicographicalCompare\n");
+    err_quantity += TEST_lexicographicalCompare();
+    printf("Testing reversed\n");
+    err_quantity += TEST_reversed();
+
+    return err_quantity;
 }
 

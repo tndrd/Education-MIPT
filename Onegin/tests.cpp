@@ -1,18 +1,22 @@
 #include "onegin.h"
+#include <string.h>
 
-#define GREATER "grtr"
-#define LESS "less"
-#define EQUAL "eqal"
+char TESTS_lexicographical_compare[6][2][5] = {
 
+{ "acde",    "abcd" },
+{ " ,ab",    "::de" },
+{ "abc ",    "abcd" },
+{ "beef",    "DEAD" },
+{ "zzzz",    "-__-" },
+{ "DING",    "DING" }};
 
-char TESTS_lexicographical_compare[6][3][5] = {
-
-{ "abcd",    "acde",    GREATER },
-{ " ,ab",    "::de",       LESS },
-{ "abc ",    "abcd",       LESS },
-{ "DEAD",    "beef",    GREATER },
-{ "zzzz",    "-__-",    GREATER },
-{ "DING",    "DING",      EQUAL }};
+int TEST_RESULTS_lexicographical_compare[6]{
+  GREATER,
+  LESS,
+  LESS,
+  GREATER,
+  GREATER,
+  EQUAL };
 
 
 char TESTS_reversed[4][2][5] = {
@@ -22,6 +26,43 @@ char TESTS_reversed[4][2][5] = {
 { "meow",    "woem" },
 { "o__-",    "-__o" }};
 
+
+int TEST_reversed(){
+
+    int result = 0;
+
+    for (int i = 0; i < 4; i++){
+        MyStr input;
+        input.pointer = TESTS_reversed[i][0];
+        input.length = 5;
+
+        if (strcmp(reversed(input).pointer, TESTS_reversed[i][1]) != 0){
+        printf("Test #%d failed. Input: %s | Result: %s | Expected: %s\n", i+1,
+        TESTS_reversed[i][0],  reversed(input).pointer,  TESTS_reversed[i][1]);
+
+        result++;
+        }
+    }
+    return result;
+}
+
+
+int TEST_lexicographicalCompare(){
+
+    int result = 0;
+
+    for(int i = 0; i < 6; i++){
+        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1]) != TEST_RESULTS_lexicographical_compare[i]){
+            printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i+1,
+            TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
+            (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1])),
+            TEST_RESULTS_lexicographical_compare[i]);
+
+            result++;
+        }
+    }
+    return result;
+}
 
 int TEST_myQsort(){
 
@@ -64,7 +105,7 @@ int TEST_myQsort(){
 
             if (current_1 != current_2){
                 result++;
-                printf("First mismatch in test #%d at char #%d\n", i+1, j+1);
+                printf("First mismatch in test #%d at char #%d. See %dt.txt\n", i+1, j+1, i);
                 continue;
             }
             j++;

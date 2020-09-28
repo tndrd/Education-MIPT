@@ -1,0 +1,402 @@
+\hypertarget{onegin_8h}{}\section{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/onegin.h File Reference}
+\label{onegin_8h}\index{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/onegin.\+h@{/home/vovchek/\+Smthng/\+Education-\/\+M\+I\+P\+T/\+Onegin/onegin.\+h}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+Include dependency graph for onegin.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{struct_my_str}{My\+Str}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{onegin_8h_ae27a03218878a9af9d7d946e186f8598}{G\+R\+E\+A\+T\+ER}~1
+\item 
+\#define \hyperlink{onegin_8h_a16bcdd65ecdd3313af9e393538fa7fa8}{L\+E\+SS}~-\/1
+\item 
+\#define \hyperlink{onegin_8h_a214c717b2e51e1993a749ac99df7de58}{E\+Q\+U\+AL}~0
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef int($\ast$ \hyperlink{onegin_8h_a02a19538cb7afb18ce3d8ce12bd92b39}{Comparator}) (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \hyperlink{onegin_8h_a9f26e5033d5c9b8104fab8ba16556fb7}{read\+File} (const char $\ast$name)
+\item 
+void \hyperlink{onegin_8h_a9e183229811f5d6f5a7b29ea5b9ce673}{add\+Char} (char $\ast$$\ast$line\+\_\+ptr, int $\ast$length\+\_\+ptr, char to\+\_\+add)
+\item 
+\hyperlink{struct_my_str}{My\+Str} $\ast$ \hyperlink{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}{get\+Lines} (char $\ast$buffer, int $\ast$number\+\_\+of\+\_\+lines)
+\item 
+char $\ast$ \hyperlink{onegin_8h_a5bbe02144d6933e35d11da9eeb26c326}{next\+\_\+letter} (char $\ast$a)
+\item 
+int \hyperlink{onegin_8h_a1848f6d0fdcbec51782e00a5b68c1ab1}{lexicographical\+Compare} (char $\ast$a, char $\ast$b)
+\item 
+\hyperlink{struct_my_str}{My\+Str} \hyperlink{onegin_8h_a2f88f0ba2566d23c1c91acd14659af6e}{reversed} (\hyperlink{struct_my_str}{My\+Str} to\+\_\+reverse)
+\item 
+int \hyperlink{onegin_8h_acecdc74fa8e7732c13e4c5a7bdf1e843}{reversed\+L\+G\+Comparator} (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
+\item 
+int \hyperlink{onegin_8h_abe4568f00b1c4b995246e2a72a1957f7}{L\+G\+Comparator} (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
+\item 
+void \hyperlink{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}{array\+Print} (\hyperlink{struct_my_str}{My\+Str} $\ast$arr, int length)
+\item 
+void \hyperlink{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}{print\+File} (const char $\ast$name, \hyperlink{struct_my_str}{My\+Str} $\ast$lines, int length)
+\item 
+void $\ast$ \hyperlink{onegin_8h_a55396e3f84d2f4a46060a577dce83ff8}{concat} (\hyperlink{struct_my_str}{My\+Str} $\ast$a, \hyperlink{struct_my_str}{My\+Str} $\ast$b, \hyperlink{struct_my_str}{My\+Str} $\ast$c, size\+\_\+t a\+\_\+size, size\+\_\+t b\+\_\+size, size\+\_\+t c\+\_\+size)
+\item 
+void \hyperlink{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}{my\+Q\+Sort} (void $\ast$lines\+\_\+ptr, int length, int($\ast$comparator)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b))
+\item 
+int \hyperlink{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}{T\+E\+S\+T\+\_\+my\+Qsort} ()
+\item 
+int \hyperlink{onegin_8h_a3a37059635c3cc3464f3f60236751e88}{T\+E\+S\+T\+\_\+lexicographical\+Compare} ()
+\item 
+int \hyperlink{onegin_8h_ab8ea3f9334aa5789c606f1a7e2a9c138}{T\+E\+S\+T\+\_\+reversed} ()
+\item 
+int \hyperlink{onegin_8h_a2dcdccc8a8ededb7804d00ba921edb73}{run\+Tests} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{onegin_8h_a214c717b2e51e1993a749ac99df7de58}\label{onegin_8h_a214c717b2e51e1993a749ac99df7de58}} 
+\index{onegin.\+h@{onegin.\+h}!E\+Q\+U\+AL@{E\+Q\+U\+AL}}
+\index{E\+Q\+U\+AL@{E\+Q\+U\+AL}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{E\+Q\+U\+AL}{EQUAL}}
+{\footnotesize\ttfamily \#define E\+Q\+U\+AL~0}
+
+
+
+Definition at line 9 of file onegin.\+h.
+
+\mbox{\Hypertarget{onegin_8h_ae27a03218878a9af9d7d946e186f8598}\label{onegin_8h_ae27a03218878a9af9d7d946e186f8598}} 
+\index{onegin.\+h@{onegin.\+h}!G\+R\+E\+A\+T\+ER@{G\+R\+E\+A\+T\+ER}}
+\index{G\+R\+E\+A\+T\+ER@{G\+R\+E\+A\+T\+ER}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{G\+R\+E\+A\+T\+ER}{GREATER}}
+{\footnotesize\ttfamily \#define G\+R\+E\+A\+T\+ER~1}
+
+
+
+Definition at line 7 of file onegin.\+h.
+
+\mbox{\Hypertarget{onegin_8h_a16bcdd65ecdd3313af9e393538fa7fa8}\label{onegin_8h_a16bcdd65ecdd3313af9e393538fa7fa8}} 
+\index{onegin.\+h@{onegin.\+h}!L\+E\+SS@{L\+E\+SS}}
+\index{L\+E\+SS@{L\+E\+SS}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{L\+E\+SS}{LESS}}
+{\footnotesize\ttfamily \#define L\+E\+SS~-\/1}
+
+
+
+Definition at line 8 of file onegin.\+h.
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{onegin_8h_a02a19538cb7afb18ce3d8ce12bd92b39}\label{onegin_8h_a02a19538cb7afb18ce3d8ce12bd92b39}} 
+\index{onegin.\+h@{onegin.\+h}!Comparator@{Comparator}}
+\index{Comparator@{Comparator}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{Comparator}{Comparator}}
+{\footnotesize\ttfamily typedef int($\ast$ Comparator) (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}
+
+
+
+Definition at line 20 of file onegin.\+h.
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{onegin_8h_a9e183229811f5d6f5a7b29ea5b9ce673}\label{onegin_8h_a9e183229811f5d6f5a7b29ea5b9ce673}} 
+\index{onegin.\+h@{onegin.\+h}!add\+Char@{add\+Char}}
+\index{add\+Char@{add\+Char}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{add\+Char()}{addChar()}}
+{\footnotesize\ttfamily void add\+Char (\begin{DoxyParamCaption}\item[{char $\ast$$\ast$}]{line\+\_\+ptr,  }\item[{int $\ast$}]{length\+\_\+ptr,  }\item[{char}]{to\+\_\+add }\end{DoxyParamCaption})}
+
+Adds char to a string 
+\begin{DoxyParams}{Parameters}
+{\em line\+\_\+ptr} & pointer to the string \\
+\hline
+{\em length\+\_\+ptr} & pointer to length-\/storing variable \\
+\hline
+{\em to\+\_\+add} & char that should be added to string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}\label{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}} 
+\index{onegin.\+h@{onegin.\+h}!array\+Print@{array\+Print}}
+\index{array\+Print@{array\+Print}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{array\+Print()}{arrayPrint()}}
+{\footnotesize\ttfamily void array\+Print (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{arr,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+Prints \hyperlink{struct_my_str}{My\+Str} array 
+\begin{DoxyParams}{Parameters}
+{\em arr} & \hyperlink{struct_my_str}{My\+Str} array \\
+\hline
+{\em length} & length of array \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 24 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a55396e3f84d2f4a46060a577dce83ff8}\label{onegin_8h_a55396e3f84d2f4a46060a577dce83ff8}} 
+\index{onegin.\+h@{onegin.\+h}!concat@{concat}}
+\index{concat@{concat}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{concat()}{concat()}}
+{\footnotesize\ttfamily void$\ast$ concat (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{a,  }\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{b,  }\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{c,  }\item[{size\+\_\+t}]{a\+\_\+size,  }\item[{size\+\_\+t}]{b\+\_\+size,  }\item[{size\+\_\+t}]{c\+\_\+size }\end{DoxyParamCaption})}
+
+Concatenates 3 \hyperlink{struct_my_str}{My\+Str} arrays 
+\begin{DoxyParams}{Parameters}
+{\em a} & first array \\
+\hline
+{\em b} & second array \\
+\hline
+{\em c} & third array \\
+\hline
+{\em a\+\_\+size} & first array length \\
+\hline
+{\em b\+\_\+size} & second array length \\
+\hline
+{\em c\+\_\+size} & third array length \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the new array 
+\end{DoxyReturn}
+
+
+Definition at line 127 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}\label{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}} 
+\index{onegin.\+h@{onegin.\+h}!get\+Lines@{get\+Lines}}
+\index{get\+Lines@{get\+Lines}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{get\+Lines()}{getLines()}}
+{\footnotesize\ttfamily \hyperlink{struct_my_str}{My\+Str}$\ast$ get\+Lines (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{int $\ast$}]{number\+\_\+of\+\_\+lines }\end{DoxyParamCaption})}
+
+Creates an array of \hyperlink{struct_my_str}{My\+Str} structs from buffer 
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer \\
+\hline
+{\em number\+\_\+of\+\_\+lines} & pointer to number of lines -\/ storing variable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{struct_my_str}{My\+Str} array 
+\end{DoxyReturn}
+
+
+Definition at line 34 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a1848f6d0fdcbec51782e00a5b68c1ab1}\label{onegin_8h_a1848f6d0fdcbec51782e00a5b68c1ab1}} 
+\index{onegin.\+h@{onegin.\+h}!lexicographical\+Compare@{lexicographical\+Compare}}
+\index{lexicographical\+Compare@{lexicographical\+Compare}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{lexicographical\+Compare()}{lexicographicalCompare()}}
+{\footnotesize\ttfamily int lexicographical\+Compare (\begin{DoxyParamCaption}\item[{char $\ast$}]{a,  }\item[{char $\ast$}]{b }\end{DoxyParamCaption})}
+
+Lexicographically compares two strings 
+\begin{DoxyParams}{Parameters}
+{\em a} & first string \\
+\hline
+{\em b} & second string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+result of comparison 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+returns 1 if a $>$ b, 2 if a $<$ b or 0 if a = b 
+\end{DoxyNote}
+
+
+Definition at line 57 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_abe4568f00b1c4b995246e2a72a1957f7}\label{onegin_8h_abe4568f00b1c4b995246e2a72a1957f7}} 
+\index{onegin.\+h@{onegin.\+h}!L\+G\+Comparator@{L\+G\+Comparator}}
+\index{L\+G\+Comparator@{L\+G\+Comparator}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{L\+G\+Comparator()}{LGComparator()}}
+{\footnotesize\ttfamily int L\+G\+Comparator (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str}}]{a,  }\item[{\hyperlink{struct_my_str}{My\+Str}}]{b }\end{DoxyParamCaption})}
+
+Lexicographically compares two \hyperlink{struct_my_str}{My\+Str} strings 
+\begin{DoxyParams}{Parameters}
+{\em a} & first \hyperlink{struct_my_str}{My\+Str} string \\
+\hline
+{\em b} & second \hyperlink{struct_my_str}{My\+Str} string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+result of comparison 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+returns 1 if a $>$ b, 2 if a $<$ b or 0 if a = b 
+\end{DoxyNote}
+
+
+Definition at line 122 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}\label{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}} 
+\index{onegin.\+h@{onegin.\+h}!my\+Q\+Sort@{my\+Q\+Sort}}
+\index{my\+Q\+Sort@{my\+Q\+Sort}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{my\+Q\+Sort()}{myQSort()}}
+{\footnotesize\ttfamily void my\+Q\+Sort (\begin{DoxyParamCaption}\item[{void $\ast$}]{lines\+\_\+ptr,  }\item[{int}]{length,  }\item[{int($\ast$)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}]{comparator }\end{DoxyParamCaption})}
+
+Does the quick-\/sort of \hyperlink{struct_my_str}{My\+Str} array 
+\begin{DoxyParams}{Parameters}
+{\em lines\+\_\+ptr} & pointer to \hyperlink{struct_my_str}{My\+Str} array \\
+\hline
+{\em length} & \hyperlink{struct_my_str}{My\+Str} array length \\
+\hline
+{\em comparator} & pointer to the comparator function \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 152 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a5bbe02144d6933e35d11da9eeb26c326}\label{onegin_8h_a5bbe02144d6933e35d11da9eeb26c326}} 
+\index{onegin.\+h@{onegin.\+h}!next\+\_\+letter@{next\+\_\+letter}}
+\index{next\+\_\+letter@{next\+\_\+letter}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{next\+\_\+letter()}{next\_letter()}}
+{\footnotesize\ttfamily char$\ast$ next\+\_\+letter (\begin{DoxyParamCaption}\item[{char $\ast$}]{a }\end{DoxyParamCaption})}
+
+Function to get first letter of string 
+\begin{DoxyParams}{Parameters}
+{\em a} & string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the found letter 
+\end{DoxyReturn}
+
+
+Definition at line 40 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}\label{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}} 
+\index{onegin.\+h@{onegin.\+h}!print\+File@{print\+File}}
+\index{print\+File@{print\+File}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{print\+File()}{printFile()}}
+{\footnotesize\ttfamily void print\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{lines,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+Prints \hyperlink{struct_my_str}{My\+Str} array to a file 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of the output file \\
+\hline
+{\em lines} & \hyperlink{struct_my_str}{My\+Str} array \\
+\hline
+{\em length} & length of array \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 3 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a9f26e5033d5c9b8104fab8ba16556fb7}\label{onegin_8h_a9f26e5033d5c9b8104fab8ba16556fb7}} 
+\index{onegin.\+h@{onegin.\+h}!read\+File@{read\+File}}
+\index{read\+File@{read\+File}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{read\+File()}{readFile()}}
+{\footnotesize\ttfamily char$\ast$ read\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})}
+
+Reads file to a string buffer 
+\begin{DoxyParams}{Parameters}
+{\em name} & name of file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the buffer 
+\end{DoxyReturn}
+
+
+Definition at line 75 of file foperations.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a2f88f0ba2566d23c1c91acd14659af6e}\label{onegin_8h_a2f88f0ba2566d23c1c91acd14659af6e}} 
+\index{onegin.\+h@{onegin.\+h}!reversed@{reversed}}
+\index{reversed@{reversed}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{reversed()}{reversed()}}
+{\footnotesize\ttfamily \hyperlink{struct_my_str}{My\+Str} reversed (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str}}]{to\+\_\+reverse }\end{DoxyParamCaption})}
+
+Creates reversed \hyperlink{struct_my_str}{My\+Str} string 
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+reverse} & \hyperlink{struct_my_str}{My\+Str} for reversing \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reversed \hyperlink{struct_my_str}{My\+Str} string 
+\end{DoxyReturn}
+
+
+Definition at line 94 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_acecdc74fa8e7732c13e4c5a7bdf1e843}\label{onegin_8h_acecdc74fa8e7732c13e4c5a7bdf1e843}} 
+\index{onegin.\+h@{onegin.\+h}!reversed\+L\+G\+Comparator@{reversed\+L\+G\+Comparator}}
+\index{reversed\+L\+G\+Comparator@{reversed\+L\+G\+Comparator}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{reversed\+L\+G\+Comparator()}{reversedLGComparator()}}
+{\footnotesize\ttfamily int reversed\+L\+G\+Comparator (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str}}]{a,  }\item[{\hyperlink{struct_my_str}{My\+Str}}]{b }\end{DoxyParamCaption})}
+
+Lexicographically compares two \hyperlink{struct_my_str}{My\+Str} strings starting from their ends 
+\begin{DoxyParams}{Parameters}
+{\em a} & first \hyperlink{struct_my_str}{My\+Str} string \\
+\hline
+{\em b} & second \hyperlink{struct_my_str}{My\+Str} string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+result of comparison 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+returns 1 if a $>$ b, 2 if a $<$ b or 0 if a = b 
+\end{DoxyNote}
+
+
+Definition at line 110 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a2dcdccc8a8ededb7804d00ba921edb73}\label{onegin_8h_a2dcdccc8a8ededb7804d00ba921edb73}} 
+\index{onegin.\+h@{onegin.\+h}!run\+Tests@{run\+Tests}}
+\index{run\+Tests@{run\+Tests}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{run\+Tests()}{runTests()}}
+{\footnotesize\ttfamily int run\+Tests (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Runs all the tests 
+
+Definition at line 217 of file onegin.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a3a37059635c3cc3464f3f60236751e88}\label{onegin_8h_a3a37059635c3cc3464f3f60236751e88}} 
+\index{onegin.\+h@{onegin.\+h}!T\+E\+S\+T\+\_\+lexicographical\+Compare@{T\+E\+S\+T\+\_\+lexicographical\+Compare}}
+\index{T\+E\+S\+T\+\_\+lexicographical\+Compare@{T\+E\+S\+T\+\_\+lexicographical\+Compare}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{T\+E\+S\+T\+\_\+lexicographical\+Compare()}{TEST\_lexicographicalCompare()}}
+{\footnotesize\ttfamily int T\+E\+S\+T\+\_\+lexicographical\+Compare (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Tests \hyperlink{onegin_8h_a1848f6d0fdcbec51782e00a5b68c1ab1}{lexicographical\+Compare} function 
+
+Definition at line 50 of file tests.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}\label{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}} 
+\index{onegin.\+h@{onegin.\+h}!T\+E\+S\+T\+\_\+my\+Qsort@{T\+E\+S\+T\+\_\+my\+Qsort}}
+\index{T\+E\+S\+T\+\_\+my\+Qsort@{T\+E\+S\+T\+\_\+my\+Qsort}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{T\+E\+S\+T\+\_\+my\+Qsort()}{TEST\_myQsort()}}
+{\footnotesize\ttfamily int T\+E\+S\+T\+\_\+my\+Qsort (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Tests \hyperlink{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}{my\+Q\+Sort} function \begin{DoxyNote}{Note}
+takes tests from \char`\"{}t\char`\"{} folder. The ones ended with i are input data, r-\/ended are expected results. If test fails, prints number of tests and number orfirst mismatched char. Creates failed tests output files. 
+\end{DoxyNote}
+
+
+Definition at line 67 of file tests.\+cpp.
+
+\mbox{\Hypertarget{onegin_8h_ab8ea3f9334aa5789c606f1a7e2a9c138}\label{onegin_8h_ab8ea3f9334aa5789c606f1a7e2a9c138}} 
+\index{onegin.\+h@{onegin.\+h}!T\+E\+S\+T\+\_\+reversed@{T\+E\+S\+T\+\_\+reversed}}
+\index{T\+E\+S\+T\+\_\+reversed@{T\+E\+S\+T\+\_\+reversed}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{T\+E\+S\+T\+\_\+reversed()}{TEST\_reversed()}}
+{\footnotesize\ttfamily int T\+E\+S\+T\+\_\+reversed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Tests \hyperlink{onegin_8h_a2f88f0ba2566d23c1c91acd14659af6e}{reversed} function 
+
+Definition at line 30 of file tests.\+cpp.
+
