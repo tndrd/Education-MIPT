@@ -10,34 +10,15 @@ void \hyperlink{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}{print\+File}
 \item 
 void \hyperlink{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}{array\+Print} (\hyperlink{struct_my_str}{My\+Str} $\ast$arr, int length)
 \item 
+int \hyperlink{foperations_8cpp_a5af1b60944c230e38b4a069dbe45e815}{Get\+Number\+Of\+Lines} (char $\ast$buffer)
+\item 
 \hyperlink{struct_my_str}{My\+Str} $\ast$ \hyperlink{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}{get\+Lines} (char $\ast$buffer, int $\ast$number\+\_\+of\+\_\+lines)
 \item 
 char $\ast$ \hyperlink{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}{read\+File} (const char $\ast$name)
-\item 
-void \hyperlink{foperations_8cpp_ac60c084b2609830dff220be155326d5c}{add\+Char} (char $\ast$$\ast$line\+\_\+ptr, int $\ast$length\+\_\+ptr, const char to\+\_\+add)
 \end{DoxyCompactItemize}
 
 
 \subsection{Function Documentation}
-\mbox{\Hypertarget{foperations_8cpp_ac60c084b2609830dff220be155326d5c}\label{foperations_8cpp_ac60c084b2609830dff220be155326d5c}} 
-\index{foperations.\+cpp@{foperations.\+cpp}!add\+Char@{add\+Char}}
-\index{add\+Char@{add\+Char}!foperations.\+cpp@{foperations.\+cpp}}
-\subsubsection{\texorpdfstring{add\+Char()}{addChar()}}
-{\footnotesize\ttfamily void add\+Char (\begin{DoxyParamCaption}\item[{char $\ast$$\ast$}]{line\+\_\+ptr,  }\item[{int $\ast$}]{length\+\_\+ptr,  }\item[{char}]{to\+\_\+add }\end{DoxyParamCaption})}
-
-Adds char to a string 
-\begin{DoxyParams}{Parameters}
-{\em line\+\_\+ptr} & pointer to the string \\
-\hline
-{\em length\+\_\+ptr} & pointer to length-\/storing variable \\
-\hline
-{\em to\+\_\+add} & char that should be added to string \\
-\hline
-\end{DoxyParams}
-
-
-Definition at line 97 of file foperations.\+cpp.
-
 \mbox{\Hypertarget{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}\label{foperations_8cpp_a8c5e4d7429ecc221543a2629036b16b0}} 
 \index{foperations.\+cpp@{foperations.\+cpp}!array\+Print@{array\+Print}}
 \index{array\+Print@{array\+Print}!foperations.\+cpp@{foperations.\+cpp}}
@@ -51,10 +32,6 @@ Prints \hyperlink{struct_my_str}{My\+Str} array
 {\em length} & length of array \\
 \hline
 \end{DoxyParams}
-
-
-Definition at line 24 of file foperations.\+cpp.
-
 \mbox{\Hypertarget{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}\label{foperations_8cpp_aad11772ae04e2b8730c60d90d1c52fc7}} 
 \index{foperations.\+cpp@{foperations.\+cpp}!get\+Lines@{get\+Lines}}
 \index{get\+Lines@{get\+Lines}!foperations.\+cpp@{foperations.\+cpp}}
@@ -71,9 +48,11 @@ Creates an array of \hyperlink{struct_my_str}{My\+Str} structs from buffer
 \begin{DoxyReturn}{Returns}
 \hyperlink{struct_my_str}{My\+Str} array 
 \end{DoxyReturn}
-
-
-Definition at line 34 of file foperations.\+cpp.
+\mbox{\Hypertarget{foperations_8cpp_a5af1b60944c230e38b4a069dbe45e815}\label{foperations_8cpp_a5af1b60944c230e38b4a069dbe45e815}} 
+\index{foperations.\+cpp@{foperations.\+cpp}!Get\+Number\+Of\+Lines@{Get\+Number\+Of\+Lines}}
+\index{Get\+Number\+Of\+Lines@{Get\+Number\+Of\+Lines}!foperations.\+cpp@{foperations.\+cpp}}
+\subsubsection{\texorpdfstring{Get\+Number\+Of\+Lines()}{GetNumberOfLines()}}
+{\footnotesize\ttfamily int Get\+Number\+Of\+Lines (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}\label{foperations_8cpp_a9b5b2f96868fc8955c7f881748a2bee8}} 
 \index{foperations.\+cpp@{foperations.\+cpp}!print\+File@{print\+File}}
@@ -90,10 +69,6 @@ Prints \hyperlink{struct_my_str}{My\+Str} array to a file
 {\em length} & length of array \\
 \hline
 \end{DoxyParams}
-
-
-Definition at line 3 of file foperations.\+cpp.
-
 \mbox{\Hypertarget{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}\label{foperations_8cpp_a9f26e5033d5c9b8104fab8ba16556fb7}} 
 \index{foperations.\+cpp@{foperations.\+cpp}!read\+File@{read\+File}}
 \index{read\+File@{read\+File}!foperations.\+cpp@{foperations.\+cpp}}
@@ -108,7 +83,3 @@ Reads file to a string buffer
 \begin{DoxyReturn}{Returns}
 pointer to the buffer 
 \end{DoxyReturn}
-
-
-Definition at line 75 of file foperations.\+cpp.
-

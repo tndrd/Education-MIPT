@@ -1,5 +1,6 @@
 *.out
 *.o
-out.txt
+straight.txt
+reversed.txt
 *.temp
 run

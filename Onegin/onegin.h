@@ -27,13 +27,6 @@ typedef int(*Comparator)(MyStr a, MyStr b);
 */
 char* readFile(const char* name);
 
-/*! Adds char to a string
-    @param line_ptr pointer to the string
-    @param length_ptr pointer to length-storing variable
-    @param to_add char that should be added to string
-*/
-void addChar(char** line_ptr, int* length_ptr, char to_add);
-
 /*! Creates an array of \link MyStr \endlink structs from buffer
     @param buffer pointer to the buffer
     @param number_of_lines pointer to number of lines - storing variable
@@ -41,11 +34,12 @@ void addChar(char** line_ptr, int* length_ptr, char to_add);
 */
 MyStr* getLines(char* buffer, int* number_of_lines);
 
-/*! Function to get first letter of string
+/*! Function to get first letter after or before pointer
     @param a string
+    @param step direction parameter, should be 1 if you are searching after pointer or -1 if before
     @return pointer to the found letter
 */
-char* next_letter(char* a);
+char* next_letter(char* a, int step);
 
 /*! Lexicographically compares two strings
     @param a first string
@@ -53,13 +47,7 @@ char* next_letter(char* a);
     @return result of comparison
     @note returns 1 if a > b, 2 if a < b or 0 if a = b
 */
-int lexicographicalCompare(char* a, char* b);
-
-/*! Creates reversed \link MyStr \endlink string
-    @param to_reverse \link MyStr \endlink for reversing
-    @return reversed \link MyStr \endlink string
-*/
-MyStr reversed(MyStr to_reverse);
+int lexicographicalCompare(char* a, char* b, int step);
 
 /*! Lexicographically compares two \link MyStr \endlink strings starting from their ends
     @param a first \link MyStr \endlink string
@@ -122,10 +110,6 @@ int TEST_myQsort();
 
 /*! Tests \link lexicographicalCompare \endlink function */
 int TEST_lexicographicalCompare();
-
-
-/*! Tests \link reversed \endlink function */
-int TEST_reversed();
 
 
 /*! Runs all the tests */

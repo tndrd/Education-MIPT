@@ -27,35 +27,25 @@ char TESTS_reversed[4][2][5] = {
 { "o__-",    "-__o" }};
 
 
-int TEST_reversed(){
-
-    int result = 0;
-
-    for (int i = 0; i < 4; i++){
-        MyStr input;
-        input.pointer = TESTS_reversed[i][0];
-        input.length = 5;
-
-        if (strcmp(reversed(input).pointer, TESTS_reversed[i][1]) != 0){
-        printf("Test #%d failed. Input: %s | Result: %s | Expected: %s\n", i+1,
-        TESTS_reversed[i][0],  reversed(input).pointer,  TESTS_reversed[i][1]);
-
-        result++;
-        }
-    }
-    return result;
-}
-
-
 int TEST_lexicographicalCompare(){
 
     int result = 0;
 
     for(int i = 0; i < 6; i++){
-        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1]) != TEST_RESULTS_lexicographical_compare[i]){
+        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1) != TEST_RESULTS_lexicographical_compare[i]){
             printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i+1,
             TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
-            (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1])),
+            (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1)),
+            TEST_RESULTS_lexicographical_compare[i]);
+
+            result++;
+        }
+    }
+    for(int i = 0; i < 6; i++){
+        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0]+3,TESTS_lexicographical_compare[i][1]+3,-1) != TEST_RESULTS_lexicographical_compare[i]){
+            printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i+1,
+            TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
+            (lexicographicalCompare(TESTS_lexicographical_compare[i][0]+3,TESTS_lexicographical_compare[i][1]+3,-1)),
             TEST_RESULTS_lexicographical_compare[i]);
 
             result++;
@@ -101,21 +91,24 @@ int TEST_myQsort(){
         int j = 0;
         char current_1 = buffer_1[j];
         char current_2 = buffer_2[j];
-
+        bool failed = false;
         while (current_1 != '\0' && current_2 != '\0') {
 
             if (current_1 != current_2){
                 result++;
                 printf("First mismatch in test #%d at char #%d. See %dt.txt\n", i+1, j+1, i);
-                continue;
+                failed = true;
+                break;
             }
             j++;
             current_1 = buffer_1[j];
             current_2 = buffer_2[j];
         }
 
+        if (!failed){
         name[3] = 't';
         remove(name);
+        }
 
     }
     return result;

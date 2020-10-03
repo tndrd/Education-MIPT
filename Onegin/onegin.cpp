@@ -26,18 +26,25 @@ int main(int argc, char* argv[]){
 
     int number_of_lines;
     MyStr* lines = getLines(buffer, &number_of_lines);
-    printf("File read successfully\n");
-    printf("Processing started, wait please\n");
+    printf("File read successfully\n\n");
+
+    printf("Processing of straight lexicographical sort started, wait please\n");
     myQSort((void*)&lines, number_of_lines, LGComparator);
     printf("Processing ended, writing to a file\n");
-    printFile("out.txt", lines, number_of_lines);
+    printFile("straight.txt", lines, number_of_lines);
+    printf("Writed successfully\n\n");
+
+    printf("Processing of reversed lexicographical sort started, wait please\n");
+    myQSort((void*)&lines, number_of_lines, reversedLGComparator);
+    printf("Processing ended, writing to a file\n");
+    printFile("reversed.txt", lines, number_of_lines);
     printf("Writed successfully\n");
 
     return 0;
 }
 
 
-char* next_letter(char* a){
+char* next_letter(char* a, int step){
 
     assert(a);
 
@@ -49,17 +56,17 @@ char* next_letter(char* a){
         return a;
     }
     else{
-        return next_letter(a+1);
+        return next_letter(a+step, step);
     }
 }
 
 
-int lexicographicalCompare(char* a, char* b){
+int lexicographicalCompare(char* a, char* b, int step){
 
     assert(a);
     assert(b);
-    a = next_letter(a);
-    b = next_letter(b);
+    a = next_letter(a, step);
+    b = next_letter(b, step);
 
     if (a == nullptr || b == nullptr){
 
@@ -86,41 +93,18 @@ int lexicographicalCompare(char* a, char* b){
     }
 
     else {
-        return lexicographicalCompare(a+1,b+1);
+        return lexicographicalCompare(a+step,b+step, step);
     }
-}
-
-
-MyStr reversed(MyStr to_reverse){
-
-    assert(to_reverse.pointer);
-    MyStr rev_MyStr;
-    rev_MyStr.length = to_reverse.length;
-    rev_MyStr.pointer = (char*)calloc(1, sizeof(char) * to_reverse.length);
-
-    for (int i = to_reverse.length - 2; i >= 0; i--){
-        (rev_MyStr.pointer)[ rev_MyStr.length - i - 2 ] = to_reverse.pointer[i];
-    }
-
-    (rev_MyStr.pointer)[ rev_MyStr.length - 1 ] = '\0';
-    return rev_MyStr;
 }
 
 
 int reversedLGComparator(MyStr a, MyStr b){
-
-    MyStr rev_a = reversed(a);
-    MyStr rev_b = reversed(b);
-    int result = lexicographicalCompare(rev_a.pointer, rev_b.pointer);
-    free(rev_a.pointer);
-    free(rev_b.pointer);
-
-    return result;
+    return lexicographicalCompare(a.pointer+a.length-2, b.pointer+b.length-2, -1);
 }
 
 
 int LGComparator(MyStr a, MyStr b){
-    return lexicographicalCompare(a.pointer, b.pointer);
+    return lexicographicalCompare(a.pointer, b.pointer, 1);
 }
 
 
@@ -139,10 +123,10 @@ void* concat(MyStr* a, MyStr* b, MyStr* c, size_t a_size, size_t b_size, size_t 
         out[m] = a[m];
     }
     for (int m = 0; m < b_size; m++){
-        out[m+a_size] = b[m];
+        out[m + a_size] = b[m];
     }
     for (int m = 0; m < c_size; m++){
-        out[m+a_size+b_size] = c[m];
+        out[m + a_size + b_size] = c[m];
     }
 
     return out;
@@ -222,9 +206,6 @@ int runTests(){
     err_quantity += TEST_myQsort();
     printf("Testing lexicographicalCompare\n");
     err_quantity += TEST_lexicographicalCompare();
-    printf("Testing reversed\n");
-    err_quantity += TEST_reversed();
 
     return err_quantity;
 }
-
