@@ -1,6 +1,6 @@
 #include "onegin.h"
 
-void printFile(const char* name, MyStr* lines, int length){
+void printFile(const char* name, const MyStr* lines, size_t length){
 
     assert(name);
     assert(lines);
@@ -21,7 +21,7 @@ void printFile(const char* name, MyStr* lines, int length){
 }
 
 
-void arrayPrint(MyStr* arr, int length){
+void arrayPrint(const MyStr* arr, size_t length){
 
     assert(arr);
 
@@ -30,34 +30,36 @@ void arrayPrint(MyStr* arr, int length){
     }
 }
 
+
 int GetNumberOfLines(char* buffer){
 
     int counter = 0;
     for (int i = 0; buffer[i] != '\0'; i++){
-        if (buffer[i] == '\n') counter++;
+        if (buffer[i] == '\n')
+        counter++;
     }
     return counter;
 }
+
 
 MyStr* getLines(char* buffer,  int* number_of_lines){
 
     assert(buffer);
     assert(number_of_lines);
     *number_of_lines = GetNumberOfLines(buffer);
-    char* line = nullptr;
     MyStr* lines  = (MyStr*)calloc(*number_of_lines, sizeof(MyStr));
-    size_t char_counter = 0;
-    size_t line_counter = 0;
-    int i = 0;
-    char current = buffer[i];
 
-    while (current != '\0'){
+    size_t line_counter = 0;
+    size_t char_counter, i;
+    char current;
+
+    for (i = 0, current = buffer[i], char_counter = 0; current != '\0'; current = buffer[++i]){
         if (current == '\n'){
             if (char_counter > 0){
                 (lines[line_counter]).pointer = buffer + (i-char_counter);
                 buffer[i] = '\0';
-                buffer[i-char_counter-1] = '\0';
-                (lines[line_counter]).length = char_counter+1;
+                buffer[i - char_counter - 1] = '\0';
+                (lines[line_counter]).length = char_counter + 1;
                 line_counter++;
             }
             char_counter = 0;
@@ -66,14 +68,12 @@ MyStr* getLines(char* buffer,  int* number_of_lines){
         else {
             char_counter++;
         }
-
-        i++;
-        current = buffer[i];
     }
 
     *number_of_lines = line_counter;
     return lines;
 }
+
 
 char* readFile(const char* name){
 
@@ -87,12 +87,21 @@ char* readFile(const char* name){
         exit(1);
     }
 
-    assert(fseek(fp, 0L, SEEK_END)==0);
-    long int filesize = ftell(fp);
+
+    long int filesize = GetFileSize(fp);
     buffer = (char*)realloc(buffer, filesize + 1);
-    rewind(fp);
     int read = fread(buffer + 1, sizeof(char), filesize, fp);
     buffer = buffer + 1;
     fclose(fp);
     return buffer;
+}
+
+
+long int GetFileSize(FILE* fp){
+
+    int seekResult = fseek(fp, 0L, SEEK_END);
+    assert(seekResult == 0);
+    long int filesize = ftell(fp);
+    rewind(fp);
+    return filesize;
 }

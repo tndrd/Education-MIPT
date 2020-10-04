@@ -3,6 +3,19 @@
 
 int main(int argc, char* argv[]){
 
+    char* buffer;
+    switch(argc){
+
+        case 1:  buffer = readFile("hamlet.txt");
+                 break;
+
+        case 2:  buffer = readFile(argv[1]);
+                 break;
+
+        default: printf("Too many arguments\n");
+                 exit(3);
+    }
+
     int err_quantity = runTests();
 
     if(err_quantity > 0){
@@ -10,19 +23,6 @@ int main(int argc, char* argv[]){
         exit(-1);
     }
     printf("All tests OK\n");
-
-    char* buffer;
-
-    if (argc == 1){
-        buffer = readFile("hamlet.txt");
-    }
-    else if (argc > 2){
-        printf("Too many arguments");
-        exit(2);
-    }
-    else{
-        buffer = readFile(argv[1]);
-    }
 
     int number_of_lines;
     MyStr* lines = getLines(buffer, &number_of_lines);
@@ -44,62 +44,36 @@ int main(int argc, char* argv[]){
 }
 
 
-char* next_letter(char* a, int step){
+const char* next_letter(const char* a, int step){
 
     assert(a);
 
-    if (*a == '\0'){
-        return nullptr;
-    }
-
-    else if (isalpha(*a)){
+    if (*a == '\0' || isalpha(*a)){
         return a;
     }
     else{
-        return next_letter(a+step, step);
+        return next_letter(a + step, step);
     }
 }
 
 
-int lexicographicalCompare(char* a, char* b, int step){
+int lexicographicalCompare(const char* a, const char* b, int step){
 
     assert(a);
     assert(b);
     a = next_letter(a, step);
     b = next_letter(b, step);
 
-    if (a == nullptr || b == nullptr){
+    if (*a > *b)          return GREATER;
+    else if (*a < *b)     return LESS;
+    else if (*a == '\0' ) return EQUAL;
 
-        if (a == nullptr && b == nullptr){
-            return EQUAL;
-        }
-
-        if (a == nullptr && b != nullptr){
-            return LESS;
-        }
-
-        if (a != nullptr && b == nullptr){
-            return GREATER;
-        }
-
-    }
-
-    if (*a > *b) {
-        return GREATER;
-    }
-
-    else if (*a < *b) {
-        return LESS;
-    }
-
-    else {
-        return lexicographicalCompare(a+step,b+step, step);
-    }
+    else return lexicographicalCompare(a + step,b + step, step);
 }
 
 
 int reversedLGComparator(MyStr a, MyStr b){
-    return lexicographicalCompare(a.pointer+a.length-2, b.pointer+b.length-2, -1);
+    return lexicographicalCompare(a.pointer + a.length - 2, b.pointer + b.length - 2, -1);
 }
 
 
@@ -113,9 +87,9 @@ void* concat(MyStr* a, MyStr* b, MyStr* c, size_t a_size, size_t b_size, size_t 
     assert(a);
     assert(b);
     assert(c);
-    assert(a!=b);
-    assert(b!=c);
-    assert(a!=c);
+    assert(a != b);
+    assert(b != c);
+    assert(a != c);
 
     MyStr* out = (MyStr*)calloc(1, (sizeof(MyStr) * (a_size+b_size+c_size)) );
 
@@ -133,7 +107,7 @@ void* concat(MyStr* a, MyStr* b, MyStr* c, size_t a_size, size_t b_size, size_t 
 }
 
 
-void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b)){ //ТУТ БЫ ЧЕРЕЗ typedef
+void myQSort(void* lines_ptr, size_t length, int(*comparator)(MyStr a, MyStr b)){ //ТУТ БЫ ЧЕРЕЗ typedef
 
     assert(lines_ptr);
 
@@ -146,9 +120,9 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b)){ /
     int gtp_length = 0;
     int etp_length = 0;
 
-    MyStr pivot = lines[length-1];
+    MyStr pivot = lines[length - 1];
 
-    for (int i = 0; i<length; i++){
+    for (int i = 0; i < length; i++){
 
         MyStr element = lines[i];
 
@@ -171,7 +145,7 @@ void myQSort(void* lines_ptr, int length, int(*comparator)(MyStr a, MyStr b)){ /
     int etp_counter = 0;
     int gtp_counter = 0;
 
-    for(int i = 0; i<length; i++){
+    for(int i = 0; i < length; i++){
 
         MyStr element = lines[i];
 

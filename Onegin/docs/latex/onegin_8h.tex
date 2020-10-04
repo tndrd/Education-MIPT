@@ -35,23 +35,25 @@ char $\ast$ \hyperlink{onegin_8h_a9f26e5033d5c9b8104fab8ba16556fb7}{read\+File} 
 \item 
 \hyperlink{struct_my_str}{My\+Str} $\ast$ \hyperlink{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}{get\+Lines} (char $\ast$buffer, int $\ast$number\+\_\+of\+\_\+lines)
 \item 
-char $\ast$ \hyperlink{onegin_8h_a7d8bbc0a3d554ef166129c66521aae0c}{next\+\_\+letter} (char $\ast$a, int step)
+const char $\ast$ \hyperlink{onegin_8h_a3ecd6f696068d38e2a46b97f3920f0de}{next\+\_\+letter} (const char $\ast$a, int step)
 \item 
-int \hyperlink{onegin_8h_ad69501ce3d65f030df35a7e162961888}{lexicographical\+Compare} (char $\ast$a, char $\ast$b, int step)
+int \hyperlink{onegin_8h_a69e0758126c653419e6e599d90626ad2}{lexicographical\+Compare} (const char $\ast$a, const char $\ast$b, int step)
 \item 
 int \hyperlink{onegin_8h_acecdc74fa8e7732c13e4c5a7bdf1e843}{reversed\+L\+G\+Comparator} (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
 \item 
 int \hyperlink{onegin_8h_abe4568f00b1c4b995246e2a72a1957f7}{L\+G\+Comparator} (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
 \item 
-void \hyperlink{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}{array\+Print} (\hyperlink{struct_my_str}{My\+Str} $\ast$arr, int length)
+void \hyperlink{onegin_8h_ab85953add92263847df1f595b0cdfd98}{array\+Print} (const \hyperlink{struct_my_str}{My\+Str} $\ast$arr, size\+\_\+t length)
 \item 
-void \hyperlink{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}{print\+File} (const char $\ast$name, \hyperlink{struct_my_str}{My\+Str} $\ast$lines, int length)
+void \hyperlink{onegin_8h_a19ad4b158b879510fbc3b8760a54e66b}{print\+File} (const char $\ast$name, const \hyperlink{struct_my_str}{My\+Str} $\ast$lines, size\+\_\+t length)
 \item 
 void $\ast$ \hyperlink{onegin_8h_a55396e3f84d2f4a46060a577dce83ff8}{concat} (\hyperlink{struct_my_str}{My\+Str} $\ast$a, \hyperlink{struct_my_str}{My\+Str} $\ast$b, \hyperlink{struct_my_str}{My\+Str} $\ast$c, size\+\_\+t a\+\_\+size, size\+\_\+t b\+\_\+size, size\+\_\+t c\+\_\+size)
 \item 
-void \hyperlink{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}{my\+Q\+Sort} (void $\ast$lines\+\_\+ptr, int length, int($\ast$comparator)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b))
+void \hyperlink{onegin_8h_a43f4e564cb43faa9a398d4f77ebba19a}{my\+Q\+Sort} (void $\ast$lines\+\_\+ptr, size\+\_\+t length, int($\ast$comparator)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b))
 \item 
 int \hyperlink{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}{T\+E\+S\+T\+\_\+my\+Qsort} ()
+\item 
+long int \hyperlink{onegin_8h_a73f896a12e05ae8ed114311920ecb0c5}{Get\+File\+Size} (F\+I\+LE $\ast$fp)
 \item 
 int \hyperlink{onegin_8h_a3a37059635c3cc3464f3f60236751e88}{T\+E\+S\+T\+\_\+lexicographical\+Compare} ()
 \item 
@@ -90,11 +92,11 @@ int \hyperlink{onegin_8h_a2dcdccc8a8ededb7804d00ba921edb73}{run\+Tests} ()
 
 
 \subsection{Function Documentation}
-\mbox{\Hypertarget{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}\label{onegin_8h_a8c5e4d7429ecc221543a2629036b16b0}} 
+\mbox{\Hypertarget{onegin_8h_ab85953add92263847df1f595b0cdfd98}\label{onegin_8h_ab85953add92263847df1f595b0cdfd98}} 
 \index{onegin.\+h@{onegin.\+h}!array\+Print@{array\+Print}}
 \index{array\+Print@{array\+Print}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{array\+Print()}{arrayPrint()}}
-{\footnotesize\ttfamily void array\+Print (\begin{DoxyParamCaption}\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{arr,  }\item[{int}]{length }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void array\+Print (\begin{DoxyParamCaption}\item[{const \hyperlink{struct_my_str}{My\+Str} $\ast$}]{arr,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
 
 Prints \hyperlink{struct_my_str}{My\+Str} array 
 \begin{DoxyParams}{Parameters}
@@ -127,6 +129,20 @@ Concatenates 3 \hyperlink{struct_my_str}{My\+Str} arrays
 \begin{DoxyReturn}{Returns}
 pointer to the new array 
 \end{DoxyReturn}
+\mbox{\Hypertarget{onegin_8h_a73f896a12e05ae8ed114311920ecb0c5}\label{onegin_8h_a73f896a12e05ae8ed114311920ecb0c5}} 
+\index{onegin.\+h@{onegin.\+h}!Get\+File\+Size@{Get\+File\+Size}}
+\index{Get\+File\+Size@{Get\+File\+Size}!onegin.\+h@{onegin.\+h}}
+\subsubsection{\texorpdfstring{Get\+File\+Size()}{GetFileSize()}}
+{\footnotesize\ttfamily long int Get\+File\+Size (\begin{DoxyParamCaption}\item[{F\+I\+LE $\ast$}]{fp }\end{DoxyParamCaption})}
+
+Founds file length 
+\begin{DoxyParams}{Parameters}
+{\em fp} & file pointer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+size of file 
+\end{DoxyReturn}
 \mbox{\Hypertarget{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}\label{onegin_8h_aad11772ae04e2b8730c60d90d1c52fc7}} 
 \index{onegin.\+h@{onegin.\+h}!get\+Lines@{get\+Lines}}
 \index{get\+Lines@{get\+Lines}!onegin.\+h@{onegin.\+h}}
@@ -143,11 +159,11 @@ Creates an array of \hyperlink{struct_my_str}{My\+Str} structs from buffer
 \begin{DoxyReturn}{Returns}
 \hyperlink{struct_my_str}{My\+Str} array 
 \end{DoxyReturn}
-\mbox{\Hypertarget{onegin_8h_ad69501ce3d65f030df35a7e162961888}\label{onegin_8h_ad69501ce3d65f030df35a7e162961888}} 
+\mbox{\Hypertarget{onegin_8h_a69e0758126c653419e6e599d90626ad2}\label{onegin_8h_a69e0758126c653419e6e599d90626ad2}} 
 \index{onegin.\+h@{onegin.\+h}!lexicographical\+Compare@{lexicographical\+Compare}}
 \index{lexicographical\+Compare@{lexicographical\+Compare}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{lexicographical\+Compare()}{lexicographicalCompare()}}
-{\footnotesize\ttfamily int lexicographical\+Compare (\begin{DoxyParamCaption}\item[{char $\ast$}]{a,  }\item[{char $\ast$}]{b,  }\item[{int}]{step }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily int lexicographical\+Compare (\begin{DoxyParamCaption}\item[{const char $\ast$}]{a,  }\item[{const char $\ast$}]{b,  }\item[{int}]{step }\end{DoxyParamCaption})}
 
 Lexicographically compares two strings 
 \begin{DoxyParams}{Parameters}
@@ -181,11 +197,11 @@ result of comparison
 \begin{DoxyNote}{Note}
 returns 1 if a $>$ b, 2 if a $<$ b or 0 if a = b 
 \end{DoxyNote}
-\mbox{\Hypertarget{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}\label{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}} 
+\mbox{\Hypertarget{onegin_8h_a43f4e564cb43faa9a398d4f77ebba19a}\label{onegin_8h_a43f4e564cb43faa9a398d4f77ebba19a}} 
 \index{onegin.\+h@{onegin.\+h}!my\+Q\+Sort@{my\+Q\+Sort}}
 \index{my\+Q\+Sort@{my\+Q\+Sort}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{my\+Q\+Sort()}{myQSort()}}
-{\footnotesize\ttfamily void my\+Q\+Sort (\begin{DoxyParamCaption}\item[{void $\ast$}]{lines\+\_\+ptr,  }\item[{int}]{length,  }\item[{int($\ast$)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}]{comparator }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void my\+Q\+Sort (\begin{DoxyParamCaption}\item[{void $\ast$}]{lines\+\_\+ptr,  }\item[{size\+\_\+t}]{length,  }\item[{int($\ast$)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}]{comparator }\end{DoxyParamCaption})}
 
 Does the quick-\/sort of \hyperlink{struct_my_str}{My\+Str} array 
 \begin{DoxyParams}{Parameters}
@@ -196,11 +212,11 @@ Does the quick-\/sort of \hyperlink{struct_my_str}{My\+Str} array
 {\em comparator} & pointer to the comparator function \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{onegin_8h_a7d8bbc0a3d554ef166129c66521aae0c}\label{onegin_8h_a7d8bbc0a3d554ef166129c66521aae0c}} 
+\mbox{\Hypertarget{onegin_8h_a3ecd6f696068d38e2a46b97f3920f0de}\label{onegin_8h_a3ecd6f696068d38e2a46b97f3920f0de}} 
 \index{onegin.\+h@{onegin.\+h}!next\+\_\+letter@{next\+\_\+letter}}
 \index{next\+\_\+letter@{next\+\_\+letter}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{next\+\_\+letter()}{next\_letter()}}
-{\footnotesize\ttfamily char$\ast$ next\+\_\+letter (\begin{DoxyParamCaption}\item[{char $\ast$}]{a,  }\item[{int}]{step }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily const char$\ast$ next\+\_\+letter (\begin{DoxyParamCaption}\item[{const char $\ast$}]{a,  }\item[{int}]{step }\end{DoxyParamCaption})}
 
 Function to get first letter after or before pointer 
 \begin{DoxyParams}{Parameters}
@@ -212,11 +228,11 @@ Function to get first letter after or before pointer
 \begin{DoxyReturn}{Returns}
 pointer to the found letter 
 \end{DoxyReturn}
-\mbox{\Hypertarget{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}\label{onegin_8h_a9b5b2f96868fc8955c7f881748a2bee8}} 
+\mbox{\Hypertarget{onegin_8h_a19ad4b158b879510fbc3b8760a54e66b}\label{onegin_8h_a19ad4b158b879510fbc3b8760a54e66b}} 
 \index{onegin.\+h@{onegin.\+h}!print\+File@{print\+File}}
 \index{print\+File@{print\+File}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{print\+File()}{printFile()}}
-{\footnotesize\ttfamily void print\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{\hyperlink{struct_my_str}{My\+Str} $\ast$}]{lines,  }\item[{int}]{length }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void print\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const \hyperlink{struct_my_str}{My\+Str} $\ast$}]{lines,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
 
 Prints \hyperlink{struct_my_str}{My\+Str} array to a file 
 \begin{DoxyParams}{Parameters}
@@ -272,12 +288,12 @@ Runs all the tests \mbox{\Hypertarget{onegin_8h_a3a37059635c3cc3464f3f60236751e8
 \subsubsection{\texorpdfstring{T\+E\+S\+T\+\_\+lexicographical\+Compare()}{TEST\_lexicographicalCompare()}}
 {\footnotesize\ttfamily int T\+E\+S\+T\+\_\+lexicographical\+Compare (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Tests \hyperlink{onegin_8h_ad69501ce3d65f030df35a7e162961888}{lexicographical\+Compare} function \mbox{\Hypertarget{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}\label{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}} 
+Tests \hyperlink{onegin_8h_a69e0758126c653419e6e599d90626ad2}{lexicographical\+Compare} function \mbox{\Hypertarget{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}\label{onegin_8h_a67eb8579a398418a2ffbfa0370064b82}} 
 \index{onegin.\+h@{onegin.\+h}!T\+E\+S\+T\+\_\+my\+Qsort@{T\+E\+S\+T\+\_\+my\+Qsort}}
 \index{T\+E\+S\+T\+\_\+my\+Qsort@{T\+E\+S\+T\+\_\+my\+Qsort}!onegin.\+h@{onegin.\+h}}
 \subsubsection{\texorpdfstring{T\+E\+S\+T\+\_\+my\+Qsort()}{TEST\_myQsort()}}
 {\footnotesize\ttfamily int T\+E\+S\+T\+\_\+my\+Qsort (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Tests \hyperlink{onegin_8h_aad4944e2f17fe3ac9c1445aae69449de}{my\+Q\+Sort} function \begin{DoxyNote}{Note}
+Tests \hyperlink{onegin_8h_a43f4e564cb43faa9a398d4f77ebba19a}{my\+Q\+Sort} function \begin{DoxyNote}{Note}
 takes tests from \char`\"{}t\char`\"{} folder. The ones ended with i are input data, r-\/ended are expected results. If test fails, prints number of tests and number orfirst mismatched char. Creates failed tests output files. 
 \end{DoxyNote}

@@ -8,6 +8,8 @@
 #define POISON NAN
 #define ELEMENT_FORMAT "%f"
 #define NAME(obj) #obj
+#define CANNARY 0xBAAD
+
 typedef double StackElement;
 const int AVAILABLE_MEMORY = 4096;
 
@@ -87,7 +89,7 @@ Stack* newStack(int capacity){
 
 void StackCtor(Stack* thou, int capacity){
 
-    thou -> CANNARY1 = 0xBAAD;
+    thou -> CANNARY1 = 0;
     thou -> minimal_capacity = capacity;
     thou -> capacity = capacity;
     thou -> stack_size = 0;
@@ -95,7 +97,7 @@ void StackCtor(Stack* thou, int capacity){
     for (int i = 0; i < capacity; (thou -> data)[i++] = POISON);
     //thou -> Hash = getHash();
     thou -> Hash = 0;
-    thou -> CANNARY2 = 0xBAAD;
+    thou -> CANNARY2 = 0;
     ASSERTED(thou);
 }
 
@@ -135,13 +137,11 @@ int ResizeUp(Stack* thou){
 
     ASSERTED(thou);
 
-    static StackElement* resized = (StackElement*)realloc(thou -> data, int((thou -> capacity) * sizeof(StackElement) * 2));
-
+    StackElement* resized = (StackElement*)realloc(thou -> data, int((thou -> capacity) * sizeof(StackElement) * 2));
     if (resized != nullptr){
         thou -> capacity = thou -> capacity * 2;
-        printf("{%d}", thou -> stack_size);
-        for (int i = (thou -> stack_size); i < (thou -> capacity); (thou -> data)[i++] = POISON/*, printf("%d", i)*/);
         thou -> data = resized;
+        for (int i = (thou -> stack_size); i < (thou -> capacity); (thou -> data)[i++] = POISON);
         return 1;
     }
     ASSERTED(thou);
@@ -152,7 +152,7 @@ int ResizeDown(Stack* thou){
 
     ASSERTED(thou);
 
-    static StackElement* resized = (StackElement*)realloc(thou -> data, int(sizeof(StackElement) * (thou -> capacity) / 2));
+    StackElement* resized = (StackElement*)realloc(thou -> data, int(sizeof(StackElement) * (thou -> capacity) / 2));
 
     if (resized != nullptr){
         thou -> capacity = int(thou -> capacity / 2);
@@ -180,7 +180,7 @@ int StackPop(Stack* thou, StackElement* popped){
 
     ASSERTED(thou);
     if (thou -> stack_size == 0) return 0;
-    if (thou -> stack_size == int(thou -> capacity / 2) && thou -> capacity != thou -> minimal_capacity) ResizeDown(thou);
+    if (thou -> stack_size < int((thou -> capacity / 2) + 2) && thou -> capacity != thou -> minimal_capacity) ResizeDown(thou);
     StackElement last = thou -> data [thou -> stack_size - 1];
     if (isPOISON(last)) LAST_WORDS(thou, DATA_CORRUPTED_CONTAINS_POISON);
     thou -> data [thou -> stack_size - 1] = POISON;
@@ -221,13 +221,12 @@ void ASSERTED(Stack* thou){
 
 }
 
-
+int Stack_CannaryAlive(Stack* thou);
 
 int main(){
 
     Stack* firstStack = newStack(3);
     StackDump(firstStack, StackOK(firstStack));
-
     int command;
     double value;
     while (true){

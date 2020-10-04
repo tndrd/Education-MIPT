@@ -10,6 +10,7 @@ char TESTS_lexicographical_compare[6][2][5] = {
 { "zzzz",    "-__-" },
 { "DING",    "DING" }};
 
+
 int TEST_RESULTS_lexicographical_compare[6]{
   GREATER,
   LESS,
@@ -42,10 +43,10 @@ int TEST_lexicographicalCompare(){
         }
     }
     for(int i = 0; i < 6; i++){
-        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0]+3,TESTS_lexicographical_compare[i][1]+3,-1) != TEST_RESULTS_lexicographical_compare[i]){
-            printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i+1,
+        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1) != TEST_RESULTS_lexicographical_compare[i]){
+            printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i + 1,
             TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
-            (lexicographicalCompare(TESTS_lexicographical_compare[i][0]+3,TESTS_lexicographical_compare[i][1]+3,-1)),
+            (lexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1)),
             TEST_RESULTS_lexicographical_compare[i]);
 
             result++;

@@ -8,9 +8,9 @@ Include dependency graph for onegin.\+cpp\+:
 \item 
 int \hyperlink{onegin_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \item 
-char $\ast$ \hyperlink{onegin_8cpp_a7d8bbc0a3d554ef166129c66521aae0c}{next\+\_\+letter} (char $\ast$a, int step)
+const char $\ast$ \hyperlink{onegin_8cpp_a3ecd6f696068d38e2a46b97f3920f0de}{next\+\_\+letter} (const char $\ast$a, int step)
 \item 
-int \hyperlink{onegin_8cpp_ad69501ce3d65f030df35a7e162961888}{lexicographical\+Compare} (char $\ast$a, char $\ast$b, int step)
+int \hyperlink{onegin_8cpp_a69e0758126c653419e6e599d90626ad2}{lexicographical\+Compare} (const char $\ast$a, const char $\ast$b, int step)
 \item 
 int \hyperlink{onegin_8cpp_acecdc74fa8e7732c13e4c5a7bdf1e843}{reversed\+L\+G\+Comparator} (\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)
 \item 
@@ -18,7 +18,7 @@ int \hyperlink{onegin_8cpp_abe4568f00b1c4b995246e2a72a1957f7}{L\+G\+Comparator} 
 \item 
 void $\ast$ \hyperlink{onegin_8cpp_a55396e3f84d2f4a46060a577dce83ff8}{concat} (\hyperlink{struct_my_str}{My\+Str} $\ast$a, \hyperlink{struct_my_str}{My\+Str} $\ast$b, \hyperlink{struct_my_str}{My\+Str} $\ast$c, size\+\_\+t a\+\_\+size, size\+\_\+t b\+\_\+size, size\+\_\+t c\+\_\+size)
 \item 
-void \hyperlink{onegin_8cpp_aad4944e2f17fe3ac9c1445aae69449de}{my\+Q\+Sort} (void $\ast$lines\+\_\+ptr, int length, int($\ast$comparator)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b))
+void \hyperlink{onegin_8cpp_a43f4e564cb43faa9a398d4f77ebba19a}{my\+Q\+Sort} (void $\ast$lines\+\_\+ptr, size\+\_\+t length, int($\ast$comparator)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b))
 \item 
 int \hyperlink{onegin_8cpp_a2dcdccc8a8ededb7804d00ba921edb73}{run\+Tests} ()
 \end{DoxyCompactItemize}
@@ -49,11 +49,11 @@ Concatenates 3 \hyperlink{struct_my_str}{My\+Str} arrays
 \begin{DoxyReturn}{Returns}
 pointer to the new array 
 \end{DoxyReturn}
-\mbox{\Hypertarget{onegin_8cpp_ad69501ce3d65f030df35a7e162961888}\label{onegin_8cpp_ad69501ce3d65f030df35a7e162961888}} 
+\mbox{\Hypertarget{onegin_8cpp_a69e0758126c653419e6e599d90626ad2}\label{onegin_8cpp_a69e0758126c653419e6e599d90626ad2}} 
 \index{onegin.\+cpp@{onegin.\+cpp}!lexicographical\+Compare@{lexicographical\+Compare}}
 \index{lexicographical\+Compare@{lexicographical\+Compare}!onegin.\+cpp@{onegin.\+cpp}}
 \subsubsection{\texorpdfstring{lexicographical\+Compare()}{lexicographicalCompare()}}
-{\footnotesize\ttfamily int lexicographical\+Compare (\begin{DoxyParamCaption}\item[{char $\ast$}]{a,  }\item[{char $\ast$}]{b,  }\item[{int}]{step }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily int lexicographical\+Compare (\begin{DoxyParamCaption}\item[{const char $\ast$}]{a,  }\item[{const char $\ast$}]{b,  }\item[{int}]{step }\end{DoxyParamCaption})}
 
 Lexicographically compares two strings 
 \begin{DoxyParams}{Parameters}
@@ -93,11 +93,11 @@ returns 1 if a $>$ b, 2 if a $<$ b or 0 if a = b
 \subsubsection{\texorpdfstring{main()}{main()}}
 {\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{onegin_8cpp_aad4944e2f17fe3ac9c1445aae69449de}\label{onegin_8cpp_aad4944e2f17fe3ac9c1445aae69449de}} 
+\mbox{\Hypertarget{onegin_8cpp_a43f4e564cb43faa9a398d4f77ebba19a}\label{onegin_8cpp_a43f4e564cb43faa9a398d4f77ebba19a}} 
 \index{onegin.\+cpp@{onegin.\+cpp}!my\+Q\+Sort@{my\+Q\+Sort}}
 \index{my\+Q\+Sort@{my\+Q\+Sort}!onegin.\+cpp@{onegin.\+cpp}}
 \subsubsection{\texorpdfstring{my\+Q\+Sort()}{myQSort()}}
-{\footnotesize\ttfamily void my\+Q\+Sort (\begin{DoxyParamCaption}\item[{void $\ast$}]{lines\+\_\+ptr,  }\item[{int}]{length,  }\item[{int($\ast$)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}]{comparator }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void my\+Q\+Sort (\begin{DoxyParamCaption}\item[{void $\ast$}]{lines\+\_\+ptr,  }\item[{size\+\_\+t}]{length,  }\item[{int($\ast$)(\hyperlink{struct_my_str}{My\+Str} a, \hyperlink{struct_my_str}{My\+Str} b)}]{comparator }\end{DoxyParamCaption})}
 
 Does the quick-\/sort of \hyperlink{struct_my_str}{My\+Str} array 
 \begin{DoxyParams}{Parameters}
@@ -108,11 +108,11 @@ Does the quick-\/sort of \hyperlink{struct_my_str}{My\+Str} array
 {\em comparator} & pointer to the comparator function \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{onegin_8cpp_a7d8bbc0a3d554ef166129c66521aae0c}\label{onegin_8cpp_a7d8bbc0a3d554ef166129c66521aae0c}} 
+\mbox{\Hypertarget{onegin_8cpp_a3ecd6f696068d38e2a46b97f3920f0de}\label{onegin_8cpp_a3ecd6f696068d38e2a46b97f3920f0de}} 
 \index{onegin.\+cpp@{onegin.\+cpp}!next\+\_\+letter@{next\+\_\+letter}}
 \index{next\+\_\+letter@{next\+\_\+letter}!onegin.\+cpp@{onegin.\+cpp}}
 \subsubsection{\texorpdfstring{next\+\_\+letter()}{next\_letter()}}
-{\footnotesize\ttfamily char$\ast$ next\+\_\+letter (\begin{DoxyParamCaption}\item[{char $\ast$}]{a,  }\item[{int}]{step }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily const char$\ast$ next\+\_\+letter (\begin{DoxyParamCaption}\item[{const char $\ast$}]{a,  }\item[{int}]{step }\end{DoxyParamCaption})}
 
 Function to get first letter after or before pointer 
 \begin{DoxyParams}{Parameters}
