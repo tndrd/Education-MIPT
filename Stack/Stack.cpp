@@ -78,7 +78,10 @@ void INSTANT_DEATH(Stack* thou, ERROR error);
 ERROR StackOK(Stack* thou);
 void StackCtor(Stack* thou, int capacity);
 int isPOISON(StackElement value);
+int RESIZE_DOWN_BIAS(Stack* thou){
+    return thou -> minimal_capacity - 1;
 
+}
 
 Stack* newStack(int capacity){
 
@@ -136,7 +139,6 @@ void LAST_WORDS(Stack* thou, ERROR error){
 int ResizeUp(Stack* thou){
 
     ASSERTED(thou);
-
     StackElement* resized = (StackElement*)realloc(thou -> data, int((thou -> capacity) * sizeof(StackElement) * 2));
     if (resized != nullptr){
         thou -> capacity = thou -> capacity * 2;
@@ -152,7 +154,7 @@ int ResizeDown(Stack* thou){
 
     ASSERTED(thou);
 
-    StackElement* resized = (StackElement*)realloc(thou -> data, int(sizeof(StackElement) * (thou -> capacity) / 2));
+    StackElement* resized = (StackElement*)realloc(thou -> data, (int(sizeof(StackElement) * (thou -> capacity) / 2)));
 
     if (resized != nullptr){
         thou -> capacity = int(thou -> capacity / 2);
@@ -164,7 +166,6 @@ int ResizeDown(Stack* thou){
 }
 
 int StackPush(Stack* thou, StackElement value){
-
     ASSERTED(thou);
     if (thou -> stack_size == thou -> capacity){
         if(!ResizeUp(thou)) return 0;
@@ -180,7 +181,7 @@ int StackPop(Stack* thou, StackElement* popped){
 
     ASSERTED(thou);
     if (thou -> stack_size == 0) return 0;
-    if (thou -> stack_size < int((thou -> capacity / 2) + 2) && thou -> capacity != thou -> minimal_capacity) ResizeDown(thou);
+    if (thou -> stack_size + (RESIZE_DOWN_BIAS(thou)) < int((thou -> capacity / 2) + 1) && thou -> capacity != thou -> minimal_capacity) ResizeDown(thou);
     StackElement last = thou -> data [thou -> stack_size - 1];
     if (isPOISON(last)) LAST_WORDS(thou, DATA_CORRUPTED_CONTAINS_POISON);
     thou -> data [thou -> stack_size - 1] = POISON;
@@ -197,7 +198,7 @@ int CheckPointer(void* ptr){
 
 void StackDump(Stack* thou, ERROR status){
 
-    printf("Stack(%s)[%p]:\n    CANNARY1: |%d|,\n    capacity: |%d|,\n     stack_size: |%d|,\n    Hash: |%d|,\n    CANNARY2: |%d|,\n    data[%p]: {\n",
+    printf("Stack(%s)[%p]:\n    CANNARY1: |%d|,\n    capacity: |%d|,\n    stack_size: |%d|,\n    Hash: |%d|,\n    CANNARY2: |%d|,\n    data[%p]: {\n",
     getERRORName(status), thou, thou -> CANNARY1, thou -> capacity, thou -> stack_size, thou -> Hash, thou -> CANNARY2, thou -> data);
     if (CheckPointer(thou -> data)){
         for(int i = 0; i < (thou -> capacity); printf("      " ELEMENT_FORMAT ",\n", (thou -> data)[i++]));
@@ -237,5 +238,6 @@ int main(){
         else StackPop(firstStack, &value);
         StackDump(firstStack, StackOK(firstStack));
     }
+
     return 0;
 }

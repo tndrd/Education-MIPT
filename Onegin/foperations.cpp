@@ -1,6 +1,6 @@
 #include "onegin.h"
 
-void printFile(const char* name, const MyStr* lines, size_t length){
+void PrintFile(const char* name, const MyStr* lines, size_t length){
 
     assert(name);
     assert(lines);
@@ -21,7 +21,7 @@ void printFile(const char* name, const MyStr* lines, size_t length){
 }
 
 
-void arrayPrint(const MyStr* arr, size_t length){
+void ArrayPrint(const MyStr* arr, size_t length){
 
     assert(arr);
 
@@ -36,13 +36,13 @@ int GetNumberOfLines(char* buffer){
     int counter = 0;
     for (int i = 0; buffer[i] != '\0'; i++){
         if (buffer[i] == '\n')
-        counter++;
+            counter++;
     }
     return counter;
 }
 
 
-MyStr* getLines(char* buffer,  int* number_of_lines){
+MyStr* GetLines(char* buffer,  int* number_of_lines){
 
     assert(buffer);
     assert(number_of_lines);
@@ -50,10 +50,11 @@ MyStr* getLines(char* buffer,  int* number_of_lines){
     MyStr* lines  = (MyStr*)calloc(*number_of_lines, sizeof(MyStr));
 
     size_t line_counter = 0;
-    size_t char_counter, i;
-    char current;
+    size_t char_counter = 0;
+    int i = 0;
+    char current = buffer[i];
 
-    for (i = 0, current = buffer[i], char_counter = 0; current != '\0'; current = buffer[++i]){
+    for (; current != '\0'; current = buffer[++i]){
         if (current == '\n'){
             if (char_counter > 0){
                 (lines[line_counter]).pointer = buffer + (i-char_counter);
@@ -75,7 +76,7 @@ MyStr* getLines(char* buffer,  int* number_of_lines){
 }
 
 
-char* readFile(const char* name){
+char* ReadFile(const char* name){
 
     assert(name);
 

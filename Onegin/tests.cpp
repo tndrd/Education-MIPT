@@ -33,20 +33,20 @@ int TEST_lexicographicalCompare(){
     int result = 0;
 
     for(int i = 0; i < 6; i++){
-        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1) != TEST_RESULTS_lexicographical_compare[i]){
+        if (LexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1) != TEST_RESULTS_lexicographical_compare[i]){
             printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i+1,
             TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
-            (lexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1)),
+            (LexicographicalCompare(TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],1)),
             TEST_RESULTS_lexicographical_compare[i]);
 
             result++;
         }
     }
     for(int i = 0; i < 6; i++){
-        if (lexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1) != TEST_RESULTS_lexicographical_compare[i]){
+        if (LexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1) != TEST_RESULTS_lexicographical_compare[i]){
             printf ("Test #%d failed. Input: %s %s | Result: %d | Expected: %d\n", i + 1,
             TESTS_lexicographical_compare[i][0],TESTS_lexicographical_compare[i][1],
-            (lexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1)),
+            (LexicographicalCompare(TESTS_lexicographical_compare[i][0] + 3,TESTS_lexicographical_compare[i][1] + 3, -1)),
             TEST_RESULTS_lexicographical_compare[i]);
 
             result++;
@@ -63,7 +63,7 @@ int TEST_myQsort(){
     int number_of_lines;
 
     Comparator* comparators = (Comparator*)calloc(2,sizeof(Comparator));
-    comparators[0] = reversedLGComparator;
+    comparators[0] = ReversedLGComparator;
     comparators[1] = LGComparator;
 
     name[0] = 't';
@@ -79,15 +79,15 @@ int TEST_myQsort(){
         name[2] = (char)(i+48);
         name[3] = 'i';
 
-        char* buffer = readFile(name);
-        MyStr* lines = getLines(buffer, &number_of_lines);
-        myQSort((void*)&lines, number_of_lines, comparators[i]);
+        char* buffer = ReadFile(name);
+        MyStr* lines = GetLines(buffer, &number_of_lines);
+        MyQSort((void*)&lines, number_of_lines, comparators[i]);
         name[3] = 't';
-        printFile(name, lines, number_of_lines);
+        PrintFile(name, lines, number_of_lines);
 
-        char* buffer_1 = readFile(name);
+        char* buffer_1 = ReadFile(name);
         name[3] = 'r';
-        char* buffer_2 = readFile(name);
+        char* buffer_2 = ReadFile(name);
 
         int j = 0;
         char current_1 = buffer_1[j];
