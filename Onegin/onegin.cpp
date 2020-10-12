@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]){
 
-    char* buffer;
+    char* buffer = nullptr;
     switch(argc){
 
         case 1:  buffer = ReadFile("hamlet.txt");
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     }
     printf("All tests OK\n");
 
-    int number_of_lines;
+    int number_of_lines = 0;
     MyStr* lines = GetLines(buffer, &number_of_lines);
     printf("File read successfully\n\n");
 
