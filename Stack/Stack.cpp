@@ -73,7 +73,7 @@ ERROR newStack(int capacity, Stack** new_stack_pointer_adress);
 void StackPrint(Stack* thou, ERROR status, FILE* stream);
 
 //----------------------------------------------------
-const char* getERRORName(ERROR error){
+static const char* getERRORName(ERROR error){
 
     switch(error){
         case_of_switch(OK)
@@ -230,10 +230,10 @@ int StackPop(Stack* thou, StackElement* popped){
 }
 
 
-void StackDump(Stack* thou, ERROR staus){
+void StackDump(Stack* thou, ERROR status){
 
     FILE* fp = fopen("log.txt", "w");
-    StackPrint(thou, staus, fp);
+    StackPrint(thou, status, fp);
     fclose(fp);
 }
 
