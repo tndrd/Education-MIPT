@@ -1,11 +1,13 @@
 #include "cpu.h"
 #define HAS_ARGUMENT_ASSERT if (isnan(value)) DIE(NOT_ENOUGH_ARGUMENTS);
 
+extern CPU_ERROR status;
+extern CPU_WARNING warning;
 
-void InitCPU(*CPU thou){
+void InitCPU(CPU* thou){
 
     Stack* stack_ptr = (Stack*)calloc(1,sizeof(Stack*));
-    ERROR StackERROR = newStack(10, &stk);
+    newStack(10, &stk);
     if (StackERROR != OK){
     printf("Failed to create stack");
     abort();
@@ -16,7 +18,7 @@ void InitCPU(*CPU thou){
 const char* getERRORName(CPU_ERROR error){
 
     switch(error){
-    case_of_switch(OK)
+    case_of_switch(CPU_OK)
     case_of_switch(STACK_EMPTY_NOTHING_TO_POP)
     case_of_switch(STACK_OVERFLOW)
     }
@@ -42,11 +44,9 @@ void Execute(CPU* thou, char** lines, int number_of_lines){
     StackElement value = POISON;
 
     for (int i = 0; i < number_of_lines; rip = rip[++i]){
-
         value = POISON;
         ReadCommand(rip, &command, &value);
         RunCommand(thou, command, value);
-
     }
 
 }

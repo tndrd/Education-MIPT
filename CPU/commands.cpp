@@ -1,5 +1,6 @@
 #include "cpu.h"
-
+extern CPU_ERROR status;
+extern CPU_WARNING warning;
 
 void Push(CPU* thou, StackElement value){
     if(!StackPush(thou -> stack_ptr, value))
@@ -18,58 +19,58 @@ StackElement Pop(CPU* thou){
 void Add(CPU* thou){
     StackElement a = Pop(thou);
     StackElement b = Pop(thou);
-    CPU_OK Push(thou, a + b);
+    CPU_IS_OK Push(thou, a + b);
 }
 
 
 void Sub(CPU* thou){
     StackElement a = Pop(thou);
     StackElement b = Pop(thou);
-    CPU_OK Push(thou, a - b);
+    CPU_IS_OK Push(thou, a - b);
 }
 
 
 void Mul(CPU* thou){
     StackElement a = Pop(thou);
     StackElement b = Pop(thou);
-    CPU_OK Push(thou, a * b);
+    CPU_IS_OK Push(thou, a * b);
 }
 
 
 void Div(CPU* thou){
     StackElement a = Pop(thou);
     StackElement b = Pop(thou);
-    CPU_OK Push(thou, a / b);
+    CPU_IS_OK Push(thou, a / b);
 }
 
 
 void Sin(CPU* thou){
     StackElement a = Pop(thou);
-    CPU_OK Push(thou, sin(a));
+    CPU_IS_OK Push(thou, sin(a));
 }
 
 
 void Cos(CPU* thou){
     StackElement a = Pop(thou);
-    CPU_OK Push(thou, cos(a));
+    CPU_IS_OK Push(thou, cos(a));
 }
 
 
 void Sqrt(CPU* thou){
     StackElement a = Pop(thou);
-    CPU_OK Push(thou, sqrt(a));
+    CPU_IS_OK Push(thou, sqrt(a));
 }
 
 
 void Neg(CPU* thou){
     StackElement a = Pop(thou);
-    CPU_OK Push(thou, -a);
+    CPU_IS_OK Push(thou, -a);
 }
 
 
 void Out(CPU* thou){
     StackElement a = Pop(thou);
-    CPU_OK printf(ELEMENT_FORMAT "\n", a);
+    CPU_IS_OK printf(ELEMENT_FORMAT "\n", a);
 }
 
 
@@ -87,7 +88,7 @@ void In(CPU* thou){
                  break;
 
     }
-    CPU_OK Push(thou, value);
+    CPU_IS_OK Push(thou, value);
 }
 
 
