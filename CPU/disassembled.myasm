@@ -1,0 +1,10 @@
+PUSH 5.000000
+POP rbx
+PUSH rcx rdx
+POP
+PUSH 6.000000 rdx
+PUSH rcx rdx
+POP
+POP
+POP
+POP

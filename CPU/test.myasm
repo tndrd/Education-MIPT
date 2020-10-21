@@ -1,0 +1,11 @@
+PUSH 5
+POP rbx
+PUSH rcx rdx
+POP
+PUSH 6 rdx
+PUSH rcx rdx
+POP
+POP
+POP
+POP
+end
