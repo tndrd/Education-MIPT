@@ -1,0 +1,10 @@
+RIP    |   CODE    |   COMMAND
+0x55bd4e8e8480    |    82    |    POP
+0x55bd4e8e8481    |    82    |    POP
+0x55bd4e8e8482    |    81 C9 16 E9 48 A5 4D F7 3F    |    PUSH rdx
+0x55bd4e8e848b    |    2 46 23 6A 65 6C BF F3 3F    |    POP rbx
+0x55bd4e8e8494    |    1 7 9D 29 D7 88 86 F5 3F C9 16 E9 48 A5 4D F7 3F    |    PUSH rcx rdx
+0x55bd4e8e84a5    |    82    |    POP
+0x55bd4e8e84a6    |    1 0 0 0 0 0 0 18 40 C9 16 E9 48 A5 4D F7 3F    |    PUSH 6 rdx
+0x55bd4e8e84b7    |    1 7 9D 29 D7 88 86 F5 3F C9 16 E9 48 A5 4D F7 3F    |    PUSH rcx rdx
+0x55bd4e8e84c8    |    82    |    POP

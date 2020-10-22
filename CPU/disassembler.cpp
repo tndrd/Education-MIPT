@@ -4,16 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
-
-
-const double RAX_CODE = 1.123123123;
-const double RBX_CODE = 1.234234234;
-const double RCX_CODE = 1.345345345;
-const double RDX_CODE = 1.456456456;
-
-const int HEADER_LENGTH = 7;
-
-
+#include "config.h"
 
 long int GetFileSize(FILE* fp){
 
@@ -53,21 +44,48 @@ int Disassemble(const char* filename){
     
     long int filesize = 0;
     char* buffer = ReadFile(filename, &filesize);
-    printf("Signature: ");
-    for (int i = 0; i < HEADER_LENGTH - 2; i++){
-        printf("%c", buffer[i]);
+    assert(buffer);
+
+    const int SIGNATURE_LENGTH = strlen(SIGNATURE);
+    const int HEADER_LENGTH = SIGNATURE_LENGTH + 2;
+
+    if (filesize - 1 < HEADER_LENGTH){
+        printf("Error: file too small to be assembled code");
+        return 0;
     }
-    printf("\nVersion %d.%d\n", buffer[HEADER_LENGTH-2], buffer[HEADER_LENGTH-1]);
+
+    for (int i = 0; i < SIGNATURE_LENGTH; i++){
+        if (buffer[i] != SIGNATURE[i]){
+            printf("Error: unappropiate signature\n");
+            return 0;
+        }
+    } 
+
+    int current_version_base = buffer[HEADER_LENGTH - 2] - 48;
+    int current_version_sub = buffer[HEADER_LENGTH - 1] - 48;
+
+    if (current_version_base != VERSION_BASE || current_version_sub != VERSION_SUB){
+        printf("Error: code version is %d.%d, should be %d.%d\n", current_version_base, current_version_sub, VERSION_BASE, VERSION_SUB);
+        return 0;
+    }
+
+    printf("Signature: ");
+    for (int i = 0; i < HEADER_LENGTH - 2; i++) printf("%c", buffer[i]);
+    printf("\nVersion %d.%d\n", buffer[HEADER_LENGTH-2] - 48, buffer[HEADER_LENGTH-1] - 48);
     fflush(stdout);
     FILE* fp = fopen("disassembled.myasm", "w");
-
+    assert(fp);
     int rip = HEADER_LENGTH;
     
-    #define DEF_CMD(name, num, max_arg, min_arg, code, arg_check)                        \
-        case (num):                                                                      \
+    #define CASE(name, num, max_arg, min_arg, code, arg_check, num_offset, arg_count)    \
+        case (num + num_offset):                                                         \
             fprintf(fp, "%s", #name);                                                    \
             rip++;                                                                       \
-            for (int i = 0; i < max_arg; i++){                                           \
+            if (filesize - rip < arg_count * sizeof(double)){                        \
+                printf("Code corrupted");                                                \
+                return 0;                                                                \
+            }                                                                            \
+            for (int i = 0; i < arg_count; i++){                                         \
                 if ( *((double*)(buffer + rip)) == RAX_CODE )       fprintf(fp, " rax"); \
                 else if ( *((double*) (buffer + rip)) == RBX_CODE ) fprintf(fp, " rbx"); \
                 else if ( *((double*) (buffer + rip)) == RCX_CODE ) fprintf(fp, " rcx"); \
@@ -77,29 +95,21 @@ int Disassemble(const char* filename){
             }                                                                            \
             fprintf(fp, "\n");                                                           \
             break;                                                                       \
-                                                                                         \
-        case (num+128):                                                                  \
-            fprintf(fp, "%s", #name);                                                    \
-            rip++;                                                                       \
-            for (int i = 0; i < min_arg; i++){                                           \
-                if ( *((double*)(buffer + rip)) == RAX_CODE )       fprintf(fp, " rax"); \
-                else if ( *((double*) (buffer + rip)) == RBX_CODE ) fprintf(fp, " rbx"); \
-                else if ( *((double*) (buffer + rip)) == RCX_CODE ) fprintf(fp, " rcx"); \
-                else if ( *((double*) (buffer + rip)) == RDX_CODE ) fprintf(fp, " rdx"); \
-                else fprintf(fp, " %lf", *((double*)(buffer + rip)));                    \
-                rip += sizeof(double);                                                   \
-            }                                                                            \
-            fprintf(fp, "\n");                                                           \
-            break;
         
+    #define DEF_CMD(name, num, max_arg, min_arg, code, arg_check)\
+        CASE(name, num, max_arg, min_arg, code, arg_check, 0, max_arg)\
+        CASE(name, num, max_arg, min_arg, code, arg_check, 128, min_arg)\
+
     while(rip < filesize){
         switch(((int)buffer[rip]) & 0xff){
         #include "commands.h"
-        default: printf("\n Error: code corrupted");
+        default: printf("\n Error: code corrupted, unknown command code: %X\n", buffer[rip] & 0xff);
                  return 0;
         }  
     }
     #undef DEF_CMD
+    #undef CASE
+    assert(fp);
     fclose(fp);
     return 1;
 }
@@ -108,6 +118,5 @@ int Disassemble(const char* filename){
 int main(){
 
     Disassemble("test.run");
-    
     exit(0);
 }

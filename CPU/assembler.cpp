@@ -16,49 +16,72 @@ double REGISTER_CODE(char* rname){
     else return 0;
 }
 
-int Assemble(char* buffer, char** beginptr, char** endptr){
+int Assemble(char* buffer, char** beginptr, char** endptr, int writeAssemblyList, const char* assemblyList_name){
     
-    #define DEF_CMD(name, num, max_arg, min_arg, code, arg_check)                                 \
-        else if (!strcmp(command, #name)){                                                        \
-            printf("\n%s", #name);\
-            *rip = num;\
-            rip++;                                                                                \
-            for (int narg = 0; narg < max_arg; narg++){                                           \
-                sscanf(lines[nline].pointer + line_offset, " %s%n", arg_value, &relative_offset); \
-                line_offset+=relative_offset;                                                     \
-                if (!strcmp(arg_value, "")){                                                      \
-                    if (narg < min_arg) {                                                         \
-                    printf("Line %d: not enough arguments for command %s (given %d, expected %d at least)\n", nline+1, #name, narg, min_arg);\
-                    status = 0;                                                                   \
-                    }                                                                             \
-                    else{                                                                         \
-                    *(rip - narg*sizeof(double) - 1) = num + 128;\
-                    break;\
-                    }\
-                }                                                                                 \
-                arg_check                                                                         \
-                if (ISREGISTER(arg_value) == 0){                                                  \
-                    *((double*)rip) = REGISTER_CODE(arg_value);                                   \
-                    arg_value+=3;                                                                 \
-                }                                                                                 \
-                else{                                                                             \
-                    *((double*)rip) = strtod(arg_value, &arg_value);                              \
-                }                                                                                 \
-                printf(" %lf", *((double*)rip));\
-                rip+=sizeof(double);                                                              \
-            }                                                                                     \
+    assert(buffer);
+    assert(beginptr);
+    assert(endptr);
+    assert(assemblyList_name);
+
+    #define DEF_CMD(name, num, max_arg, min_arg, code, arg_check)                                                                             \
+        else if (!strcmp(command, #name)){                                                                                                    \
+            *rip = num;                                                                                                                       \
+            command_start_ptr = rip;                                                                                                          \
+            rip++;                                                                                                                            \
+            for (int narg = 0; narg < max_arg; narg++){                                                                                       \
+                sscanf(lines[nline].pointer + line_offset, " %s%n", arg_value, &relative_offset);                                             \
+                line_offset += relative_offset;                                                                                                 \
+                if (!strcmp(arg_value, "")){                                                                                                  \
+                    if (narg < min_arg) {                                                                                                     \
+                    printf("Line %d: not enough arguments for command %s (given %d, expected %d at least)\n", nline+1, #name, narg, min_arg); \
+                    status = 0;                                                                                                               \
+                    }                                                                                                                         \
+                    else{                                                                                                                     \
+                    *(rip - narg*sizeof(double) - 1) = num + 128;                                                                             \
+                    break;                                                                                                                    \
+                    }                                                                                                                         \
+                }                                                                                                                             \
+                arg_check                                                                                                                     \
+                if (ISREGISTER(arg_value) == 0){                                                                                              \
+                    *((double*)rip) = REGISTER_CODE(arg_value);                                                                               \
+                    arg_value+=3;                                                                                                             \
+                }                                                                                                                             \
+                else{                                                                                                                         \
+                    *((double*)rip) = strtod(arg_value, &arg_value);                                                                          \
+                }                                                                                                                             \
+                rip+=sizeof(double);                                                                                                          \
+            }                                                                                                                                 \
+            if (status && writeAssemblyList) {                                                                                                \
+                assert(fp);                                                                                                                   \
+                fprintf(fp, "%p    |    ", command_start_ptr);                                                                                \
+                for (int i = 0; i < rip - command_start_ptr; i++) fprintf(fp, "%X ", command_start_ptr[i] & 0xff);                            \
+                fprintf(fp,"   |    %s\n", lines[nline].pointer);                                                                             \
+            }                                                                                                                                 \
         }
     
     int status = 1;
     char* codeptr = (char*)calloc(1,MINIMAL_FILESIZE);
     char* rip = codeptr;
+    char* command_start_ptr = rip;
     int number_of_lines = 0;
     MyStr* lines =  GetLines(buffer, &number_of_lines);
+    
+    if (number_of_lines < 1){
+        printf("Error: empty file\n");
+        return 0;
+    }
     
     char* command = (char*)calloc(1, COMMAND_LENGTH);
     int line_offset = 0;
     int relative_offset = 0;
     char* arg_value = (char*)calloc(1, COMMAND_LENGTH);
+    FILE* fp = nullptr;
+
+    if (writeAssemblyList){
+        fp = fopen(assemblyList_name, "w");
+        assert(fp);
+        fprintf(fp, "RIP    |   CODE    |   COMMAND\n");
+    }
 
     for(int nline = 0; nline < number_of_lines; nline++){
         sscanf(lines[nline].pointer," %s%n", command, &line_offset);
@@ -69,37 +92,43 @@ int Assemble(char* buffer, char** beginptr, char** endptr){
         relative_offset = 0;
     }
     #undef DEF_CMD
+    
+    if (writeAssemblyList){
+        assert(fp);
+        fclose(fp);
+    } 
     if (!status) return 0;
     *beginptr = codeptr;
     *endptr = rip;
-    //free(lines);
-    //free(command);
-    //free(arg_value);
+    
     return 1;
 }
 
-void Write(const char* name, char* begin, char* end){
+void WriteCode(const char* name, char* begin, char* end){
     FILE* fp = fopen(name, "w");
-    fprintf(fp, "%c", 'M');
-    fprintf(fp, "%c", 'Y');
-    fprintf(fp, "%c", 'A');
-    fprintf(fp, "%c", 'S');
-    fprintf(fp, "%c", 'S');
-    fprintf(fp, "%c", VERSION_BASE);
-    fprintf(fp, "%c", VERSION_SUB);
+    assert(fp);
+    assert(begin);
+    assert(end);
+    
+    fprintf(fp,SIGNATURE);
+    fprintf(fp, "%c", VERSION_BASE + 48);
+    fprintf(fp, "%c", VERSION_SUB + 48);
     for (int i = 0; i < end - begin; i++) fputc(begin[i], fp);
     fclose(fp);
-
-
 }
+
+
 
 int main(){
     char* begin = nullptr;
     char* end = nullptr;
     char* buffer = ReadFile("test.myasm");
-    Assemble(buffer, &begin, &end);
+    if(!Assemble(buffer, &begin, &end, 1, "test.asslist")){
+        printf("Assembly failed\n");
+        exit(1);
+    }
     //for(int i = 0; i < end - begin; i++) printf("%X|",begin[i] & 0xff);
-    Write("test.run", begin, end);
+    WriteCode("test.run", begin, end);
     
 
 
