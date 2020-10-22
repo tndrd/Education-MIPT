@@ -5,7 +5,7 @@ const short int COMMAND_LENGTH = 16;
 
 const char* SIGNATURE = "MYASS";
 
-const double RAX_CODE = 1.123123123;
-const double RBX_CODE = 1.234234234;
-const double RCX_CODE = 1.345345345;
-const double RDX_CODE = 1.456456456;
+const char RAX_CODE = 'A';
+const char RBX_CODE = 'B';
+const char RCX_CODE = 'C';
+const char RDX_CODE = 'D';

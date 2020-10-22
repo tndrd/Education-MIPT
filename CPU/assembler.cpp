@@ -28,7 +28,8 @@ int Assemble(char* buffer, char** beginptr, char** endptr, int writeAssemblyList
             *rip = num;                                                                                                                       \
             command_start_ptr = rip;                                                                                                          \
             rip++;                                                                                                                            \
-            for (int narg = 0; narg < max_arg; narg++){                                                                                       \
+            int narg = 0;\
+            for (; narg < max_arg; narg++){                                                                                       \
                 sscanf(lines[nline].pointer + line_offset, " %s%n", arg_value, &relative_offset);                                             \
                 line_offset += relative_offset;                                                                                                 \
                 if (!strcmp(arg_value, "")){                                                                                                  \
@@ -36,21 +37,21 @@ int Assemble(char* buffer, char** beginptr, char** endptr, int writeAssemblyList
                     printf("Line %d: not enough arguments for command %s (given %d, expected %d at least)\n", nline+1, #name, narg, min_arg); \
                     status = 0;                                                                                                               \
                     }                                                                                                                         \
-                    else{                                                                                                                     \
-                    *(rip - narg*sizeof(double) - 1) = num + 128;                                                                             \
                     break;                                                                                                                    \
-                    }                                                                                                                         \
                 }                                                                                                                             \
                 arg_check                                                                                                                     \
                 if (ISREGISTER(arg_value) == 0){                                                                                              \
-                    *((double*)rip) = REGISTER_CODE(arg_value);                                                                               \
+                    *(rip) = REGISTER_CODE(arg_value);                                                                               \
+                    *(command_start_ptr) += (128 >> narg);\
+                    rip++;\
                     arg_value+=3;                                                                                                             \
                 }                                                                                                                             \
                 else{                                                                                                                         \
                     *((double*)rip) = strtod(arg_value, &arg_value);                                                                          \
+                    rip+=sizeof(double);                                                                                                      \
                 }                                                                                                                             \
-                rip+=sizeof(double);                                                                                                          \
             }                                                                                                                                 \
+            *(command_start_ptr) += (narg << 4);\
             if (status && writeAssemblyList) {                                                                                                \
                 assert(fp);                                                                                                                   \
                 fprintf(fp, "%p    |    ", command_start_ptr);                                                                                \

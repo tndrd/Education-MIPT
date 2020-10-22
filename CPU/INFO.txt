@@ -1,0 +1,8 @@
+Supports 16 commands with 0, 1 or 2 arguments
+Number byte:
+|xx|xx|xxxx|
+  1  2   3
+  
+  1: value-type mask
+  2: number of arguments
+  3: command number
