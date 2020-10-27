@@ -1,10 +1,14 @@
-POP
-POP
-PUSH rdx
-POP rbx
-PUSH rcx rdx
-POP
-PUSH 6 rdx
-PUSH rcx rdx
-POP
-end
+# aaaa
+# aaaa
+
+JMP entry
+
+PRINT:
+IN
+OUT
+RETURN
+
+entry:
+CALL PRINT
+CALL PRINT
+HLT

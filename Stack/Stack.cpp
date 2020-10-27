@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-#include "../Utils/ptrpermission.cpp"
 #define case_of_switch(en) case en: return #en;
 #define POISON NAN
 
@@ -99,9 +98,6 @@ static const char* getERRORName(ERROR error){
         case_of_switch(STRUCT_CORRUPTED_WRONG_HASH)
     }}
 //-----------------------------------------------------------
-
-int number_of_regions = 0;
-MemReg* regions = getMemoryRegions(&number_of_regions);
 
 
 ERROR newStack(int capacity, Stack** new_stack_pointer_adress){
@@ -222,10 +218,13 @@ int StackPush(Stack* thou, StackElement value){
 }
 
 
-int StackPop(Stack* thou, StackElement* popped){
+StackElement StackPop(Stack* thou, int* status_ptr){
 
     ASSERTED(thou);
-    if (thou -> stack_size == 0) return 0;
+    if (thou -> stack_size == 0){
+        *status_ptr = 0;
+        return 0;
+    }
     if (thou -> stack_size + (RESIZE_DOWN_BIAS(thou)) < int((thou -> capacity / 2) + 1) && thou -> capacity != thou -> minimal_capacity)
         ResizeDown(thou);
 
@@ -233,11 +232,10 @@ int StackPop(Stack* thou, StackElement* popped){
     if (isPOISON(last)) LAST_WORDS(thou, DATA_CORRUPTED_CONTAINS_POISON);
     thou -> data [thou -> stack_size - 1] = POISON;
     (thou -> stack_size)--;
-    *popped = last;
 
     RecomputeHashes(thou);
     ASSERTED(thou);
-    return 1;
+    return last;
 }
 
 
@@ -276,7 +274,7 @@ void ASSERTED(Stack* thou){
 }
 
 int CheckPointer(void* ptr){
-    if (!IsGood_RW_Ptr(ptr, regions, number_of_regions)) return 0;
+    if (!ptr) return 0;
     return 1;
 }
 
@@ -373,6 +371,7 @@ void RecomputeHashes(Stack* thou){
     thou -> data_hash = ComputeHash((char*)(thou -> data), sizeof(StackElement) * (thou -> stack_size + 2));
 }
 
+/*
 int main(){
 
     Stack* firstStack = (Stack*)calloc(1,sizeof(Stack*));
@@ -393,3 +392,4 @@ int main(){
 
     return 0;
 }
+*/

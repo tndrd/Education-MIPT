@@ -6,6 +6,5 @@
 #include <assert.h>
 #include "../Onegin/foperations.cpp"
 #include "config.h"
+#include "keywords.cpp"
 
-#define DO_POP printf("pop");
-#define DO_PUSH printf("push");

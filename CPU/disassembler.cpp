@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include "config.h"
+#include "keywords.cpp"
 
 long int GetFileSize(FILE* fp){
 
@@ -40,83 +41,66 @@ char* ReadFile(const char* name, long int* filesize_ptr){
 }
 
 
-int Disassemble(const char* filename){
+int Disassemble(char* filename, char* out){
     
     long int filesize = 0;
     char* buffer = ReadFile(filename, &filesize);
+    int rip = 0;
     assert(buffer);
 
-    const int SIGNATURE_LENGTH = strlen(SIGNATURE);
-    const int HEADER_LENGTH = SIGNATURE_LENGTH + 2;
-
-    if (filesize - 1 < HEADER_LENGTH){
-        printf("Error: file too small to be assembled code");
-        return 0;
-    }
-
-    for (int i = 0; i < SIGNATURE_LENGTH; i++){
-        if (buffer[i] != SIGNATURE[i]){
-            printf("Error: unappropiate signature\n");
-            return 0;
-        }
-    } 
-
-    int current_version_base = buffer[HEADER_LENGTH - 2] - 48;
-    int current_version_sub = buffer[HEADER_LENGTH - 1] - 48;
-
-    if (current_version_base != VERSION_BASE || current_version_sub != VERSION_SUB){
-        printf("Error: code version is %d.%d, should be %d.%d\n", current_version_base, current_version_sub, VERSION_BASE, VERSION_SUB);
-        return 0;
-    }
-
-    printf("Signature: ");
-    for (int i = 0; i < HEADER_LENGTH - 2; i++) printf("%c", buffer[i]);
-    printf("\nVersion %d.%d\n", buffer[HEADER_LENGTH-2] - 48, buffer[HEADER_LENGTH-1] - 48);
-    fflush(stdout);
-    FILE* fp = fopen("disassembled.myasm", "w");
+    #include "binary_work_initialization.h"
+    FILE* fp = fopen(out, "w");
     assert(fp);
-    int rip = HEADER_LENGTH;
     
-    #define CASE(name, num, max_arg, min_arg, code, arg_check, num_offset, arg_count)    \
-        case (num + num_offset):                                                         \
-            fprintf(fp, "%s", #name);                                                    \
-            rip++;                                                                       \
-            if (filesize - rip < arg_count * sizeof(double)){                        \
-                printf("Code corrupted");                                                \
-                return 0;                                                                \
-            }                                                                            \
-            for (int i = 0; i < arg_count; i++){                                         \
-                if ( *((double*)(buffer + rip)) == RAX_CODE )       fprintf(fp, " rax"); \
-                else if ( *((double*) (buffer + rip)) == RBX_CODE ) fprintf(fp, " rbx"); \
-                else if ( *((double*) (buffer + rip)) == RCX_CODE ) fprintf(fp, " rcx"); \
-                else if ( *((double*) (buffer + rip)) == RDX_CODE ) fprintf(fp, " rdx"); \
-                else fprintf(fp, " %lf", *((double*)(buffer + rip)));                    \
-                rip += sizeof(double);                                                   \
-            }                                                                            \
-            fprintf(fp, "\n");                                                           \
-            break;                                                                       \
-        
-    #define DEF_CMD(name, num, max_arg, min_arg, code, arg_check)\
-        CASE(name, num, max_arg, min_arg, code, arg_check, 0, max_arg)\
-        CASE(name, num, max_arg, min_arg, code, arg_check, 128, min_arg)\
+    #define CASE_CBITS(cbits, name)\
+        case cbits: CBITS_ ## cbits ## _ ## name\
+                    break;
+
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, nkw_pi)                \
+        case (num):                                                                      \
+            switch((buffer[rip] & 0xE0) >> 5){                                            \
+                CASE_CBITS(0, name)\
+                CASE_CBITS(1, name)\
+                CASE_CBITS(2, name)\
+                CASE_CBITS(3, name)\
+                CASE_CBITS(4, name)\
+                CASE_CBITS(5, name)\
+                CASE_CBITS(6, name)\
+                CASE_CBITS(7, name)\
+            }\
+            break;                                                                       
 
     while(rip < filesize){
-        switch(((int)buffer[rip]) & 0xff){
+        for (int i = 0; i < nlabels; i++){
+            if ((rip - nlabels*sizeof(int) - HEADER_LENGTH - 1) == *((int*)(buffer + HEADER_LENGTH + 1 + i*sizeof(int)))){
+                fprintf(fp, "LABEL_%d:\n", i);
+            }
+        }
+        switch(buffer[rip] & 0x1f){
+        #include "DISASSEMBLER_COMMAND_PREFERENCES.h"
         #include "commands.h"
         default: printf("\n Error: code corrupted, unknown command code: %X\n", buffer[rip] & 0xff);
-                 return 0;
+                return 1;
         }  
     }
     #undef DEF_CMD
     #undef CASE
     assert(fp);
     fclose(fp);
-    return 1;
+    return 0;
 }
 
 
-int main(){
+int main(int argc, char* argv[]){
 
-    Disassemble("test.run");
-    exit(0);
+    switch(argc){
+
+        case 3:  Disassemble(argv[1], argv[2]);
+                 break;
+
+        default: printf("Wrong arguments\n");
+                 exit(-1);
+
+    }
+    return 0;
 }

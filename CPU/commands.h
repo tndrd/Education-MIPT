@@ -1,19 +1,23 @@
-
-#define ISREGISTER(name) strcmp(name, "rax") * strcmp(name, "rbx") * strcmp(name, "rcx") * strcmp(name, "rdx") 
-
-#define POP_ARGUMENTS_CHECK(nline, arg_value)                             \
-        if (ISREGISTER(arg_value)){                                       \
-            printf("Line %d: pop argument is not a register\n", nline+1); \
-            status = 0;                                                   \
-            break;                                                        \
-        }                                                       
-
-#define PUSH_ARGUMENTS_CHECK(nline, arg_value)                            \
-    if (narg == 1 && ISREGISTER(arg_value)){                              \
-        printf("Line %d: second argument is not a register\n", nline+1);  \
-        status = 0;                                                       \
-    }
-
-
-DEF_CMD(PUSH, 0x01, 2, 1, {DO_PUSH(ARG(1), ARG(2))}, PUSH_ARGUMENTS_CHECK(nline, arg_value))
-DEF_CMD(POP, 0x02, 1, 0, {DO_POP(ARG(1))}, POP_ARGUMENTS_CHECK(nline, arg_value))
+DEF_CMD(PUSH, 0x01, 5, 1, PUSH_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(POP, 0x02, 5, 0, POP_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JMP, 0x03, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(ADD, 0x04, 0, 0, {}, {})
+DEF_CMD(SUB, 0x05, 0, 0, {}, {})
+DEF_CMD(MUL, 0x06, 0, 0, {}, {})
+DEF_CMD(DIV, 0x07, 0, 0, {}, {})
+DEF_CMD(SIN, 0x08, 0, 0, {}, {})
+DEF_CMD(COS, 0x09, 0, 0, {}, {})
+DEF_CMD(SQRT, 0x0A, 0, 0, {}, {})
+DEF_CMD(NEG, 0x0B, 0, 0, {}, {})
+DEF_CMD(OUT, 0x0C, 0, 0, {}, {})
+DEF_CMD(IN, 0x0D, 0, 0, {}, {})
+DEF_CMD(DUMP, 0x0E, 0, 0, {}, {})
+DEF_CMD(HLT, 0x0F, 0, 0, {}, {})
+DEF_CMD(JA, 0x10, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JAE, 0x11, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JB, 0x12, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JBE, 0x13, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JE, 0x14, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(JNE, 0x15, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(CALL, 0x16, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION)
+DEF_CMD(RETURN, 0x17, 0, 0, {}, {})
