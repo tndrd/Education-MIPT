@@ -6,7 +6,6 @@ const char* SIGNATURE = "MYASS";
 
 typedef char LABEL_TYPE;
 const int MAX_LABELS = 256;
-const int MAX_LABEL_NAME_LENGTH = 8;
 
 const int COMMAND_NUMBER_BYTES = 4;
 

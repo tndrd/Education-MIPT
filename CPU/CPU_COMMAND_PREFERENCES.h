@@ -1,3 +1,5 @@
+//NE PEREBOR
+
 #define STACK_EMPTY_CHECK\
         if (!(thou -> _rsx)){\
             printf("Failed to pop on rip %d\n", rip);\
@@ -101,7 +103,7 @@
         DO_JMP\
         }\
         else {\
-        rip+= sizeof(LABEL_TYPE) + 1;\
+        rip += sizeof(LABEL_TYPE) + 1;\
         }\
         STACK_EMPTY_CHECK\
 

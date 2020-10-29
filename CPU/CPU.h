@@ -8,6 +8,7 @@
 #include "../Stack/Stack.cpp"
 #include "config.h"
 #include "keywords.cpp"
+#include "foperations.h"
 
 struct CPU{
 

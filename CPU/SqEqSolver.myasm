@@ -1,0 +1,134 @@
+IN
+IN
+IN
+POP rcx
+POP rbx
+POP rax
+CALL quadr
+HLT
+
+
+linear:
+PUSH 0
+PUSH rbx
+JE azero
+PUSH rax
+PUSH rcx
+NEG
+DIV
+PUSH 1
+OUT
+OUT
+HLT
+
+azero:
+PUSH 0
+PUSH rcx
+JNE zroots
+PUSH 8
+OUT 
+HLT
+
+zroots:
+PUSH 0
+OUT
+HLT
+
+
+quadr:
+PUSH 0
+PUSH rax
+JE linear
+PUSH 0
+PUSH rcx
+JE czero
+CALL discr
+PUSH rdx
+PUSH 0
+JE dzero
+PUSH rdx
+PUSH 0
+JA dplus
+PUSH 0
+OUT
+HLT
+
+dplus:
+PUSH 2
+OUT
+
+PUSH 2
+PUSH rax
+MUL
+PUSH rbx
+NEG
+PUSH rdx
+SQRT
+ADD
+DIV
+OUT
+
+
+PUSH 2
+PUSH rax
+MUL
+PUSH rdx
+SQRT
+PUSH rbx
+NEG
+SUB
+DIV
+OUT
+HLT
+
+dzero:
+PUSH 1
+OUT
+PUSH 2
+PUSH rax
+MUL
+PUSH rbx
+NEG
+DIV
+OUT
+HLT
+
+czero:
+PUSH rbx
+PUSH 0
+JE bzero
+PUSH 2
+OUT
+PUSH 0
+OUT
+PUSH rax
+PUSH rbx
+NEG
+DIV
+OUT
+HLT
+
+bzero:
+PUSH 1
+OUT
+PUSH 0
+OUT
+HLT
+
+
+discr:
+# 4ac 
+PUSH 4
+PUSH rax
+MUL
+PUSH rcx
+MUL
+# b^2
+PUSH rbx
+PUSH rbx
+MUL
+DUMP
+SUB
+POP rdx
+RETURN
+end

@@ -1,0 +1,38 @@
+JMP entry
+# rax - n
+# rbx - is being multiplied on n, n-1, n-2
+
+do:
+PUSH rax
+PUSH 1
+JE finish
+
+PUSH rax
+PUSH rbx
+MUL
+POP rbx
+
+PUSH 1
+PUSH rax
+SUB
+POP rax
+CALL do
+finish:
+RETURN
+
+# ------------
+
+entry:
+IN
+POP rax
+PUSH 1
+POP rbx
+CALL do
+PUSH rbx
+OUT
+HLT
+
+
+
+
+

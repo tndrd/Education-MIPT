@@ -1,20 +1,29 @@
 #include "assembler.h"
 
 // Add toomucharguments check
-// Add comments
 
 int CheckLabel(char* command){
     char* label_end = strchr(command, ':');
     if (label_end == 0) return 0;
-    *label_end = '\0';
+    //printf("%s\n", command);
     return 1;
 }
 
 
-int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList, const char* assemblyList_name, char** label_names, int* label_arr, int* nlabels_ptr, int number_of_lines){
+int CompareWithLabel(char* str, char* label_name){
+    int nchar = 0;
+    while (str[nchar] != '\0'){
+        if (str[nchar] != label_name[nchar]) return 0;
+        nchar++;
+    }
+    if (label_name[nchar] == ':') return 1;
+    else return 0;
+}
+
+int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, int writeLabels, const char* assemblyList_name, Label* labels, int* nlabels_ptr, int number_of_lines){
     
     assert(lines);
-    assert(beginptr);
+    assert(begin);
     assert(endptr);
     assert(assemblyList_name);
 
@@ -24,7 +33,7 @@ int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList
 
 
     #define NECESSARY_PLUS\
-        if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + ((*(command_start_ptr) & 0x80) >> 7))) && strcmp(arg_value, "+")){\
+        if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + ((*(command_start_ptr) & 0x80) >> 7))) && strcmp(command, "+")){\
             status = 0;\
             printf("Wrong syntax on line %d, expected \"+\"\n", nline + 1);\
         }
@@ -37,9 +46,9 @@ int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList
             int narg = 0;                                                                                                                     \
             int toRam = 0;\
             for (; narg < max_arg; narg++){                                                                                                   \
-                sscanf(lines[nline].pointer + line_offset, " %s%n", arg_value, &relative_offset);                                             \
+                sscanf(lines[nline].pointer + line_offset, " %s%n", command, &relative_offset);                                             \
                 line_offset += relative_offset;                                                                                               \
-                if (!strcmp(arg_value, "")){                                                                                                  \
+                if (!strcmp(command, "")){                                                                                                  \
                     if (narg < min_arg) {                                                                                                     \
                     printf("Line %d: not enough arguments for command \"%s\" (given %d, expected %d at least)\n", nline+1, #name, narg, min_arg); \
                     status = 0;                                                                                                               \
@@ -47,7 +56,7 @@ int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList
                     break;                                                                                                                    \
                 }                                                                                                                             \
                 NECESSARY_PLUS                                                                                                                \
-                if (!ASSEMBLE_KEYWORD(&arg_value, command_start_ptr, &rip, narg, &status, nline)){                                                   \
+                if (!ASSEMBLE_KEYWORD(&command, command_start_ptr, &rip, narg, &status, nline)){                                                   \
                     NON_KEYWORD_PROCESSING_INSTRUCTION\
                 }                                                                                                                             \
             }                                                                                                                                 \
@@ -60,55 +69,43 @@ int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList
             }                                                                                                                                 \
         }
     
+    
     int status = 1;
-    char* codeptr = (char*)calloc(1,MINIMAL_FILESIZE);
-    char* rip = codeptr;
+    char* rip = begin;
     char* command_start_ptr = rip;
     int argtype = 0;
-    
     if (number_of_lines < 1){
         printf("Error: empty file\n");
         return 0;
     }
-    
+    printf("this can break\n");
+    fflush(stdout);
     char* command = (char*)calloc(1, COMMAND_LENGTH);
+    printf("not broken\n");
+    fflush(stdout);
     int line_offset = 0;
     int relative_offset = 0;
-    char* arg_value = (char*)calloc(1, COMMAND_LENGTH);
+
     FILE* fp = nullptr;
-    char* label_name = (char*)calloc(MAX_LABEL_NAME_LENGTH, sizeof(char));
+    //char* label_name = (char*)calloc(128, sizeof(char));
     int label_length = 0;
     int ADD_LABEL = 1;
-
     if (writeAssemblyList){
         fp = fopen(assemblyList_name, "w");
         assert(fp);
         fprintf(fp, "RIP    |   CODE    |   COMMAND\n");
     }
-
+    
     for(int nline = 0; nline < number_of_lines; nline++){
         sscanf(lines[nline].pointer," %s%n", command, &line_offset);
-        
         if(!line_offset || !strcmp(command, "#")) continue;
         #include "ASSEMBLER_COMMAND_PREFERENCES.h"
         #include "commands.h"    
-        else if (CheckLabel(command)){
-            sscanf(command, "%s:", label_name);
-            for (int nlabel = 0; nlabel < *nlabels_ptr; nlabel++){
-                if (!strcmp(label_names[nlabel], label_name)){
-                    if (label_arr[nlabel] != rip - codeptr){
-                        printf("Error: redefinition of label %s on line %d\n", label_name, nline+1);
-                        status = 0;
-                    }
-                    else ADD_LABEL = 0;
-                }
+        else if (CheckLabel(lines[nline].pointer)){
+            if (writeLabels){
+                (labels[*nlabels_ptr]).name = lines[nline].pointer;
+                (labels[(*(nlabels_ptr))++]).value = rip - begin;
             }
-            if (ADD_LABEL){
-                label_names[*nlabels_ptr] = (char*)calloc(MAX_LABEL_NAME_LENGTH,1);
-                strcpy(label_names[*nlabels_ptr], label_name);
-                label_arr[(*(nlabels_ptr))++] = rip - codeptr;
-            }
-            ADD_LABEL = 1;
         }
         else{
             status = 0;
@@ -124,13 +121,12 @@ int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList
         fclose(fp);
     } 
     if (!status) return 0;
-    *beginptr = codeptr;
     *endptr = rip;
     
     return 1;
 }
 
-void WriteCode(const char* name, char* begin, char* end, int* labels, int nlabels){
+void WriteCode(const char* name, char* begin, char* end, Label* labels, int nlabels){
     FILE* fp = fopen(name, "w");
     assert(fp);
     assert(begin);
@@ -140,7 +136,9 @@ void WriteCode(const char* name, char* begin, char* end, int* labels, int nlabel
     fprintf(fp, "%c", VERSION_BASE + 48);
     fprintf(fp, "%c", VERSION_SUB + 48);
     fprintf(fp, "%c", nlabels);
-    for (int i = 0; i < nlabels * sizeof(int) / sizeof(char); i++) fprintf(fp, "%c", *((char*)labels + i));
+    for (int nlabel = 0; nlabel < nlabels; nlabel++){
+        for (int nbyte = 0; nbyte < sizeof(int)/sizeof(char); nbyte++) fprintf(fp, "%c", *((char*)(&(labels[nlabel].value)) + nbyte));
+    }
     for (int i = 0; i < end - begin; i++) fputc(begin[i], fp);
     fclose(fp);
 }
@@ -170,19 +168,18 @@ int main(int argc, char* argv[]){
 
     int number_of_lines = 0;
     MyStr* lines =  GetLines(buffer, &number_of_lines);   
-    char* begin = nullptr;
+    char* begin = (char*)calloc(1, MINIMAL_FILESIZE);
     char* end = nullptr;
-    int* label_arr = (int*)calloc(MAX_LABELS,sizeof(int));
-    char** label_names = (char**)calloc(MAX_LABELS, sizeof(char*));
+    Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));
     int nlabels = 0;
-    for (int i = 0; i < MAX_LABELS; i++) label_arr[i] = -1;
     
-    if(!Assemble(lines, &begin, &end, 0, "empty", label_names, label_arr, &nlabels, number_of_lines)){
+    if(!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
         printf("Assembly failed\n");
         exit(1);
     }
 
-    Assemble(lines, &begin, &end, write_asm_list, list_name, label_names, label_arr, &nlabels, number_of_lines);
-    for(int i = 0; i < nlabels; i++) printf("label #%d: %s on rip %d\n",i ,label_names[i], label_arr[i]);
-    WriteCode(out_name, begin, end, label_arr, nlabels);
+    Assemble(lines, begin, &end, 0/*write_asm_list*/, 0, list_name, labels, &nlabels, number_of_lines);
+    for(int i = 0; i < nlabels; i++) printf("label #%d: %s on rip %d\n",i ,labels[i].name, labels[i].value);
+    
+    //WriteCode(out_name, begin, end, labels, nlabels);
 }
