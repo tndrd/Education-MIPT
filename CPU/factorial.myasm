@@ -1,6 +1,6 @@
 JMP entry
 # rax - n
-# rbx - is being multiplied on n, n-1, n-2
+# rbx - is being multiplied on n, n-1, n-2...
 
 do:
 PUSH rax
@@ -25,6 +25,11 @@ RETURN
 entry:
 IN
 POP rax
+
+PUSH rax
+PUSH 1
+JB zero
+
 PUSH 1
 POP rbx
 CALL do
@@ -32,6 +37,10 @@ PUSH rbx
 OUT
 HLT
 
+zero:
+PUSH 1
+OUT
+HLT
 
 
 

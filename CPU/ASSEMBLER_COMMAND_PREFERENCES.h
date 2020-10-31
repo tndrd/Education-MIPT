@@ -17,7 +17,6 @@
     *(command_start_ptr) += 0x20;\
 
 #define JMP_NON_KEYWORD_PROCESSING_INSTRUCTION\
-    *(command_start_ptr) += 0x80;\
     for (int i = 0; i < *nlabels_ptr; i++){\
         if (CompareWithLabel(command, (labels[i]).name)){\
             *((LABEL_TYPE*)rip) = i;\

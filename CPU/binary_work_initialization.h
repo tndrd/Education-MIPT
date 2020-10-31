@@ -2,7 +2,7 @@
 const int SIGNATURE_LENGTH = strlen(SIGNATURE);
 const int HEADER_LENGTH = SIGNATURE_LENGTH + 2;
 
-if (filesize - 1 < HEADER_LENGTH){
+if (FILESIZE - 1 < HEADER_LENGTH){
     printf("Error: file too small to be assembled code");
     return 5;
 }
@@ -28,4 +28,4 @@ printf("\nVersion %d.%d\n", buffer[HEADER_LENGTH-2] - 48, buffer[HEADER_LENGTH-1
 fflush(stdout);
 
 char nlabels = buffer[HEADER_LENGTH];
-rip = HEADER_LENGTH + nlabels*sizeof(int) + 1;
+RIP = HEADER_LENGTH + nlabels*sizeof(int) + 1;

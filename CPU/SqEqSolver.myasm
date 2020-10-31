@@ -12,7 +12,7 @@ linear:
 PUSH 0
 PUSH rbx
 JE azero
-PUSH rax
+PUSH rbx
 PUSH rcx
 NEG
 DIV

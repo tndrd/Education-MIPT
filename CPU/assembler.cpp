@@ -38,7 +38,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
             printf("Wrong syntax on line %d, expected \"+\"\n", nline + 1);\
         }
 
-    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, NON_KEYWORD_PROCESSING_INSTRUCTION)                                                                             \
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, NON_KEYWORD_PROCESSING_INSTRUCTION, dai)                                                                             \
         else if (!strcmp(command, #name)){                                                                                                    \
             *rip = num & 0xff;                                                                                                                       \
             command_start_ptr = rip;                                                                                                          \
@@ -87,7 +87,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
     int relative_offset = 0;
 
     FILE* fp = nullptr;
-    //char* label_name = (char*)calloc(128, sizeof(char));
+    char* label_name = (char*)calloc(128, sizeof(char));
     int label_length = 0;
     int ADD_LABEL = 1;
     if (writeAssemblyList){
@@ -115,7 +115,10 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
         relative_offset = 0;
     }
     #undef DEF_CMD
-    
+    #undef RAM_BIT
+    #undef CONST_BIT
+    #undef REGISTER_BIT
+
     if (writeAssemblyList){
         assert(fp);
         fclose(fp);
@@ -178,8 +181,8 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
-    Assemble(lines, begin, &end, 0/*write_asm_list*/, 0, list_name, labels, &nlabels, number_of_lines);
+    Assemble(lines, begin, &end, write_asm_list, 0, list_name, labels, &nlabels, number_of_lines);
     for(int i = 0; i < nlabels; i++) printf("label #%d: %s on rip %d\n",i ,labels[i].name, labels[i].value);
     
-    //WriteCode(out_name, begin, end, labels, nlabels);
+    WriteCode(out_name, begin, end, labels, nlabels);
 }

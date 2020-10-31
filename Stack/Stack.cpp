@@ -229,7 +229,7 @@ StackElement StackPop(Stack* thou, int* status_ptr){
         ResizeDown(thou);
 
     StackElement last = thou -> data [thou -> stack_size - 1];
-    if (isPOISON(last)) LAST_WORDS(thou, DATA_CORRUPTED_CONTAINS_POISON);
+    //if (isPOISON(last)) LAST_WORDS(thou, DATA_CORRUPTED_CONTAINS_POISON);
     thou -> data [thou -> stack_size - 1] = POISON;
     (thou -> stack_size)--;
 

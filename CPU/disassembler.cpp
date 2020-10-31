@@ -11,45 +11,43 @@
 
 int Disassemble(char* filename, char* out){
     
-    long int filesize = 0;
-    char* buffer = ReadFile(filename, &filesize);
-    int rip = 0;
+    long int FILESIZE = 0;
+    char* buffer = ReadFile(filename, &FILESIZE);
+    int RIP = 0;
     assert(buffer);
+    double CONST = 0;
+    int offset = 1;
 
     #include "binary_work_initialization.h"
+    
     FILE* fp = fopen(out, "w");
     assert(fp);
     
-    #define CASE_CBITS(cbits, name)\
-        case cbits: CBITS_ ## cbits ## _ ## name\
-                    break;
+    #define RAM_BIT (buffer[RIP] & 0x80)
+    #define REGISTER_BIT (buffer[RIP] & 0x40)
+    #define CONST_BIT (buffer[RIP] & 0x20)
 
-    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, nkw_pi)                \
-        case (num):                                                                      \
-            switch((buffer[rip] & 0xE0) >> 5){                                            \
-                CASE_CBITS(0, name)\
-                CASE_CBITS(1, name)\
-                CASE_CBITS(2, name)\
-                CASE_CBITS(3, name)\
-                CASE_CBITS(4, name)\
-                CASE_CBITS(5, name)\
-                CASE_CBITS(6, name)\
-                CASE_CBITS(7, name)\
-            }\
-            break;                                                                       
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, nkw_pi, DISASSEMBLE_INSTRUCTION)                \
+            case (num):\
+                fprintf(fp, "%s ", #name);\
+                DISASSEMBLE_INSTRUCTION\
+                fprintf(fp, "\n");\
+                RIP += offset;\
+                break;\
 
-    while(rip < filesize){
+    while(RIP < FILESIZE){
         for (int i = 0; i < nlabels; i++){
-            if ((rip - nlabels*sizeof(int) - HEADER_LENGTH - 1) == *((int*)(buffer + HEADER_LENGTH + 1 + i*sizeof(int)))){
-                fprintf(fp, "LABEL_%d:\n", i);
+            if ((RIP - nlabels*sizeof(int) - HEADER_LENGTH - 1) == *((int*)(buffer + HEADER_LENGTH + 1 + i*sizeof(int)))){
+                fprintf(fp, "\nLABEL_%d:\n", i);
             }
         }
-        switch(buffer[rip] & 0x1f){
-        #include "DISASSEMBLER_COMMAND_PREFERENCES.h"
+
+        switch(buffer[RIP] & 0x1f){
         #include "commands.h"
-        default: printf("\n Error: code corrupted, unknown command code: %X\n", buffer[rip] & 0xff);
+        default: printf("\n Error: code corrupted, unknown command code at RIP %d: %X\n", RIP,  buffer[RIP] & 0xff);
                 return 1;
-        }  
+        }
+        offset = 1;  
     }
     #undef DEF_CMD
     #undef CASE
@@ -60,7 +58,7 @@ int Disassemble(char* filename, char* out){
 
 
 int main(int argc, char* argv[]){
-
+    
     switch(argc){
 
         case 3:  Disassemble(argv[1], argv[2]);
