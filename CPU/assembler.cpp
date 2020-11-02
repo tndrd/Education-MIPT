@@ -5,7 +5,6 @@
 int CheckLabel(char* command){
     char* label_end = strchr(command, ':');
     if (label_end == 0) return 0;
-    //printf("%s\n", command);
     return 1;
 }
 
@@ -20,6 +19,40 @@ int CompareWithLabel(char* str, char* label_name){
     else return 0;
 }
 
+FILE* StartListing(const char* assemblyList_name){
+    FILE* Listing_ptr = fopen(assemblyList_name, "w");
+    assert(Listing_ptr);
+    fprintf(Listing_ptr, "RIP    |   CODE    |   COMMAND\n");
+    return Listing_ptr;
+}
+
+
+void WriteListingLine(FILE* Listing_ptr, char* rip, char* command_start_ptr, char* command){
+    assert(Listing_ptr);                                                                                                                   \
+    fprintf(Listing_ptr, "%p    |    ", command_start_ptr);                                                                                \
+    for (int i = 0; i < rip - command_start_ptr; i++) fprintf(Listing_ptr, "%X ", command_start_ptr[i] & 0xff);                            \
+    fprintf(Listing_ptr,"   |    %s\n", command);
+}
+
+void WriteLabel(Label* labels, char* label_name, int value, int* nlabels_ptr){
+    (labels[*nlabels_ptr]).name = label_name;
+    (labels[(*(nlabels_ptr))++]).value = value;
+}
+
+int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_ptr, int narg, int* status_ptr, int nline){
+   
+    #define KEYWORD(name, keyword_code, ASSEMBLING_INSTR, DISASSEMBLING_INSTR) else if(!strcmp(*arg_value_ptr, #name)) {\
+        ASSEMBLING_INSTR\
+    }
+    if(0) return 228; 
+    #include "keywords.h"
+    #undef KEYWORD
+    else return 0;
+    return 1;
+}
+
+
+
 int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, int writeLabels, const char* assemblyList_name, Label* labels, int* nlabels_ptr, int number_of_lines){
     
     assert(lines);
@@ -31,27 +64,24 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
     #define REGISTER_BIT (*(command_start_ptr) & 0x40)
     #define CONST_BIT (*(command_start_ptr) & 0x20)
 
-
     #define NECESSARY_PLUS\
-        if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + ((*(command_start_ptr) & 0x80) >> 7))) && strcmp(command, "+")){\
+        if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + (RAM_BIT >> 7))) && strcmp(command, "+")){\
             status = 0;\
             printf("Wrong syntax on line %d, expected \"+\"\n", nline + 1);\
         }
 
     #define DEF_CMD(name, num, max_arg, min_arg, arg_check, NON_KEYWORD_PROCESSING_INSTRUCTION, dai)                                                                             \
         else if (!strcmp(command, #name)){                                                                                                    \
-            *rip = num & 0xff;                                                                                                                       \
-            command_start_ptr = rip;                                                                                                          \
-            rip++;                                                                                                                            \
-            int narg = 0;                                                                                                                     \
-            int toRam = 0;\
-            for (; narg < max_arg; narg++){                                                                                                   \
+            *rip = num;                                                                                                                       \
+            command_start_ptr = rip++;                                                                                                          \
+            for (int narg = 0; narg < max_arg; narg++){                                                                                                   \
                 sscanf(lines[nline].pointer + line_offset, " %s%n", command, &relative_offset);                                             \
                 line_offset += relative_offset;                                                                                               \
                 if (!strcmp(command, "")){                                                                                                  \
                     if (narg < min_arg) {                                                                                                     \
-                    printf("Line %d: not enough arguments for command \"%s\" (given %d, expected %d at least)\n", nline+1, #name, narg, min_arg); \
-                    status = 0;                                                                                                               \
+                        printf("Line %d: not enough arguments for command \"%s\" "\
+                        "(given %d, expected %d at least)\n", nline+1, #name, narg, min_arg); \
+                        status = 0;                                                                                                               \
                     }                                                                                                                         \
                     break;                                                                                                                    \
                 }                                                                                                                             \
@@ -62,50 +92,28 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
             }                                                                                                                                 \
             arg_check\
             if (status && writeAssemblyList) {                                                                                                \
-                assert(fp);                                                                                                                   \
-                fprintf(fp, "%p    |    ", command_start_ptr);                                                                                \
-                for (int i = 0; i < rip - command_start_ptr; i++) fprintf(fp, "%X ", command_start_ptr[i] & 0xff);                            \
-                fprintf(fp,"   |    %s\n", lines[nline].pointer);                                                                             \
+                WriteListingLine(Listing_ptr, rip, command_start_ptr, lines[nline].pointer);\
             }                                                                                                                                 \
         }
-    
     
     int status = 1;
     char* rip = begin;
     char* command_start_ptr = rip;
-    int argtype = 0;
-    if (number_of_lines < 1){
-        printf("Error: empty file\n");
-        return 0;
-    }
-    printf("this can break\n");
-    fflush(stdout);
-    char* command = (char*)calloc(1, COMMAND_LENGTH);
-    printf("not broken\n");
-    fflush(stdout);
+    char* command_buffer = (char*)calloc(1, COMMAND_LENGTH); 
+    char* command = command_buffer;
     int line_offset = 0;
     int relative_offset = 0;
-
-    FILE* fp = nullptr;
-    char* label_name = (char*)calloc(128, sizeof(char));
-    int label_length = 0;
-    int ADD_LABEL = 1;
-    if (writeAssemblyList){
-        fp = fopen(assemblyList_name, "w");
-        assert(fp);
-        fprintf(fp, "RIP    |   CODE    |   COMMAND\n");
-    }
+    FILE* Listing_ptr = nullptr;
+    
+    if (writeAssemblyList)
+        Listing_ptr = StartListing(assemblyList_name);
     
     for(int nline = 0; nline < number_of_lines; nline++){
         sscanf(lines[nline].pointer," %s%n", command, &line_offset);
-        if(!line_offset || !strcmp(command, "#")) continue;
-        #include "ASSEMBLER_COMMAND_PREFERENCES.h"
+        if(!strcmp(command, "#")) continue;
         #include "commands.h"    
         else if (CheckLabel(lines[nline].pointer)){
-            if (writeLabels){
-                (labels[*nlabels_ptr]).name = lines[nline].pointer;
-                (labels[(*(nlabels_ptr))++]).value = rip - begin;
-            }
+            if (writeLabels) WriteLabel(labels, lines[nline].pointer, rip - begin, nlabels_ptr);
         }
         else{
             status = 0;
@@ -113,6 +121,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
         }
         line_offset = 0;
         relative_offset = 0;
+        command = command_buffer;
     }
     #undef DEF_CMD
     #undef RAM_BIT
@@ -120,8 +129,8 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
     #undef REGISTER_BIT
 
     if (writeAssemblyList){
-        assert(fp);
-        fclose(fp);
+        assert(Listing_ptr);
+        fclose(Listing_ptr);
     } 
     if (!status) return 0;
     *endptr = rip;
@@ -171,6 +180,12 @@ int main(int argc, char* argv[]){
 
     int number_of_lines = 0;
     MyStr* lines =  GetLines(buffer, &number_of_lines);   
+    
+    if (number_of_lines < 1){
+        printf("Error: empty file\n");
+        return -5;
+    }
+    
     char* begin = (char*)calloc(1, MINIMAL_FILESIZE);
     char* end = nullptr;
     Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));

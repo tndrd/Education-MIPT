@@ -1,172 +1,202 @@
+//#########################################################################
+//-----------------------------CPU-----------------------------------------
 
-    #define STATUS_CHECK(error)\
-            if (!(thou -> _rsx)){\
-            printf(error, RIP);\
-            return 9;\
+#define STATUS_CHECK(error)\
+        if (!(thou -> _rsx)){\
+        printf(error, RIP);\
+        return 9;\
+    }
+
+#define STACK_EMPTY_CHECK STATUS_CHECK("Failed to pop on RIP %d\n")
+#define STACK_OVERFLOW_CHECK STATUS_CHECK("Failed to push on RIP %d\n")
+    
+//-------------------------------------------------------------------------
+
+#define STACK_POP(destination)\
+        destination StackPop(CPU_Stack_ptr, &(CPU_Status));\
+        STACK_EMPTY_CHECK
+
+#define STACK_PUSH(value)\
+        CPU_Status = StackPush(CPU_Stack_ptr, value);\
+        STACK_OVERFLOW_CHECK 
+
+#define POPPED StackPop(CPU_Stack_ptr, &(CPU_Status))
+#define POP_TWO(sign) POPPED sign POPPED
+
+#define DO_PUSH\
+        if (RAM_BIT){\
+            if (REGISTER_BIT){\
+                STACK_PUSH(CPU_RAM[(int)(*REGISTER_ADDR + CONST)])\
+            }\
+            else{\
+                STACK_PUSH(CPU_RAM[(int)CONST])\
+            }\
+        }\
+        else{\
+            if (REGISTER_BIT){\
+                STACK_PUSH(*REGISTER_ADDR + CONST)\
+            }\
+            else{\
+                STACK_PUSH(CONST)\
+            }\
         }
 
-    #define STACK_EMPTY_CHECK STATUS_CHECK("Failed to pop on RIP %d\n")
-    #define STACK_OVERFLOW_CHECK STATUS_CHECK("Failed to push on RIP %d\n")
-        
-//-------------------------------------------------------------------------
-
-    #define STACK_POP(destination)\
-            destination StackPop(CPU_Stack_ptr, &(CPU_Status));\
-            STACK_EMPTY_CHECK
-    
-    #define STACK_PUSH(value)\
-            CPU_Status = StackPush(CPU_Stack_ptr, value);\
-            STACK_OVERFLOW_CHECK 
-
-    #define POPPED StackPop(CPU_Stack_ptr, &(CPU_Status))
-    #define POP_TWO(sign) POPPED sign POPPED
-
-    #define DO_PUSH\
-            if (RAM_BIT){\
-                if (REGISTER_BIT){\
-                    STACK_PUSH(CPU_RAM[(int)(*REGISTER_ADDR + CONST)])\
-                }\
-                else{\
-                    STACK_PUSH(CPU_RAM[(int)CONST])\
-                }\
-            }\
-            else{\
-                if (REGISTER_BIT){\
-                    STACK_PUSH(*REGISTER_ADDR + CONST)\
-                }\
-                else{\
-                    STACK_PUSH(CONST)\
-                }\
-            }
-
-    #define DO_POP\
-            if (RAM_BIT){\
-                if (REGISTER_BIT){\
-                    STACK_POP(CPU_RAM[(int)(*REGISTER_ADDR + CONST)] =)\
-                }\
-                else{\
-                    STACK_POP(CPU_RAM[(int)CONST] = )\
-                }\
-            }\
-            else{\
-                if (REGISTER_BIT){\
-                    STACK_POP(*REGISTER_ADDR = )\
-                }\
-                else{\
-                    STACK_POP()\
-                }\
-            }
-
-//-------------------------------------------------------------------------
-    
-    #define JUMP\
-        RIP = *((int*)(buffer + HEADER_LENGTH + 1 + (*(buffer + RIP + 1)) * sizeof(int))) + HEADER_LENGTH + nlabels * sizeof(int);\
-
-    #define DO_JMP JUMP
-    
-    #define CDTL_JMP(sign)\
-        if (POP_TWO(sign)){\
-        JUMP\
-        }\
-        else {\
-        RIP += sizeof(LABEL_TYPE);\
-        }\
-        STACK_EMPTY_CHECK\
-
-    #define DO_CALL\
-            if(!StackPush(CALLSTACK, RIP + sizeof(LABEL_TYPE))){\
-                printf("Callstack overflow on rip %d\n", RIP);\
-                return 11;\
-            }\
-            DO_JMP\
-
-    #define DO_RETURN\
-            prev_rip = RIP;\
-            RIP = StackPop(CALLSTACK, &(thou -> _rsx));\
-            if (!(CPU_Status)){\
-                printf("Critical Error: attempt to return while callstack is empty on rip %d\n", prev_rip);\
-                return 12;\
-            }\
-
-    #define DO_JA CDTL_JMP(<)
-    #define DO_JAE CDTL_JMP(<=)
-    #define DO_JB CDTL_JMP(>)
-    #define DO_JBE CDTL_JMP(>=)
-    #define DO_JE CDTL_JMP(==)
-    #define DO_JNE CDTL_JMP(!=)
- 
-//-------------------------------------------------------------------------
-
-    #define BIN_OPERATION(sign)\
-        STACK_PUSH(POP_TWO(sign))\
-        STACK_EMPTY_CHECK\
-
-    #define DO_ADD BIN_OPERATION(+)
-    #define DO_SUB BIN_OPERATION(-)
-    #define DO_MUL BIN_OPERATION(*)
-    #define DO_DIV BIN_OPERATION(/)
-
-    //---------------------------------------------------------------------
-
-    #define UN_OPERATION(func)\
-            STACK_PUSH(func(POPPED))\
-            STACK_EMPTY_CHECK\
-
-    #define DO_SIN UN_OPERATION(sin)
-    #define DO_COS UN_OPERATION(cos)
-    #define DO_SQRT UN_OPERATION(sqrt)
-    #define DO_NEG UN_OPERATION(-)
-
-//-------------------------------------------------------------------------
-
-    #define DO_IN\
-        if (!scanf("%lf", &CONST)){\
-            printf("Failed to read value from stdin at rip %d\n", RIP);\
-            return 10;\
-        }\
-        STACK_PUSH(CONST)\
-
-    #define DO_OUT\
-            printf("%lf\n", POPPED);\
-            STACK_EMPTY_CHECK\
-
-
-    #define DO_DUMP\
-            CPU_DUMP(thou, fp);\
-
-    #define DO_HLT\
-            printf("Program hult on rip %d\n", RIP);\
-            return 0;
-
-//-------------------------------------------------------------------------
-//-------------------------------------------------------------------------
-
-    #define DEFAULT_ARGUMENT_DISASSEMBLE\
+#define DO_POP\
+        if (RAM_BIT){\
             if (REGISTER_BIT){\
-                fprintf(fp, "%s ", GET_KEYWORD_NAME(buffer[RIP + offset]));\
-                offset++;\
-            }\
-            if (CONST_BIT){\
-                if (REGISTER_BIT) fprintf(fp, "+ ");\
-                fprintf(fp, "%lf ", *((double*)(buffer + RIP + offset)));\
-                offset += sizeof(double);\
-            }\
-
-    #define DEFAULT_DISASSEMBLING_INSTRUCTION\
-            if (RAM_BIT){\
-                fprintf(fp, "[ ");\
-                DEFAULT_ARGUMENT_DISASSEMBLE\
-                fprintf(fp, "]");\
+                STACK_POP(CPU_RAM[(int)(*REGISTER_ADDR + CONST)] =)\
             }\
             else{\
-                DEFAULT_ARGUMENT_DISASSEMBLE\
-            }
-
-    #define JMP_DISASSEMBLING_INSTRUCTION\
-            fprintf(fp, "LABEL_%d ", *((LABEL_TYPE*)(buffer + RIP + offset)));\
-            offset+=sizeof(LABEL_TYPE);\
+                STACK_POP(CPU_RAM[(int)CONST] = )\
+            }\
+        }\
+        else{\
+            if (REGISTER_BIT){\
+                STACK_POP(*REGISTER_ADDR = )\
+            }\
+            else{\
+                STACK_POP()\
+            }\
+        }
 
 //-------------------------------------------------------------------------
+
+#define JUMP\
+    RIP = *((int*)(buffer + HEADER_LENGTH + 1 + (*(buffer + RIP + 1)) * sizeof(int))) + HEADER_LENGTH + nlabels * sizeof(int);\
+
+#define DO_JMP JUMP
+
+#define DO_CALL\
+        if(!StackPush(CALLSTACK, RIP + sizeof(LABEL_TYPE))){\
+            printf("Callstack overflow on rip %d\n", RIP);\
+            return 11;\
+        }\
+        DO_JMP\
+
+#define DO_RETURN\
+        prev_rip = RIP;\
+        RIP = StackPop(CALLSTACK, &(thou -> _rsx));\
+        if (!(CPU_Status)){\
+            printf("Critical Error: attempt to return while callstack is empty on rip %d\n", prev_rip);\
+            return 12;\
+        }\
+
+
+#define CDTL_JMP(sign)\
+    if (POP_TWO(sign)){\
+    JUMP\
+    }\
+    else {\
+    RIP += sizeof(LABEL_TYPE);\
+    }\
+    STACK_EMPTY_CHECK\
+
+#define DO_JA CDTL_JMP(<)
+#define DO_JAE CDTL_JMP(<=)
+#define DO_JB CDTL_JMP(>)
+#define DO_JBE CDTL_JMP(>=)
+#define DO_JE CDTL_JMP(==)
+#define DO_JNE CDTL_JMP(!=)
+
+//-------------------------------------------------------------------------
+
+#define BIN_OPERATION(sign)\
+    STACK_PUSH(POP_TWO(sign))\
+    STACK_EMPTY_CHECK\
+
+#define DO_ADD BIN_OPERATION(+)
+#define DO_SUB BIN_OPERATION(-)
+#define DO_MUL BIN_OPERATION(*)
+#define DO_DIV BIN_OPERATION(/)
+
+//---------------------------------------------------------------------
+
+#define UN_OPERATION(func)\
+        STACK_PUSH(func(POPPED))\
+        STACK_EMPTY_CHECK\
+
+#define DO_SIN UN_OPERATION(sin)
+#define DO_COS UN_OPERATION(cos)
+#define DO_SQRT UN_OPERATION(sqrt)
+#define DO_NEG UN_OPERATION(-)
+
+//-------------------------------------------------------------------------
+
+#define DO_IN\
+    if (!scanf("%lf", &CONST)){\
+        printf("Failed to read value from stdin at rip %d\n", RIP);\
+        return 10;\
+    }\
+    STACK_PUSH(CONST)\
+
+#define DO_OUT\
+        printf("%lf\n", POPPED);\
+        STACK_EMPTY_CHECK\
+
+
+#define DO_DUMP\
+        CPU_DUMP(thou, fp);\
+
+#define DO_HLT\
+        printf("Program hult on rip %d\n", RIP);\
+        return 0;
+
+//#########################################################################
+//------------------DISASSEMBLER-------------------------------------------
+
+#define DEFAULT_ARGUMENT_DISASSEMBLE\
+        if (REGISTER_BIT){\
+            fprintf(fp, "r%cx ", buffer[RIP + offset]);\
+            offset++;\
+        }\
+        if (CONST_BIT){\
+            if (REGISTER_BIT) fprintf(fp, "+ ");\
+            fprintf(fp, "%lf ", *((double*)(buffer + RIP + offset)));\
+            offset += sizeof(double);\
+        }\
+
+#define DEFAULT_DISASSEMBLING_INSTRUCTION\
+        if (RAM_BIT){\
+            fprintf(fp, "[ ");\
+            DEFAULT_ARGUMENT_DISASSEMBLE\
+            fprintf(fp, "]");\
+        }\
+        else{\
+            DEFAULT_ARGUMENT_DISASSEMBLE\
+        }
+
+#define JMP_DISASSEMBLING_INSTRUCTION\
+        fprintf(fp, "LABEL_%d ", *((LABEL_TYPE*)(buffer + RIP + offset)));\
+        offset+=sizeof(LABEL_TYPE);\
+
+//#########################################################################
+//--------------------ASSEMBLER--------------------------------------------
+
+#define POP_ARGUMENTS_CHECK(nline, command)                             \
+    if (CONST_BIT != 0 && RAM_BIT == 0 || RAM_BIT != 0 && CONST_BIT == 0 && REGISTER_BIT == 0){\
+        status = 0;\
+        printf("Line %d: wrong use of \"pop\"\n", nline + 1);\
+    }
+
+#define PUSH_ARGUMENTS_CHECK(nline, command)                            \
+    if (CONST_BIT == 0 && REGISTER_BIT == 0){\
+            status = 0;\
+            printf("Line %d: wrong use of \"push\"\n", nline + 1);\
+    }
+
+#define DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION\
+    *((double*)rip) = strtod(command, &command);\
+    rip+=sizeof(double);\
+    *(command_start_ptr) += 0x20;\
+
+#define JMP_NON_KEYWORD_PROCESSING_INSTRUCTION \
+    for (int i = 0; i < *nlabels_ptr; i++){\
+        if (CompareWithLabel(command, (labels[i]).name)){\
+            *((LABEL_TYPE*)rip) = i;\
+        }\
+    }\
+    rip+=sizeof(LABEL_TYPE);\
+
 //-------------------------------------------------------------------------
 
 DEF_CMD(PUSH, 0x01, 5, 1, PUSH_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)

@@ -5,9 +5,19 @@
 #include <ctype.h>
 #include <assert.h>
 #include "config.h"
-#include "keywords.cpp"
 #include "foperations.h"
 
+char* GET_KEYWORD_NAME(char code){
+    #define KEYWORD(name, keyword_code, ain, din)\
+        case keyword_code: return #name;\
+                           break;
+    
+    switch(code){ 
+    #include "registers.h"
+    #undef KEYWORD
+    default: return nullptr;
+    }
+}
 
 int Disassemble(char* filename, char* out){
     

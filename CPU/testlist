@@ -1,108 +1,108 @@
 RIP    |   CODE    |   COMMAND
-0x55d65b3738f0    |    D    |    IN
-0x55d65b3738f1    |    D    |    IN
-0x55d65b3738f2    |    D    |    IN
-0x55d65b3738f3    |    42 63    |    POP rcx
-0x55d65b3738f5    |    42 62    |    POP rbx
-0x55d65b3738f7    |    42 61    |    POP rax
-0x55d65b3738f9    |    16 3    |    CALL quadr
-0x55d65b3738fb    |    F    |    HLT
-0x55d65b3738fc    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373905    |    41 62    |    PUSH rbx
-0x55d65b373907    |    14 1    |    JE azero
-0x55d65b373909    |    41 62    |    PUSH rbx
-0x55d65b37390b    |    41 63    |    PUSH rcx
-0x55d65b37390d    |    B    |    NEG
-0x55d65b37390e    |    7    |    DIV
-0x55d65b37390f    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
-0x55d65b373918    |    C    |    OUT
-0x55d65b373919    |    C    |    OUT
-0x55d65b37391a    |    F    |    HLT
-0x55d65b37391b    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373924    |    41 63    |    PUSH rcx
-0x55d65b373926    |    15 2    |    JNE zroots
-0x55d65b373928    |    21 0 0 0 0 0 0 20 40    |    PUSH 8
-0x55d65b373931    |    C    |    OUT 
-0x55d65b373932    |    F    |    HLT
-0x55d65b373933    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b37393c    |    C    |    OUT
-0x55d65b37393d    |    F    |    HLT
-0x55d65b37393e    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373947    |    41 61    |    PUSH rax
-0x55d65b373949    |    14 0    |    JE linear
-0x55d65b37394b    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373954    |    41 63    |    PUSH rcx
-0x55d65b373956    |    14 6    |    JE czero
-0x55d65b373958    |    16 8    |    CALL discr
-0x55d65b37395a    |    41 64    |    PUSH rdx
-0x55d65b37395c    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373965    |    14 5    |    JE dzero
-0x55d65b373967    |    41 64    |    PUSH rdx
-0x55d65b373969    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373972    |    10 4    |    JA dplus
-0x55d65b373974    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b37397d    |    C    |    OUT
-0x55d65b37397e    |    F    |    HLT
-0x55d65b37397f    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
-0x55d65b373988    |    C    |    OUT
-0x55d65b373989    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
-0x55d65b373992    |    41 61    |    PUSH rax
-0x55d65b373994    |    6    |    MUL
-0x55d65b373995    |    41 62    |    PUSH rbx
-0x55d65b373997    |    B    |    NEG
-0x55d65b373998    |    41 64    |    PUSH rdx
-0x55d65b37399a    |    A    |    SQRT
-0x55d65b37399b    |    4    |    ADD
-0x55d65b37399c    |    7    |    DIV
-0x55d65b37399d    |    C    |    OUT
-0x55d65b37399e    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
-0x55d65b3739a7    |    41 61    |    PUSH rax
-0x55d65b3739a9    |    6    |    MUL
-0x55d65b3739aa    |    41 64    |    PUSH rdx
-0x55d65b3739ac    |    A    |    SQRT
-0x55d65b3739ad    |    41 62    |    PUSH rbx
-0x55d65b3739af    |    B    |    NEG
-0x55d65b3739b0    |    5    |    SUB
-0x55d65b3739b1    |    7    |    DIV
-0x55d65b3739b2    |    C    |    OUT
-0x55d65b3739b3    |    F    |    HLT
-0x55d65b3739b4    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
-0x55d65b3739bd    |    C    |    OUT
-0x55d65b3739be    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
-0x55d65b3739c7    |    41 61    |    PUSH rax
-0x55d65b3739c9    |    6    |    MUL
-0x55d65b3739ca    |    41 62    |    PUSH rbx
-0x55d65b3739cc    |    B    |    NEG
-0x55d65b3739cd    |    7    |    DIV
-0x55d65b3739ce    |    C    |    OUT
-0x55d65b3739cf    |    F    |    HLT
-0x55d65b3739d0    |    41 62    |    PUSH rbx
-0x55d65b3739d2    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b3739db    |    14 7    |    JE bzero
-0x55d65b3739dd    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
-0x55d65b3739e6    |    C    |    OUT
-0x55d65b3739e7    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b3739f0    |    C    |    OUT
-0x55d65b3739f1    |    41 61    |    PUSH rax
-0x55d65b3739f3    |    41 62    |    PUSH rbx
-0x55d65b3739f5    |    B    |    NEG
-0x55d65b3739f6    |    7    |    DIV
-0x55d65b3739f7    |    C    |    OUT
-0x55d65b3739f8    |    F    |    HLT
-0x55d65b3739f9    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
-0x55d65b373a02    |    C    |    OUT
-0x55d65b373a03    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
-0x55d65b373a0c    |    C    |    OUT
-0x55d65b373a0d    |    F    |    HLT
-0x55d65b373a0e    |    21 0 0 0 0 0 0 10 40    |    PUSH 4
-0x55d65b373a17    |    41 61    |    PUSH rax
-0x55d65b373a19    |    6    |    MUL
-0x55d65b373a1a    |    41 63    |    PUSH rcx
-0x55d65b373a1c    |    6    |    MUL
-0x55d65b373a1d    |    41 62    |    PUSH rbx
-0x55d65b373a1f    |    41 62    |    PUSH rbx
-0x55d65b373a21    |    6    |    MUL
-0x55d65b373a22    |    E    |    DUMP
-0x55d65b373a23    |    5    |    SUB
-0x55d65b373a24    |    42 64    |    POP rdx
-0x55d65b373a26    |    17    |    RETURN
+0x55fe048998f0    |    D    |    IN
+0x55fe048998f1    |    D    |    IN
+0x55fe048998f2    |    D    |    IN
+0x55fe048998f3    |    42 63    |    POP rcx
+0x55fe048998f5    |    42 62    |    POP rbx
+0x55fe048998f7    |    42 61    |    POP rax
+0x55fe048998f9    |    16 3    |    CALL quadr
+0x55fe048998fb    |    F    |    HLT
+0x55fe048998fc    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899905    |    41 62    |    PUSH rbx
+0x55fe04899907    |    14 1    |    JE azero
+0x55fe04899909    |    41 62    |    PUSH rbx
+0x55fe0489990b    |    41 63    |    PUSH rcx
+0x55fe0489990d    |    B    |    NEG
+0x55fe0489990e    |    7    |    DIV
+0x55fe0489990f    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
+0x55fe04899918    |    C    |    OUT
+0x55fe04899919    |    C    |    OUT
+0x55fe0489991a    |    F    |    HLT
+0x55fe0489991b    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899924    |    41 63    |    PUSH rcx
+0x55fe04899926    |    15 2    |    JNE zroots
+0x55fe04899928    |    21 0 0 0 0 0 0 20 40    |    PUSH 8
+0x55fe04899931    |    C    |    OUT 
+0x55fe04899932    |    F    |    HLT
+0x55fe04899933    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe0489993c    |    C    |    OUT
+0x55fe0489993d    |    F    |    HLT
+0x55fe0489993e    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899947    |    41 61    |    PUSH rax
+0x55fe04899949    |    14 0    |    JE linear
+0x55fe0489994b    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899954    |    41 63    |    PUSH rcx
+0x55fe04899956    |    14 6    |    JE czero
+0x55fe04899958    |    16 8    |    CALL discr
+0x55fe0489995a    |    41 64    |    PUSH rdx
+0x55fe0489995c    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899965    |    14 5    |    JE dzero
+0x55fe04899967    |    41 64    |    PUSH rdx
+0x55fe04899969    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899972    |    10 4    |    JA dplus
+0x55fe04899974    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe0489997d    |    C    |    OUT
+0x55fe0489997e    |    F    |    HLT
+0x55fe0489997f    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
+0x55fe04899988    |    C    |    OUT
+0x55fe04899989    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
+0x55fe04899992    |    41 61    |    PUSH rax
+0x55fe04899994    |    6    |    MUL
+0x55fe04899995    |    41 62    |    PUSH rbx
+0x55fe04899997    |    B    |    NEG
+0x55fe04899998    |    41 64    |    PUSH rdx
+0x55fe0489999a    |    A    |    SQRT
+0x55fe0489999b    |    4    |    ADD
+0x55fe0489999c    |    7    |    DIV
+0x55fe0489999d    |    C    |    OUT
+0x55fe0489999e    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
+0x55fe048999a7    |    41 61    |    PUSH rax
+0x55fe048999a9    |    6    |    MUL
+0x55fe048999aa    |    41 64    |    PUSH rdx
+0x55fe048999ac    |    A    |    SQRT
+0x55fe048999ad    |    41 62    |    PUSH rbx
+0x55fe048999af    |    B    |    NEG
+0x55fe048999b0    |    5    |    SUB
+0x55fe048999b1    |    7    |    DIV
+0x55fe048999b2    |    C    |    OUT
+0x55fe048999b3    |    F    |    HLT
+0x55fe048999b4    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
+0x55fe048999bd    |    C    |    OUT
+0x55fe048999be    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
+0x55fe048999c7    |    41 61    |    PUSH rax
+0x55fe048999c9    |    6    |    MUL
+0x55fe048999ca    |    41 62    |    PUSH rbx
+0x55fe048999cc    |    B    |    NEG
+0x55fe048999cd    |    7    |    DIV
+0x55fe048999ce    |    C    |    OUT
+0x55fe048999cf    |    F    |    HLT
+0x55fe048999d0    |    41 62    |    PUSH rbx
+0x55fe048999d2    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe048999db    |    14 7    |    JE bzero
+0x55fe048999dd    |    21 0 0 0 0 0 0 0 40    |    PUSH 2
+0x55fe048999e6    |    C    |    OUT
+0x55fe048999e7    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe048999f0    |    C    |    OUT
+0x55fe048999f1    |    41 61    |    PUSH rax
+0x55fe048999f3    |    41 62    |    PUSH rbx
+0x55fe048999f5    |    B    |    NEG
+0x55fe048999f6    |    7    |    DIV
+0x55fe048999f7    |    C    |    OUT
+0x55fe048999f8    |    F    |    HLT
+0x55fe048999f9    |    21 0 0 0 0 0 0 F0 3F    |    PUSH 1
+0x55fe04899a02    |    C    |    OUT
+0x55fe04899a03    |    21 0 0 0 0 0 0 0 0    |    PUSH 0
+0x55fe04899a0c    |    C    |    OUT
+0x55fe04899a0d    |    F    |    HLT
+0x55fe04899a0e    |    21 0 0 0 0 0 0 10 40    |    PUSH 4
+0x55fe04899a17    |    41 61    |    PUSH rax
+0x55fe04899a19    |    6    |    MUL
+0x55fe04899a1a    |    41 63    |    PUSH rcx
+0x55fe04899a1c    |    6    |    MUL
+0x55fe04899a1d    |    41 62    |    PUSH rbx
+0x55fe04899a1f    |    41 62    |    PUSH rbx
+0x55fe04899a21    |    6    |    MUL
+0x55fe04899a22    |    E    |    DUMP
+0x55fe04899a23    |    5    |    SUB
+0x55fe04899a24    |    42 64    |    POP rdx
+0x55fe04899a26    |    17    |    RETURN

@@ -1,0 +1,12 @@
+digraph structs {
+  rankdir=HR;
+  0 [shape=record, label="  { nan | { 9 | 0 | 1 }}" ];
+1 [shape=record, label="  { 1.000000 | { 0 | 1 | 2 }}" ];
+2 [shape=record, label="  { 2.000000 | { 1 | 2 | 3 }}" ];
+3 [shape=record, label="  { 3.000000 | { 2 | 3 | 8 }}" ];
+4 [shape=record, label="  { 4.000000 | { 8 | 4 | 5 }}" ];
+5 [shape=record, label="  { 5.000000 | { 4 | 5 | 6 }}" ];
+6 [shape=record, label="  { 6.000000 | { 5 | 6 | 7 }}" ];
+7 [shape=record, label="  { 7.000000 | { 6 | 7 | 9 }}" ];
+8 [shape=record, label="  { 15.000000 | { 3 | 8 | 4 }}" ];
+}

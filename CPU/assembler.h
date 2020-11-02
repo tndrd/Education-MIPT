@@ -6,7 +6,6 @@
 #include <assert.h>
 #include "../Onegin/foperations.cpp"
 #include "config.h"
-#include "keywords.cpp"
 
 void WriteCode(const char* name, char* begin, char* end, int* labels, int nlabels);
 int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList, const char* assemblyList_name, char** label_names, int* label_arr, int* nlabels_ptr, int number_of_lines);

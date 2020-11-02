@@ -1,9 +1,5 @@
 #define REGISTER_ASSEMBLING(keyword_code)                            \
-    if (((*command_start_ptr) & 0x1F) == 0x04){\
-        *status_ptr = 0;\
-        printf("Line %d: label name cannot be a register\n", nline + 1);\
-    }\
-    else if (((*(command_start_ptr) & 0x80) >> 7) == narg){ \
+    if (((*(command_start_ptr) & 0x80) >> 7) == narg){ \
         **(rip_ptr) = keyword_code;                                  \
         *(command_start_ptr) += 0x40;             \
         *(rip_ptr) = *((char**)(rip_ptr)) + 1 ;                          \
