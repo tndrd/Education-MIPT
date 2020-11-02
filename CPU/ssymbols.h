@@ -8,7 +8,7 @@
         printf("Syntax error: unexpected \"" #value "\" on line %d\n", nline + 1);\
     }
 
-# define LEFT_BRACKET_ASSEMBLING\
+#define LEFT_BRACKET_ASSEMBLING\
     IF_UNEXPECTED(RAM_BIT != 0, [)\
     else *(command_start_ptr) += 128 ;\
     *(arg_value_ptr)+=1;
