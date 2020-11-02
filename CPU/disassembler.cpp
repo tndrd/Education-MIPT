@@ -34,6 +34,10 @@ int Disassemble(char* filename, char* out){
     #define REGISTER_BIT (buffer[RIP] & 0x40)
     #define CONST_BIT (buffer[RIP] & 0x20)
 
+    #define REGISTER(name, code, ASSEMBLING_INSTRUCTION) ;
+    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) ;
+
+
     #define DEF_CMD(name, num, max_arg, min_arg, arg_check, nkw_pi, DISASSEMBLE_INSTRUCTION)                \
             case (num):\
                 fprintf(fp, "%s ", #name);\

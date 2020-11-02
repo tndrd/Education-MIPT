@@ -6,26 +6,19 @@
 #define CPU_TRACE ;
 #endif
 
-double GET_REGISTER_VALUE(CPU* thou, char code){
-    #define KEYWORD(name, keyword_code, ain, din)\
-        case keyword_code: return thou -> name;\
-                           break;
-    switch(code){ 
-    #include "registers.h"
-    #undef KEYWORD
-    default: printf("Code corrupted on RIP %d: attempt to read from unknown register with code %X\n", RIP, code & 0xff);
-             return 0;
-    }
-
-}
-
 double* GET_REGISTER_ADRESS(CPU* thou, char code){
-    #define KEYWORD(name, keyword_code, ain, din)\
-        case keyword_code: return &(thou -> name);\
+    
+    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) ;
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, ASSEMBLING_INSTRUCTION, DISASSEMBLING_INSTRUCTION) ;
+    
+    #define REGISTER(name, code, ASSEMBLING_INSTRUCTION)\
+        case code: return &(thou -> name);\
                            break;
     switch(code){ 
-    #include "registers.h"
+    #include "commands.h"
     #undef KEYWORD
+    #undef DEF_CMD
+    #undef SSYMBOL
     default: printf("Code corrupted on RIP %d: attempt to get unknown register's adress with code %X\n", RIP, code & 0xff);
              return nullptr;
     }
@@ -62,6 +55,9 @@ int Execute(CPU* thou){
     #define RAM_BIT (buffer[RIP] & 0x80)
     #define REGISTER_BIT (buffer[RIP] & 0x40)
     #define CONST_BIT (buffer[RIP] & 0x20)
+
+    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) ;
+    #define REGISTER(name, code, ASSEMBLING_INSTRUCTION) ;
 
     #define DEF_CMD(name, num, max_arg, min_arg, arg_check, AIN, DIN)                        \
         case (num):\

@@ -169,12 +169,14 @@
             printf("Line %d: wrong use of \"push\"\n", nline + 1);\
     }
 
-#define DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION\
-    *((double*)rip) = strtod(command, &command);\
-    rip+=sizeof(double);\
-    *(command_start_ptr) += 0x20;\
+#define DEFAULT_ASSEMBLING_INSTRUCTION\
+    if (!ASSEMBLE_KEYWORD(&command, command_start_ptr, &rip, narg, &status, nline)){ \
+        *((double*)rip) = strtod(command, &command);                                 \
+        rip+=sizeof(double);                                                         \
+        *(command_start_ptr) += 0x20;                                                \
+    }
 
-#define JMP_NON_KEYWORD_PROCESSING_INSTRUCTION \
+#define JMP_ASSEMBLING_INSTRUCTION \
     for (int i = 0; i < *nlabels_ptr; i++){\
         if (CompareWithLabel(command, (labels[i]).name)){\
             *((LABEL_TYPE*)rip) = i;\
@@ -182,11 +184,67 @@
     }\
     rip+=sizeof(LABEL_TYPE);\
 
+//-----------------------REGISTERS----------------------------------------
+
+#define REGISTER_ASSEMBLING(keyword_code)                            \
+    if (((*(command_start_ptr) & 0x80) >> 7) == narg){ \
+        **(rip_ptr) = keyword_code;                                  \
+        *(command_start_ptr) += 0x40;             \
+        *(rip_ptr) = *((char**)(rip_ptr)) + 1 ;                          \
+    }                                                  \
+    else {\
+        *status_ptr = 0;\
+        printf("Syntax error: wrong register position on line %d\n", nline + 1);\
+    }\
+    *(arg_value_ptr)+=3;
+
+REGISTER(rax, 'a', REGISTER_ASSEMBLING('a'))
+REGISTER(rbx, 'b', REGISTER_ASSEMBLING('b'))
+REGISTER(rcx, 'c', REGISTER_ASSEMBLING('c'))
+REGISTER(rdx, 'd', REGISTER_ASSEMBLING('d'))
+
+//-----------------------SPECIAL_SYMBOLS-----------------------------------
+
+#define IF_UNEXPECTED(criteria, value)\
+    if (criteria){\
+        *status_ptr = 0;\
+        printf("Syntax error: unexpected \"" #value "\" on line %d\n", nline + 1);\
+    }
+
+#define LEFT_BRACKET_ASSEMBLING\
+    IF_UNEXPECTED(RAM_BIT != 0, [)\
+    else *(command_start_ptr) += 128 ;\
+    *(arg_value_ptr)+=1;
+
+
+#define PLUS_ASSEMBLING\
+    IF_UNEXPECTED(RAM_BIT == 0 && narg != 1 || RAM_BIT != 0 && narg != 2, +)\
+    else if (REGISTER_BIT == 0){\
+        *status_ptr = 0;\
+        printf("Line %d: expression's first member should be register\n", nline+1);\
+    }\
+    *arg_value_ptr += 1;
+
+#define RIGHT_BRACKET_ASSEMBLING\
+    IF_UNEXPECTED(narg != (REGISTER_BIT >> 6) + (CONST_BIT >> 5) + (REGISTER_BIT >> 6) * (CONST_BIT >> 5) + 1, ]) \
+    else if (RAM_BIT == 0){\
+        *status_ptr = 0;\
+        printf("Line %d: \"]\" without \"[\"", nline + 1);\
+    }\
+    *arg_value_ptr += 1;
+
+SSYMBOL([, LEFT_BRACKET_ASSEMBLING)
+SSYMBOL(+, PLUS_ASSEMBLING)
+SSYMBOL(], RIGHT_BRACKET_ASSEMBLING)
+
+//#########################################################################
 //-------------------------------------------------------------------------
 
-DEF_CMD(PUSH, 0x01, 5, 1, PUSH_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(POP, 0x02, 5, 0, POP_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_NON_KEYWORD_PROCESSING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JMP, 0x03, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+
+
+DEF_CMD(PUSH, 0x01, 5, 1, PUSH_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(POP, 0x02, 5, 0, POP_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JMP, 0x03, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
 DEF_CMD(ADD, 0x04, 0, 0, {}, {}, {})
 DEF_CMD(SUB, 0x05, 0, 0, {}, {}, {})
 DEF_CMD(MUL, 0x06, 0, 0, {}, {}, {})
@@ -199,11 +257,11 @@ DEF_CMD(OUT, 0x0C, 0, 0, {}, {}, {})
 DEF_CMD(IN, 0x0D, 0, 0, {}, {}, )
 DEF_CMD(DUMP, 0x0E, 0, 0, {}, {}, {})
 DEF_CMD(HLT, 0x0F, 0, 0, {}, {}, {})
-DEF_CMD(JA, 0x10, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JAE, 0x11, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JB, 0x12, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JBE, 0x13, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JE, 0x14, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JNE, 0x15, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(CALL, 0x16, 1, 1, {}, JMP_NON_KEYWORD_PROCESSING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JA, 0x10, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JAE, 0x11, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JB, 0x12, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JBE, 0x13, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JE, 0x14, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(JNE, 0x15, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(CALL, 0x16, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
 DEF_CMD(RETURN, 0x17, 0, 0, {}, {}, DEFAULT_DISASSEMBLING_INSTRUCTION)

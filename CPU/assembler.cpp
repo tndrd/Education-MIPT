@@ -39,15 +39,22 @@ void WriteLabel(Label* labels, char* label_name, int value, int* nlabels_ptr){
 
 int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_ptr, int narg, int* status_ptr, int nline){
 
-    #define KEYWORD(name, keyword_code, ASSEMBLING_INSTR, DISASSEMBLING_INSTR)\
-    else if(!strcmp(*arg_value_ptr, #name)) {\
-        ASSEMBLING_INSTR\
-    }
-
+    #define KEYWORD(name, keyword_code, ASSEMBLING_INSTR)\
+        else if(!strcmp(*arg_value_ptr, #name)) {\
+            ASSEMBLING_INSTR\
+        }
+    
+    #define REGISTER(name, code, ASSEMBLING_INSTRUCTION) KEYWORD(name, code, ASSEMBLING_INSTRUCTION)
+    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) KEYWORD(name, 0, ASSEMBLING_INSTRUCTION)
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, ASSEMBLING_INSTRUCTION, DISASSEMBLING_INSTRUCTION) else if (0) return 228;
+    
     if(0) return 228; 
-    #include "keywords.h"
-    #undef KEYWORD
+    #include "commands.h"
     else return 0;
+    #undef KEYWORD
+    #undef DEF_CMD
+    #undef REGISTER
+    #undef SSYMBOL
     return 1;
 }
 
@@ -65,7 +72,10 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
             printf("Wrong syntax on line %d, expected \"+\"\n", nline + 1);\
         }
 
-    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, NON_KEYWORD_PROCESSING_INSTRUCTION, dai)                                                                             \
+    #define REGISTER(name, code, ASSEMBLING_INSTRUCTION) else if (0) return 228;
+    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) else if (0) return 228;
+
+    #define DEF_CMD(name, num, max_arg, min_arg, arg_check, ASSEMBLING_INSTRUCTION, DISASSEMBLING_INSTRUCTION)                                                                             \
         else if (!strcmp(command, #name)){                                                                                                    \
             *rip = num;                                                                                                                       \
             command_start_ptr = rip++;                                                                                                          \
@@ -81,9 +91,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
                     break;                                                                                                                    \
                 }                                                                                                                             \
                 NECESSARY_PLUS                                                                                                                \
-                if (!ASSEMBLE_KEYWORD(&command, command_start_ptr, &rip, narg, &status, nline)){                                                   \
-                    NON_KEYWORD_PROCESSING_INSTRUCTION\
-                }                                                                                                                             \
+                ASSEMBLING_INSTRUCTION                                                                                                                             \
             }                                                                                                                                 \
             arg_check\
             if (status && writeAssemblyList) {                                                                                                \
