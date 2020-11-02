@@ -1,13 +1,10 @@
 #include "assembler.h"
 
-// Add toomucharguments check
-
 int CheckLabel(char* command){
     char* label_end = strchr(command, ':');
     if (label_end == 0) return 0;
     return 1;
 }
-
 
 int CompareWithLabel(char* str, char* label_name){
     int nchar = 0;
@@ -39,8 +36,9 @@ void WriteLabel(Label* labels, char* label_name, int value, int* nlabels_ptr){
     (labels[(*(nlabels_ptr))++]).value = value;
 }
 
+
 int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_ptr, int narg, int* status_ptr, int nline){
-    
+
     #define KEYWORD(name, keyword_code, ASSEMBLING_INSTR, DISASSEMBLING_INSTR)\
     else if(!strcmp(*arg_value_ptr, #name)) {\
         ASSEMBLING_INSTR\
@@ -53,16 +51,13 @@ int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_p
     return 1;
 }
 
+
 int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, int writeLabels, const char* assemblyList_name, Label* labels, int* nlabels_ptr, int number_of_lines){
     
     assert(lines);
     assert(begin);
     assert(endptr);
     assert(assemblyList_name);
-
-    #define RAM_BIT (*(command_start_ptr) & 0x80)
-    #define REGISTER_BIT (*(command_start_ptr) & 0x40)
-    #define CONST_BIT (*(command_start_ptr) & 0x20)
 
     #define NECESSARY_PLUS\
         if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + (RAM_BIT >> 7))) && strcmp(command, "+")){\
@@ -175,7 +170,7 @@ int main(int argc, char* argv[]){
                   break;
 
         default:  printf("Wrong arguments\n");
-                  exit(-1);
+                  return (-1);
     }
 
     int number_of_lines = 0;
@@ -193,7 +188,7 @@ int main(int argc, char* argv[]){
     
     if(!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
         printf("Assembly failed\n");
-        exit(1);
+        return (1);
     }
 
     Assemble(lines, begin, &end, write_asm_list, 0, list_name, labels, &nlabels, number_of_lines);

@@ -7,6 +7,10 @@
 #include "../Onegin/foperations.cpp"
 #include "config.h"
 
+#define RAM_BIT (*(command_start_ptr) & 0x80)
+#define REGISTER_BIT (*(command_start_ptr) & 0x40)
+#define CONST_BIT (*(command_start_ptr) & 0x20)
+
 void WriteCode(const char* name, char* begin, char* end, int* labels, int nlabels);
 int Assemble(MyStr* lines, char** beginptr, char** endptr, int writeAssemblyList, const char* assemblyList_name, char** label_names, int* label_arr, int* nlabels_ptr, int number_of_lines);
 void AddLabel(char* command, char* label_name, int* nlabels_ptr, char** label_names, int* label_arr, int* ADD_LABEL_ptr, int* status_ptr, char* rip, char* codeptr, int nline);

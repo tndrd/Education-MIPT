@@ -1,7 +1,3 @@
-#define RAM_BIT (*(command_start_ptr) & 0x80)
-#define REGISTER_BIT (*(command_start_ptr) & 0x40)
-#define CONST_BIT (*(command_start_ptr) & 0x20)
-
 #define IF_UNEXPECTED(criteria, value)\
     if (criteria){\
         *status_ptr = 0;\

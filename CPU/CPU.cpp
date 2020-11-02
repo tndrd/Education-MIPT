@@ -49,7 +49,8 @@ int Execute(CPU* thou){
     CPU_Status = 1;
     int prev_rip = 0;
     double CONST = 0;
-    double* REGISTER_ADDR = nullptr;
+    double NO_REGISTER = 0;
+    double* REGISTER_ADDR = &NO_REGISTER;
     int offset = 1;
 
     #include "binary_work_initialization.h"
@@ -58,12 +59,6 @@ int Execute(CPU* thou){
     FILE* fp = fopen("CPU.log", "w");
     assert(fp);
 
-    #define CASE_CBITS(cbits, name)\
-        case cbits: {\
-                    CBITS_ ## cbits ## _ ## name\
-                    break;\
-                    }
-    
     #define RAM_BIT (buffer[RIP] & 0x80)
     #define REGISTER_BIT (buffer[RIP] & 0x40)
     #define CONST_BIT (buffer[RIP] & 0x20)
@@ -90,7 +85,7 @@ int Execute(CPU* thou){
         }
         CPU_TRACE
         CONST = 0;
-        REGISTER_ADDR = nullptr;
+        REGISTER_ADDR = &NO_REGISTER;
         RIP+=offset;
         offset = 1;  
     }

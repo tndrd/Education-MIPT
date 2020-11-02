@@ -7,15 +7,12 @@
 #include "config.h"
 #include "foperations.h"
 
-char* GET_KEYWORD_NAME(char code){
-    #define KEYWORD(name, keyword_code, ain, din)\
-        case keyword_code: return #name;\
-                           break;
+void PrintLabelIfNeed(FILE* fp, char* buffer, int RIP, int nlabels, int HEADER_LENGTH){
     
-    switch(code){ 
-    #include "registers.h"
-    #undef KEYWORD
-    default: return nullptr;
+    for (int i = 0; i < nlabels; i++){
+        if ((RIP - nlabels*sizeof(int) - HEADER_LENGTH - 1) == *((int*)(buffer + HEADER_LENGTH + 1 + i*sizeof(int)))){
+            fprintf(fp, "\nLABEL_%d:\n", i);
+        }
     }
 }
 
@@ -46,12 +43,7 @@ int Disassemble(char* filename, char* out){
                 break;\
 
     while(RIP < FILESIZE){
-        for (int i = 0; i < nlabels; i++){
-            if ((RIP - nlabels*sizeof(int) - HEADER_LENGTH - 1) == *((int*)(buffer + HEADER_LENGTH + 1 + i*sizeof(int)))){
-                fprintf(fp, "\nLABEL_%d:\n", i);
-            }
-        }
-
+        PrintLabelIfNeed(fp, buffer, RIP, nlabels, HEADER_LENGTH);
         switch(buffer[RIP] & 0x1f){
         #include "commands.h"
         default: printf("\n Error: code corrupted, unknown command code at RIP %d: %X\n", RIP,  buffer[RIP] & 0xff);
@@ -60,7 +52,6 @@ int Disassemble(char* filename, char* out){
         offset = 1;  
     }
     #undef DEF_CMD
-    #undef CASE
     assert(fp);
     fclose(fp);
     return 0;
@@ -71,11 +62,11 @@ int main(int argc, char* argv[]){
     
     switch(argc){
 
-        case 3:  Disassemble(argv[1], argv[2]);
+        case 3:  return Disassemble(argv[1], argv[2]);
                  break;
 
         default: printf("Wrong arguments\n");
-                 exit(-1);
+                 return (-1);
 
     }
     return 0;

@@ -25,30 +25,15 @@
 
 #define DO_PUSH\
         if (RAM_BIT){\
-            if (REGISTER_BIT){\
-                STACK_PUSH(CPU_RAM[(int)(*REGISTER_ADDR + CONST)])\
-            }\
-            else{\
-                STACK_PUSH(CPU_RAM[(int)CONST])\
-            }\
+            STACK_PUSH(CPU_RAM[(int)(*REGISTER_ADDR + CONST)])\
         }\
         else{\
-            if (REGISTER_BIT){\
-                STACK_PUSH(*REGISTER_ADDR + CONST)\
-            }\
-            else{\
-                STACK_PUSH(CONST)\
-            }\
+            STACK_PUSH(*REGISTER_ADDR + CONST)\
         }
 
 #define DO_POP\
         if (RAM_BIT){\
-            if (REGISTER_BIT){\
-                STACK_POP(CPU_RAM[(int)(*REGISTER_ADDR + CONST)] =)\
-            }\
-            else{\
-                STACK_POP(CPU_RAM[(int)CONST] = )\
-            }\
+            STACK_POP(CPU_RAM[(int)(*REGISTER_ADDR + CONST)] =)\
         }\
         else{\
             if (REGISTER_BIT){\
