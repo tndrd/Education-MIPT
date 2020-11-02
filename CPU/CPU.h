@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "../Stack/Stack.cpp"
 #include "config.h"
-#include "foperations.h"
+#include "foperations.cpp"
 
 struct CPU{
 
@@ -45,3 +45,10 @@ struct CPU{
 #define buffer thou->code
 
 #define CALLSTACK thou -> callstack
+
+
+double* GET_REGISTER_ADRESS(CPU* thou, char code);
+void CPU_DUMP(CPU* thou, FILE* stream);
+int Execute(CPU* thou);
+int Init(CPU* thou);
+int Load(CPU* thou, const char* name);

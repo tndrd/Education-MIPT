@@ -96,6 +96,8 @@ static const char* getERRORName(ERROR error){
         case_of_switch(STRUCT_CORRUPTED_CANNARY_IS_DEAD)
         case_of_switch(DATA_CORRUPTED_WRONG_HASH)
         case_of_switch(STRUCT_CORRUPTED_WRONG_HASH)
+        default: return "UNKNOWN_ERROR";
+                 break;
     }}
 //-----------------------------------------------------------
 
@@ -137,16 +139,16 @@ StackElement* CannaryCalloc(Stack* thou, int capacity){
     if (!CheckPointer(thou -> data)) return nullptr;
     *(thou -> data) = DATA_CANNARY_VALUE;
     (thou -> data)[capacity + 1] = DATA_CANNARY_VALUE;
-    thou -> data = (StackElement*)((void*)(thou -> data) + sizeof(StackElement));
+    thou -> data = (StackElement*)((char*)(thou -> data) + sizeof(StackElement));
     return thou -> data;
 }
 
 
 StackElement* CannaryRealloc(Stack* thou, int newsize){
 
-    StackElement* resized = (StackElement*)realloc((void*)(thou -> data) - sizeof(StackElement), newsize + 2 * sizeof(StackElement));
+    StackElement* resized = (StackElement*)realloc((char*)(thou -> data) - sizeof(StackElement), newsize + 2 * sizeof(StackElement));
 
-    if (CheckPointer(resized)) return (StackElement*)((void*)resized + sizeof(StackElement));
+    if (CheckPointer(resized)) return (StackElement*)((char*)resized + sizeof(StackElement));
 
     return nullptr;
 }

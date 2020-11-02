@@ -16,7 +16,7 @@ double* GET_REGISTER_ADRESS(CPU* thou, char code){
                            break;
     switch(code){ 
     #include "commands.h"
-    #undef KEYWORD
+    #undef REGISTER
     #undef DEF_CMD
     #undef SSYMBOL
     default: printf("Code corrupted on RIP %d: attempt to get unknown register's adress with code %X\n", RIP, code & 0xff);
@@ -88,7 +88,8 @@ int Execute(CPU* thou){
     
     fclose(fp);
     #undef DEF_CMD
-    #undef CASE
+    #undef REGISTER
+    #undef SSYMBOL
     return 1;                                                                       
 }
 
@@ -110,24 +111,27 @@ int Init(CPU* thou){
     Stack* stack_ptr = (Stack*)calloc(1, sizeof(Stack));
     if(newStack(10, &stack_ptr) != OK){
         printf("Initialisation failed: cannot create stack\n");
-        return 1;
+        return 0;
     }
     CPU_Stack_ptr = stack_ptr;
 
     Stack* callstack = (Stack*)calloc(1, sizeof(Stack));
     if(newStack(10, &callstack) != OK){
         printf("Initialisation failed: cannot create callstack\n");
-        return 1;
+        return 0;
     }
     
     CALLSTACK = callstack;
 
     double* RAM = (double*)calloc(RAM_SIZE,1);
+
     if (!RAM){
         printf("Initialisation failed: cannot create RAM\n");
-        return 1;
+        return 0;
     }
+    
     CPU_RAM = RAM;
+    return 1;
 }
 
 
@@ -139,6 +143,6 @@ int main(int argc, char* argv[]){
                  exit(-1);
     }
     CPU* CPU_ptr = (CPU*)calloc(1,sizeof(CPU));
-    if(!(Init(CPU_ptr) && Load(CPU_ptr, argv[1]))) exit(1);
+    if(!(Init(CPU_ptr) && Load(CPU_ptr, argv[1]))) return 1;
     return Execute(CPU_ptr);
 }

@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include "config.h"
-#include "foperations.h"
+#include "foperations.cpp"
 
 void PrintLabelIfNeed(FILE* fp, char* buffer, int RIP, int nlabels, int HEADER_LENGTH){
     

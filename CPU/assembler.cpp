@@ -1,5 +1,54 @@
 #include "assembler.h"
 
+int main(int argc, char* argv[]){
+    
+    char* buffer = nullptr;
+    int write_asm_list = 0;
+    char* out_name = nullptr;
+    char* list_name = nullptr;
+    switch(argc){
+
+        case 5:   if (!strcmp(argv[4], "--list")) write_asm_list = 1;
+                  buffer = ReadFile(argv[1]);
+                  out_name = argv[2];
+                  list_name = argv[3];
+                  break;
+    
+        case 3:   buffer = ReadFile(argv[1]);
+                  out_name = argv[2];
+                  break;
+
+        default:  printf("Wrong arguments\n");
+                  return (-1);
+    }
+
+
+    int number_of_lines = 0;
+    MyStr* lines =  GetLines(buffer, &number_of_lines);   
+    
+    if (number_of_lines < 1){
+        printf("Error: empty file\n");
+        return -5;
+    }
+    
+    char* begin = (char*)calloc(1, MINIMAL_FILESIZE);
+    char* end = nullptr;
+    Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));
+    int nlabels = 0;
+    
+    if(!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
+        printf("Assembly failed\n");
+        return (1);
+    }
+
+    Assemble(lines, begin, &end, write_asm_list, 0, list_name, labels, &nlabels, number_of_lines);
+    printf("Assembly successful!\nSignature: %s\nVersion %d.%d\n", SIGNATURE, VERSION_BASE, VERSION_SUB);
+    WriteCode(out_name, begin, end, labels, nlabels);
+    return 0;
+}
+
+//-----------------------------LABELS------------------------------------------
+
 int CheckLabel(char* command){
     char* label_end = strchr(command, ':');
     if (label_end == 0) return 0;
@@ -16,26 +65,30 @@ int CompareWithLabel(char* str, char* label_name){
     else return 0;
 }
 
-FILE* StartListing(const char* assemblyList_name){
-    FILE* Listing_ptr = fopen(assemblyList_name, "w");
-    assert(Listing_ptr);
-    fprintf(Listing_ptr, "RIP    |   CODE    |   COMMAND\n");
-    return Listing_ptr;
-}
-
-
-void WriteListingLine(FILE* Listing_ptr, char* rip, char* command_start_ptr, char* command){
-    assert(Listing_ptr);                                                                                                                   \
-    fprintf(Listing_ptr, "%p    |    ", command_start_ptr);                                                                                \
-    for (int i = 0; i < rip - command_start_ptr; i++) fprintf(Listing_ptr, "%X ", command_start_ptr[i] & 0xff);                            \
-    fprintf(Listing_ptr,"   |    %s\n", command);
-}
-
 void WriteLabel(Label* labels, char* label_name, int value, int* nlabels_ptr){
     (labels[*nlabels_ptr]).name = label_name;
     (labels[(*(nlabels_ptr))++]).value = value;
 }
 
+//--------------------------------LISTING---------------------------------------
+
+FILE* StartListing(const char* assemblyList_name){
+    FILE* Listing_ptr = fopen(assemblyList_name, "w");
+    assert(Listing_ptr);
+    fprintf(Listing_ptr, "Signature: %s\nVersion %d.%d\n", SIGNATURE, VERSION_BASE, VERSION_SUB);
+    fprintf(Listing_ptr, "RIP   |     CODE     |   COMMAND\n");
+    return Listing_ptr;
+}
+
+
+void WriteListingLine(FILE* Listing_ptr, char* rip, char* command_start_ptr, char* command, char* begin){
+    assert(Listing_ptr);                                                                                                                   \
+    fprintf(Listing_ptr, "0x%x        ", command_start_ptr - begin);                                                                                \
+    for (int i = 0; i < rip - command_start_ptr; i++) fprintf(Listing_ptr, "%X ", command_start_ptr[i] & 0xff);                            \
+    fprintf(Listing_ptr,"       %s\n", command);
+}
+
+//-----------------------------ASSEMBLY-----------------------------------------
 
 int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_ptr, int narg, int* status_ptr, int nline){
 
@@ -95,7 +148,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
             }                                                                                                                                 \
             arg_check\
             if (status && writeAssemblyList) {                                                                                                \
-                WriteListingLine(Listing_ptr, rip, command_start_ptr, lines[nline].pointer);\
+                WriteListingLine(Listing_ptr, rip, command_start_ptr, lines[nline].pointer, begin);\
             }                                                                                                                                 \
         }
     
@@ -136,12 +189,12 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
         fclose(Listing_ptr);
     } 
     if (!status) return 0;
-    *endptr = rip;
-    
+    *endptr = rip;  
     return 1;
 }
 
 void WriteCode(const char* name, char* begin, char* end, Label* labels, int nlabels){
+    
     FILE* fp = fopen(name, "w");
     assert(fp);
     assert(begin);
@@ -156,51 +209,4 @@ void WriteCode(const char* name, char* begin, char* end, Label* labels, int nlab
     }
     for (int i = 0; i < end - begin; i++) fputc(begin[i], fp);
     fclose(fp);
-}
-
-
-int main(int argc, char* argv[]){
-    
-    char* buffer = nullptr;
-    int write_asm_list = 0;
-    char* out_name = nullptr;
-    char* list_name = nullptr;
-    switch(argc){
-
-        case 5:   if (!strcmp(argv[4], "--list")) write_asm_list = 1;
-                  buffer = ReadFile(argv[1]);
-                  out_name = argv[2];
-                  list_name = argv[3];
-                  break;
-    
-        case 3:   buffer = ReadFile(argv[1]);
-                  out_name = argv[2];
-                  break;
-
-        default:  printf("Wrong arguments\n");
-                  return (-1);
-    }
-
-    int number_of_lines = 0;
-    MyStr* lines =  GetLines(buffer, &number_of_lines);   
-    
-    if (number_of_lines < 1){
-        printf("Error: empty file\n");
-        return -5;
-    }
-    
-    char* begin = (char*)calloc(1, MINIMAL_FILESIZE);
-    char* end = nullptr;
-    Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));
-    int nlabels = 0;
-    
-    if(!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
-        printf("Assembly failed\n");
-        return (1);
-    }
-
-    Assemble(lines, begin, &end, write_asm_list, 0, list_name, labels, &nlabels, number_of_lines);
-    for(int i = 0; i < nlabels; i++) printf("label #%d: %s on rip %d\n",i ,labels[i].name, labels[i].value);
-    
-    WriteCode(out_name, begin, end, labels, nlabels);
 }

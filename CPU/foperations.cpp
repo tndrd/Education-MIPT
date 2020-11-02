@@ -19,7 +19,6 @@ char* ReadFile(const char* name, long int* filesize_ptr){
         exit(1);
     }
 
-
     long int filesize = GetFileSize(fp);
     *filesize_ptr = filesize;
     buffer = (char*)realloc(buffer, filesize + 1);
