@@ -3,11 +3,15 @@
 #include <assert.h>
 #include <math.h>
 
+#define NEXT_OF(i) elements[elements[i].next]
+#define PREV_OF(i) elements[elements[i].prev]
+
 enum ESTATUS{
-    VACANT = 0;
-    BUSY = 1;
-    ERROR_BROKEN_NUMERATION = 2;
-}
+    VACANT,
+    BUSY,
+    FREE,
+    ERROR_BROKEN_NUMERATION
+};
 
 struct Element{
     ESTATUS status = VACANT;
@@ -22,8 +26,10 @@ struct List{
     int size = -1;
     int head = -1;
     int tail = -1;
-    int free_element = 0;
+    int free_element = 1;
 };
+
+void GraphicalDump(List* thou);
 
 
 List* NewList(int capacity){
@@ -34,6 +40,7 @@ List* NewList(int capacity){
     new_list -> head = 1;
     new_list -> tail = 1;
     new_list -> elements = (Element*)calloc(capacity, sizeof(Element));
+    new_list -> free_element = 1;
     
     #define elements new_list -> elements
 
@@ -42,8 +49,11 @@ List* NewList(int capacity){
     elements[0].prev = 0;
     
     for (int i = 1; i < capacity; i++) elements[i].value = NAN;
-    for (int i = 1; i < capacity; i++) elements[i].prev = -1;
-    for (int i = 1; i < capacity; i++) elements[i].next = -1;
+    for (int i = 1; i < capacity; i++) elements[i].status = FREE;
+    for (int i = 1; i < capacity; i++) elements[i].next = i + 1;
+    for (int i = 2; i < capacity; i++) elements[i].prev = i - 1;
+    elements[capacity - 1].next = 0;
+    elements[1].prev = 0;
 
     #undef elements
     
@@ -61,18 +71,21 @@ List* NewList(int capacity){
 
 
 int FindFree(List* thou){
-    if (free_element){
-        free_element = elements[free_element].next;
-        return free_element;
-    }
-    else return size + 1;
+    int old_free_element = free_element;
+    free_element = elements[free_element].next;
+    int abcd = PREV_OF(old_free_element).next;
+    PREV_OF(old_free_element).next = NEXT_OF(old_free_element).prev;
+    NEXT_OF(old_free_element).prev = abcd;
+    return old_free_element;
 }
 
 int InsertAfter(List* thou, int pos, double value){
     int new_pos = FindFree(thou);
+    printf("%d\n", new_pos);
     elements[new_pos].next = elements[pos].next;
     elements[new_pos].prev = pos;
-    elements[elements[pos].next].prev = new_pos;
+    GraphicalDump(thou);
+    NEXT_OF(pos).prev = new_pos;
     elements[pos].next = new_pos;
     elements[new_pos].value = value;
     elements[new_pos].status = BUSY;
@@ -81,12 +94,12 @@ int InsertAfter(List* thou, int pos, double value){
 }
 
 void Delete(List* thou, int pos){
-    elements[elements[pos].prev].next = elements[pos].next;
-    elements[elements[pos].next].prev = elements[pos].prev;
+    PREV_OF(pos).next = elements[pos].next;
+    NEXT_OF(pos).prev = elements[pos].prev;
     elements[pos].value = NAN;
-    elements[pos].next = free_element;
-    free_element = pos;
-    elements[pos].prev = -1;
+    elements[pos].prev = free_element;
+    elements[pos].next = elements[free_element].next;
+    elements[free_element].next = pos;
     elements[pos].status = FREE;
     size--;
 }
@@ -102,12 +115,17 @@ void ListPrint(List* thou){
 
 void GraphicalDump(List* thou){
     FILE* fp = fopen("show", "w");
-    fprintf(fp, "digraph structs {\nrankdir=HR;\n");
-    for (int nelement = 1; nelement < capacity; nelement++){
-        fprintf(fp, "%d [shape=record, label=\"   { %lf | {  %d | %d | %d }}\" ];\n", nelement, elements[nelement].value, elements[nelement].prev,
+    char* color = "white";
+    fprintf(fp, "digraph structs {\nrankdir=TD;\n");
+    for (int nelement = 0; nelement < capacity; nelement++){
+        if (elements[nelement].status == BUSY) color = "blue";
+        if (elements[nelement].status == FREE) color = "green";
+        if (elements[nelement].status == ERROR_BROKEN_NUMERATION) color = "red";
+
+        fprintf(fp, "%d [shape=record, fillcolor=%s style=filled label=\"   { %lf | {  %d | %d | %d }}\" ];\n", nelement, color, elements[nelement].value, elements[nelement].prev,
         nelement, elements[nelement].next);
         //fprintf(fp, "%d:<n%d> -> %d:<p%d>", nelement, elements[nelement].next, elements[nelement].next, elements[nelement].prev);
-        if (elements[nelement].prev != -1 && elements[nelement].next != 0) fprintf(fp, "%d -> %d\n", nelement, elements[nelement].next);
+        if (elements[nelement].status == BUSY) fprintf(fp, "%d -> %d\n", nelement, elements[nelement].next);
     }
     fprintf(fp, "}");
     fclose(fp);
@@ -117,14 +135,22 @@ void GraphicalDump(List* thou){
 
 void ValidateList(List* thou){
     for (int nelement = 2; nelement < capacity - 1; nelement++){
-        if (elements[elements[nelement].prev].next != )
+        if (PREV_OF(nelement).next != elements[nelement].prev){
+            PREV_OF(nelement).status = ERROR_BROKEN_NUMERATION;
+            elements[nelement].status = ERROR_BROKEN_NUMERATION;
+        }
+        if (NEXT_OF(nelement).prev != elements[nelement].next){
+            NEXT_OF(nelement).status = ERROR_BROKEN_NUMERATION;
+            elements[nelement].status = ERROR_BROKEN_NUMERATION;
+        }
     }
 
 }
 
 
 int main(){
-    List* thou = NewList(20);
+    List* thou = NewList(10);
+    GraphicalDump(thou);
     for (;size < capacity - 3;){
         InsertAfter(thou, size, size + 1);
         GraphicalDump(thou);
