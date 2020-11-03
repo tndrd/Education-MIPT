@@ -64,7 +64,7 @@ List* NewList(int capacity){
 #define capacity thou -> capacity
 #define size thou -> size
 #define head thou -> head
-#define tail thou -> capacity
+#define tail thou -> tail
 #define free_element thou -> free_element
 
 
@@ -76,8 +76,8 @@ int FindFree(List* thou){
 }
 
 int InsertAfter(List* thou, int pos, double value){
+    
     int new_pos = FindFree(thou);
-
     elements[new_pos].next = elements[pos].next;
     elements[new_pos].prev = pos;
     NEXT_OF(pos).prev = new_pos;
@@ -86,6 +86,7 @@ int InsertAfter(List* thou, int pos, double value){
     elements[new_pos].status = BUSY;
     size++;
     ValidateList(thou);
+    if (elements[new_pos].next == 0) head = new_pos;
     return new_pos; 
 }
 
@@ -111,18 +112,19 @@ void ListPrint(List* thou){
 void GraphicalDump(List* thou){
     FILE* fp = fopen("show", "w");
     const char* color = "white";
-    fprintf(fp, "digraph structs {\nrankdir=TD;\n");
+    fprintf(fp, "digraph structs {\nrankdir=LR;\n");
     for (int nelement = 1; nelement < capacity; nelement++){
-        
-        if(elements[nelement].status == FREE) color = "green";
-        if(elements[nelement].status == BUSY) color = "blue";
+
+        if(elements[nelement].status == FREE) color = "chartreuse";
+        if(elements[nelement].status == BUSY) color = "deepskyblue";
         if(elements[nelement].status == ERROR_BROKEN_NUMERATION) color = "red";
         
-        fprintf(fp, "%d [shape=record, fillcolor=%s style=filled label=\"   { %lf | {  %d | %d | %d }}\" ];\n", nelement, color, elements[nelement].value, elements[nelement].prev,
+        fprintf(fp, "%d [shape=record, fillcolor=%s style=filled label=\"    %lf | {  %d | %d | %d }\" ];\n", nelement, color, elements[nelement].value, elements[nelement].prev,
         nelement, elements[nelement].next);
-        //fprintf(fp, "%d:<n%d> -> %d:<p%d>", nelement, elements[nelement].next, elements[nelement].next, elements[nelement].prev);
-        if (elements[nelement].prev != -1 && elements[nelement].next != 0) fprintf(fp, "%d -> %d\n", nelement, elements[nelement].next);
     }
+    for (int nelement = 1; nelement < capacity; nelement++) if (elements[nelement].prev != -1 && elements[nelement].next != 0) fprintf(fp, "%d -> %d\n", nelement, elements[nelement].next);
+    fprintf(fp, "HEAD -> %d\n", head);
+    fprintf(fp, "TAIL -> %d\n", tail);
     fprintf(fp, "}");
     fclose(fp);
     system("dot -Tpng show -o show.png");

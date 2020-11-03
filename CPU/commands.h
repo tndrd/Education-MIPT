@@ -200,7 +200,7 @@ DEF_CMD(COS, 0x09, 0, 0, {}, {}, {})
 DEF_CMD(SQRT, 0x0A, 0, 0, {}, {}, {})
 DEF_CMD(NEG, 0x0B, 0, 0, {}, {}, {})
 DEF_CMD(OUT, 0x0C, 0, 0, {}, {}, {})
-DEF_CMD(IN, 0x0D, 0, 0, {}, {}, )
+DEF_CMD(IN, 0x0D, 0, 0, {}, {}, {})
 DEF_CMD(DUMP, 0x0E, 0, 0, {}, {}, {})
 DEF_CMD(HLT, 0x0F, 0, 0, {}, {}, {})
 DEF_CMD(JA, 0x10, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
@@ -210,7 +210,7 @@ DEF_CMD(JBE, 0x13, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTR
 DEF_CMD(JE, 0x14, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
 DEF_CMD(JNE, 0x15, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
 DEF_CMD(CALL, 0x16, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(RETURN, 0x17, 0, 0, {}, {}, DEFAULT_DISASSEMBLING_INSTRUCTION)
+DEF_CMD(RETURN, 0x17, 0, 0, {}, {}, {})
 
 //#########################################################################
 //-----------------------REGISTERS----------------------------------------
