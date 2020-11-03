@@ -52,11 +52,19 @@ int Execute(CPU* thou){
     FILE* fp = fopen("CPU.log", "w");
     assert(fp);
 
-    #define RAM_BIT (buffer[RIP] & 0x80)
-    #define REGISTER_BIT (buffer[RIP] & 0x40)
-    #define CONST_BIT (buffer[RIP] & 0x20)
+    const char RAM_BIT_MASK      = 0b10000000;
+    const char REGISTER_BIT_MASK = 0b01000000;
+    const char CONST_BIT_MASK    = 0b00100000;
+    const char COMMAND_NUM_MASK = 0b00011111;
 
-    #define SSYMBOL(name, ASSEMBLING_INSTRUCTION) ;
+    #define BIT_BY_MASK(mask) (buffer[RIP] & mask)
+    
+    #define RAM_BIT      (buffer[RIP] & RAM_BIT_MASK)
+    #define REGISTER_BIT (buffer[RIP] & REGISTER_BIT_MASK)
+    #define CONST_BIT    (buffer[RIP] & CONST_BIT_MASK)
+    #define COMMAND_NUM  (buffer[RIP] & COMMAND_NUM_MASK)
+
+    #define SSYMBOL( name,       ASSEMBLING_INSTRUCTION) ;
     #define REGISTER(name, code, ASSEMBLING_INSTRUCTION) ;
 
     #define DEF_CMD(name, num, max_arg, min_arg, arg_check, AIN, DIN)                        \
@@ -74,7 +82,7 @@ int Execute(CPU* thou){
             break;
 
     while(RIP < FILESIZE){
-        switch(buffer[RIP] & 0x1f){
+        switch(COMMAND_NUM){
         #include "commands.h"
         default: printf("\n Error: code corrupted, unknown command code: %X\n", buffer[RIP] & 0xff);
                  return 0;
@@ -122,8 +130,7 @@ int Init(CPU* thou){
     }
     
     CALLSTACK = callstack;
-
-    double* RAM = (double*)calloc(RAM_SIZE,1);
+    double* RAM = (double*)calloc(RAM_SIZE,sizeof(double));
 
     if (!RAM){
         printf("Initialisation failed: cannot create RAM\n");

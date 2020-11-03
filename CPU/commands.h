@@ -116,6 +116,7 @@
 
 #define DO_OUT\
         printf("%lf\n", POPPED);\
+        fflush(stdout);\
         STACK_EMPTY_CHECK\
 
 
@@ -125,6 +126,20 @@
 #define DO_HLT\
         printf("Program hult on rip %d\n", RIP);\
         return 0;
+
+//-------------------------------------------------------------------------
+
+#define PIXEL(x, y) CPU_RAM[y*YSIZE + x]
+
+#define DO_SHOW                              \
+        for (int y = 0; y < YSIZE; y+=2){     \
+            for (int x = 0; x < XSIZE; x++){ \
+                if (PIXEL(x,y) == 1) printf("\x1b[8;44m@\x1b[0m");\
+                else printf("\x1b[8;40mE\x1b[0m");\
+            }                                \
+            printf("\n");                    \
+        }
+
 
 //#########################################################################
 //------------------DISASSEMBLER-------------------------------------------
@@ -188,44 +203,45 @@
 //--------------------------------COMMANDS---------------------------------
 
 
-DEF_CMD(PUSH, 0x01, 5, 1, PUSH_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(POP, 0x02, 5, 0, POP_ARGUMENTS_CHECK(nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JMP, 0x03, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(ADD, 0x04, 0, 0, {}, {}, {})
-DEF_CMD(SUB, 0x05, 0, 0, {}, {}, {})
-DEF_CMD(MUL, 0x06, 0, 0, {}, {}, {})
-DEF_CMD(DIV, 0x07, 0, 0, {}, {}, {})
-DEF_CMD(SIN, 0x08, 0, 0, {}, {}, {})
-DEF_CMD(COS, 0x09, 0, 0, {}, {}, {})
-DEF_CMD(SQRT, 0x0A, 0, 0, {}, {}, {})
-DEF_CMD(NEG, 0x0B, 0, 0, {}, {}, {})
-DEF_CMD(OUT, 0x0C, 0, 0, {}, {}, {})
-DEF_CMD(IN, 0x0D, 0, 0, {}, {}, {})
-DEF_CMD(DUMP, 0x0E, 0, 0, {}, {}, {})
-DEF_CMD(HLT, 0x0F, 0, 0, {}, {}, {})
-DEF_CMD(JA, 0x10, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JAE, 0x11, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JB, 0x12, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JBE, 0x13, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JE, 0x14, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(JNE, 0x15, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(CALL, 0x16, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
-DEF_CMD(RETURN, 0x17, 0, 0, {}, {}, {})
+DEF_CMD (PUSH,   0x01, 5, 1, PUSH_ARGUMENTS_CHECK (nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (POP,    0x02, 5, 0, POP_ARGUMENTS_CHECK  (nline, arg_value), DEFAULT_ASSEMBLING_INSTRUCTION, DEFAULT_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JMP,    0x03, 1, 1, {},                                      JMP_ASSEMBLING_INSTRUCTION,     JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (ADD,    0x04, 0, 0, {}, {}, {})
+DEF_CMD (SUB,    0x05, 0, 0, {}, {}, {})
+DEF_CMD (MUL,    0x06, 0, 0, {}, {}, {})
+DEF_CMD (DIV,    0x07, 0, 0, {}, {}, {})
+DEF_CMD (SIN,    0x08, 0, 0, {}, {}, {})
+DEF_CMD (COS,    0x09, 0, 0, {}, {}, {})
+DEF_CMD (SQRT,   0x0A, 0, 0, {}, {}, {})
+DEF_CMD (NEG,    0x0B, 0, 0, {}, {}, {})
+DEF_CMD (OUT,    0x0C, 0, 0, {}, {}, {})
+DEF_CMD (IN,     0x0D, 0, 0, {}, {}, {})
+DEF_CMD (DUMP,   0x0E, 0, 0, {}, {}, {})
+DEF_CMD (HLT,    0x0F, 0, 0, {}, {}, {})
+DEF_CMD (JA,     0x10, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JAE,    0x11, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JB,     0x12, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JBE,    0x13, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JE,     0x14, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (JNE,    0x15, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (CALL,   0x16, 1, 1, {}, JMP_ASSEMBLING_INSTRUCTION, JMP_DISASSEMBLING_INSTRUCTION)
+DEF_CMD (RETURN, 0x17, 0, 0, {}, {}, {})
+DEF_CMD (SHOW,   0x18, 0, 0, {}, {}, {})
 
 //#########################################################################
 //-----------------------REGISTERS----------------------------------------
 
 #define REGISTER_ASSEMBLING(keyword_code)                            \
-    if (((*(command_start_ptr) & 0x80) >> 7) == narg){ \
+    if (((*(command_start_ptr) & 0x80) >> 7) == narg){               \
         **(rip_ptr) = keyword_code;                                  \
-        *(command_start_ptr) += 0x40;             \
-        *(rip_ptr) = *((char**)(rip_ptr)) + 1 ;                          \
-    }                                                  \
-    else {\
-        *status_ptr = 0;\
+        *(command_start_ptr) += 0x40;                                \
+        *(rip_ptr) = *((char**)(rip_ptr)) + 1 ;                      \
+    }                                                                \
+    else {                                                           \
+        *status_ptr = 0;                                             \
         printf("Syntax error: wrong register position on line %d\n", nline + 1);\
-    }\
-    *(arg_value_ptr)+=3;
+    }                                                                \
+    *(arg_value_ptr) += 3;
 
 REGISTER(rax, 'a', REGISTER_ASSEMBLING('a'))
 REGISTER(rbx, 'b', REGISTER_ASSEMBLING('b'))

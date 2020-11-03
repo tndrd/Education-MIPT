@@ -86,7 +86,7 @@ int InsertAfter(List* thou, int pos, double value){
     elements[new_pos].status = BUSY;
     size++;
     ValidateList(thou);
-    if (elements[new_pos].next == 0) head = new_pos;
+    if (elements[new_pos].next == 0) tail = new_pos;
     return new_pos; 
 }
 

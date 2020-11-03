@@ -1,0 +1,152 @@
+in
+# radius
+
+pop rdx
+
+push 100
+pop rax
+push 100
+pop rbx
+
+loopy:
+push 100
+pop rax
+loopx:
+
+push 100
+push rax
+sub
+
+push 100
+push rax
+sub
+mul
+
+push 100
+push rbx
+sub
+
+push 100
+push rbx
+sub
+mul
+
+add
+sqrt
+push rdx
+sub
+pop rcx
+
+push -1
+push rcx
+ja skip
+
+push 1
+push rcx
+jb skip
+
+# --------
+
+# Bottom right
+
+push rbx
+push 200
+mul
+push rax
+add
+pop rcx
+
+push 1
+pop [ rcx ]
+
+# Bottom left
+
+push rbx
+push 200
+mul
+
+push 100
+push rax
+sub
+push 2
+mul
+push rax
+sub
+add
+pop rcx
+
+push 1
+pop [ rcx ]
+
+
+# Top right
+
+push 100
+push rbx
+sub
+push 2
+mul
+push rbx
+sub
+push 200
+mul
+
+push rax
+add
+pop rcx
+
+push 1
+pop [ rcx ]
+
+# Top left
+
+push 100
+push rbx
+sub
+push 2
+mul
+push rbx
+sub
+push 200
+mul
+
+push 100
+push rax
+sub
+push 2
+mul
+push rax
+sub
+
+add
+pop rcx
+
+push 1
+pop [ rcx ]
+
+# --------
+
+skip:
+push rax
+push 1
+add
+pop rax
+
+push rax
+push 100
+push rdx
+add
+jbe loopx
+
+push rbx
+push 1
+add
+pop rbx
+
+push rbx
+push 100
+push rdx
+add
+jbe loopy
+show
+hlt

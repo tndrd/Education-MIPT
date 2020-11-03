@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
         return -5;
     }
     
-    char* begin = (char*)calloc(1, MINIMAL_FILESIZE);
+    char* begin = (char*)calloc(1, MAXIMAL_FILESIZE);
     char* end = nullptr;
     Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));
     int nlabels = 0;
