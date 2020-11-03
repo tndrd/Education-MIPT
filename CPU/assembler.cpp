@@ -111,6 +111,11 @@ int ASSEMBLE_KEYWORD(char** arg_value_ptr, char* command_start_ptr, char** rip_p
     return 1;
 }
 
+char* strupr(char* str){
+    for (int nchar = 0; str[nchar] != '\0'; nchar++) str[nchar] = toupper(str[nchar]);
+    return str;
+}
+
 
 int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, int writeLabels, const char* assemblyList_name, Label* labels, int* nlabels_ptr, int number_of_lines){
     
@@ -166,6 +171,7 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
     
     for(int nline = 0; nline < number_of_lines; nline++){
         sscanf(lines[nline].pointer," %s%n", command, &line_offset);
+        command = strupr(command);
         if(!strcmp(command, "#")) continue;
         #include "commands.h"    
         else if (CheckLabel(lines[nline].pointer)){

@@ -1,134 +1,134 @@
-IN
-IN
-IN
-POP rcx
-POP rbx
-POP rax
-CALL quadr
-HLT
+in
+in
+in
+pop rcx
+pop rbx
+pop rax
+call quadr
+hlt
 
 
 linear:
-PUSH 0
-PUSH rbx
-JE azero
-PUSH rbx
-PUSH rcx
-NEG
-DIV
-PUSH 1
-OUT
-OUT
-HLT
+push 0
+push rbx
+je azero
+push rbx
+push rcx
+neg
+div
+push 1
+out
+out
+hlt
 
 azero:
-PUSH 0
-PUSH rcx
-JNE zroots
-PUSH 8
-OUT 
-HLT
+push 0
+push rcx
+jne zroots
+push 8
+out 
+hlt
 
 zroots:
-PUSH 0
-OUT
-HLT
+push 0
+out
+hlt
 
 
 quadr:
-PUSH 0
-PUSH rax
-JE linear
-PUSH 0
-PUSH rcx
-JE czero
-CALL discr
-PUSH rdx
-PUSH 0
-JE dzero
-PUSH rdx
-PUSH 0
-JA dplus
-PUSH 0
-OUT
-HLT
+push 0
+push rax
+je linear
+push 0
+push rcx
+je czero
+call discr
+push rdx
+push 0
+je dzero
+push rdx
+push 0
+ja dplus
+push 0
+out
+hlt
 
 dplus:
-PUSH 2
-OUT
+push 2
+out
 
-PUSH 2
-PUSH rax
-MUL
-PUSH rbx
-NEG
-PUSH rdx
-SQRT
+push 2
+push rax
+mul
+push rbx
+neg
+push rdx
+sqrt
 ADD
-DIV
-OUT
+div
+out
 
 
-PUSH 2
-PUSH rax
-MUL
-PUSH rdx
-SQRT
-PUSH rbx
-NEG
-SUB
-DIV
-OUT
-HLT
+push 2
+push rax
+mul
+push rdx
+sqrt
+push rbx
+neg
+sub
+div
+out
+hlt
 
 dzero:
-PUSH 1
-OUT
-PUSH 2
-PUSH rax
-MUL
-PUSH rbx
-NEG
-DIV
-OUT
-HLT
+push 1
+out
+push 2
+push rax
+mul
+push rbx
+neg
+div
+out
+hlt
 
 czero:
-PUSH rbx
-PUSH 0
-JE bzero
-PUSH 2
-OUT
-PUSH 0
-OUT
-PUSH rax
-PUSH rbx
-NEG
-DIV
-OUT
-HLT
+push rbx
+push 0
+je bzero
+push 2
+out
+push 0
+out
+push rax
+push rbx
+neg
+div
+out
+hlt
 
 bzero:
-PUSH 1
-OUT
-PUSH 0
-OUT
-HLT
+push 1
+out
+push 0
+out
+hlt
 
 
 discr:
 # 4ac 
-PUSH 4
-PUSH rax
-MUL
-PUSH rcx
-MUL
+push 4
+push rax
+mul
+push rcx
+mul
 # b^2
-PUSH rbx
-PUSH rbx
-MUL
-DUMP
-SUB
-POP rdx
-RETURN
+push rbx
+push rbx
+mul
+dump
+sub
+pop rdx
+return
 end
