@@ -35,8 +35,6 @@ enum LIST_STATUS{
 
 };
 
-LIST_STATUS ValidationResult = OK;
-
 struct Element{
     ESTATUS status = FREE;
     double value = NAN;
@@ -67,16 +65,18 @@ void GraphicalDump(List* thou);
 LIST_STATUS ValidateData(List* thou);
 int DeleteList(List* thou);
 
-#define LIST_ASSERT\
-    ValidationResult = ValidateList(thou);\
-    if (ValidationResult != OK){\
-        if (ValidationResult == LIST_PTR_UNAVAILABLE) return -3;\
-        else{\
-            GraphicalDump(thou);\
-            printf("ListError\n");\
-            return -2;\
-        }\
-    }\
+LIST_STATUS ValidationResult = OK;
+
+#define LIST_ASSERT                                              \
+    ValidationResult = ValidateList(thou);                       \
+    if (ValidationResult != OK){                                 \
+        if (ValidationResult == LIST_PTR_UNAVAILABLE) return -3; \
+        else{                                                    \
+            GraphicalDump(thou);                                 \
+            printf("ListError\n");                               \
+            return -2;                                           \
+        }                                                        \
+    }                                                            \
 
 List* NewList(int capacity){
     
@@ -115,15 +115,15 @@ List* NewList(int capacity){
 
 //TEMPORARY FOR DUMP TESTING
 
-#define elements thou -> elements
-#define capacity thou -> capacity
-#define size thou -> size
-#define head thou -> head
-#define tail thou -> tail
-#define free_head thou -> free_head
+#define elements    thou -> elements
+#define capacity    thou -> capacity
+#define size        thou -> size
+#define head        thou -> head
+#define tail        thou -> tail
+#define free_head   thou -> free_head
 #define list_status thou -> list_status
-#define exists thou -> exists
-#define isOrdered thou -> isOrdered
+#define exists      thou -> exists
+#define isOrdered   thou -> isOrdered
 
 int FindFree(List* thou){
     LIST_ASSERT
@@ -161,7 +161,6 @@ int ResizeUp(List* thou){
 
 
 int InsertAfter(List* thou, int pos, double value){
-
 
     LIST_ASSERT
 
@@ -223,7 +222,6 @@ int InsertBefore(List* thou, int pos, double value){
     return new_pos; 
 }
 
-
 int Delete(List* thou, int pos){
     
     LIST_ASSERT
@@ -236,23 +234,117 @@ int Delete(List* thou, int pos){
     else if (pos == tail) tail = elements[pos].prev;
     else PREV_OF(pos).next = elements[pos].next;
     
-    NEXT_OF(pos).prev = elements[pos].prev;
-    elements[pos].value = NAN;
-    elements[pos].prev = -1;
+    NEXT_OF(pos).prev    = elements[pos].prev;
+    elements[pos].value  = NAN;
+    elements[pos].prev   = -1;
     elements[pos].status = FREE;
     
-    elements[pos].next = free_head;
-    free_head = pos;
-    
+    elements[pos].next   = free_head;
+    free_head            = pos;
     size--;
+    
     if (size == 0){
         isOrdered = 1;
-        head = 1;
-        tail = 1;
+        head      = 1;
+        tail      = 1;
     }
     LIST_ASSERT
 
     return 1;
+}
+
+int DeleteList(List* thou){
+    
+    LIST_ASSERT
+
+    free(elements);
+    free(thou);
+    return 1;
+}
+
+int LogicalComparator(const void* a, const void* b){
+    
+    if ((((Element*)a) -> prev) == -1 && (((Element*)b) -> prev) != -1) return 1;
+    if ((((Element*)a) -> prev) != -1 && (((Element*)b) -> prev) == -1) return -1;
+    return (((Element*)a) -> prev) - (((Element*)b) -> prev); 
+}
+
+int LogicalOrdering(List* thou){
+    
+    LIST_ASSERT
+    
+    if (isOrdered) return 0;
+    
+    Element* elements_buffer = (Element*)calloc(sizeof(Element), capacity);
+    
+    elements_buffer[0].value = NAN;
+    elements_buffer[0].next = -1;
+    elements_buffer[0].prev = -1;
+    int nelement = head;
+
+    for (int i = 1; i < size + 1; i++){
+        elements_buffer[i].value  = elements[nelement].value;
+        elements_buffer[i].next   = i+1;
+        elements_buffer[i].prev   = i-1;
+        elements_buffer[i].status = BUSY;
+        nelement = elements[nelement].next;
+    }
+    for (int i = size + 1; i < capacity; i++){
+        elements_buffer[i].status = FREE;
+        elements_buffer[i].next = i + 1;
+        elements_buffer[i].prev = -1;
+        elements_buffer[i].value = NAN;
+    }
+    
+    head = 1;
+    tail = size;
+    free_head = size + 1;
+
+    elements_buffer[head].prev = 0;
+    elements_buffer[tail].next = 0;
+    elements_buffer[capacity - 1].next = 0;
+    isOrdered = 1;
+    free(elements);
+    elements = elements_buffer;
+    
+    LIST_ASSERT
+
+    return 1;
+}
+
+int PhysIndexFromLogic(List* thou, int logic_index){
+
+    LIST_ASSERT
+    
+    if (isOrdered) return logic_index;
+    
+    if (logic_index > size - 1) return -1;
+    int phys_index = head;
+    for(int i = 0; i < logic_index; i++) phys_index = elements[phys_index].next;
+    return phys_index;
+}
+
+int LogicIndexFromPhys(List* thou, int phys_index){
+
+    LIST_ASSERT
+    
+    if (isOrdered) return phys_index;
+    if (phys_index > capacity - 1) return -1;
+    
+    int logic_index = 0;
+    for(; elements[phys_index].prev != 0; phys_index = elements[phys_index].prev) logic_index++;
+    return logic_index;
+}
+
+int Search(List* thou, double value){
+    
+    LIST_ASSERT;
+    
+    int nelement = head;
+    for (int i = 0; i < size; i++, nelement = elements[nelement].next){
+        if (elements[nelement].value == value) return i;
+    }
+    return -1;
 }
 
 void ListPrint(List* thou){
@@ -304,8 +396,8 @@ LIST_STATUS ValidateData(List* thou){
     for (int nelement = 1; nelement < capacity; nelement++){
         if (elements[nelement].status == FREE) sum++;
         if (PREV_OF(nelement).next != NEXT_OF(nelement).prev && elements[nelement].status == BUSY && nelement != head && nelement != tail){
-            NEXT_OF(nelement).status = ERROR_BROKEN_NUMERATION;
-            PREV_OF(nelement).status = ERROR_BROKEN_NUMERATION;
+            NEXT_OF(nelement).status  = ERROR_BROKEN_NUMERATION;
+            PREV_OF(nelement).status  = ERROR_BROKEN_NUMERATION;
             elements[nelement].status = ERROR_BROKEN_NUMERATION;
             numeration_is_broken = 1;
         }
@@ -317,7 +409,7 @@ LIST_STATUS ValidateData(List* thou){
 }
 
 LIST_STATUS ValidateList(List* thou){
-    if (!thou)           return LIST_PTR_UNAVAILABLE;
+    if (!thou)                       return LIST_PTR_UNAVAILABLE;
     else if (!exists)         list_status = LIST_ALREADY_DEAD;
     else if (!elements)       list_status = DATA_PTR_UNAVAILABLE;
     else if (size < 0)        list_status = SIZE_LESS_ZERO;
@@ -328,57 +420,6 @@ LIST_STATUS ValidateList(List* thou){
     else ValidateData(thou);
     return list_status;
 }
-
-int DeleteList(List* thou){
-    
-    LIST_ASSERT
-
-    free(elements);
-    free(thou);
-    return 1;
-}
-
-int LogicalComparator(const void* a, const void* b){
-    
-    if ((((Element*)a) -> prev) == -1 && (((Element*)b) -> prev) != -1) return 1;
-    if ((((Element*)a) -> prev) != -1 && (((Element*)b) -> prev) == -1) return -1;
-    return (((Element*)a) -> prev) - (((Element*)b) -> prev); 
-}
-
-int LogicalOrdering(List* thou){
-    LIST_ASSERT
-    
-    if (isOrdered) return 0;
-    
-    qsort((void*)(elements + 1), capacity - 1, sizeof(Element), LogicalComparator);
-    for (int i = 1; i < capacity; i++){
-        elements[i].next = i + 1;
-        elements[i].prev = i - 1;
-    }
-    elements[1].prev = 0;
-    elements[size].next = 0;
-    elements[capacity - 1].next = 0;
-    head = 1;
-    tail = size;
-    free_head = size + 1;
-    isOrdered = 1;
-    LIST_ASSERT
-
-    return 1;
-}
-
-int PhysIndexFromHead(List* thou, int logic_index){
-
-    LIST_ASSERT
-    
-    if (isOrdered) return logic_index;
-    
-    if (logic_index > size - 1) return -1;
-    int phys_index = head;
-    for(int i = 0; i < logic_index; i++) phys_index = elements[phys_index].next;
-    return phys_index;
-}
-
 
 int main(){
     List* thou = NewList(10);
@@ -392,13 +433,15 @@ int main(){
     double value = 0;
     while (true){
         scanf("%s %d %lf", command, &pos, &value);
-        if (!strcmp(command, "ia")) InsertAfter(thou, pos, value);
-        if (!strcmp(command, "ib")) InsertBefore(thou, pos, value);
-        if (!strcmp(command, "del")) Delete(thou, pos);
-        if (!strcmp(command, "rup")) ResizeUp(thou);
-        if (!strcmp(command, "pi")) printf("%d\n", PhysIndexFromHead(thou, pos));
+        if (!strcmp(command, "ia"))   InsertAfter(thou, pos, value);
+        if (!strcmp(command, "ib"))   InsertBefore(thou, pos, value);
+        if (!strcmp(command, "del"))  Delete(thou, pos);
+        if (!strcmp(command, "rup"))  ResizeUp(thou);
+        if (!strcmp(command, "pi"))   printf("%d\n", PhysIndexFromLogic(thou, pos));
+        if (!strcmp(command, "li"))   printf("%d\n", LogicIndexFromPhys(thou, pos));
         if (!strcmp(command, "sort")) LogicalOrdering(thou);
-        ListPrint(thou);
+        if (!strcmp(command, "srch")) printf("%d\n", Search(thou, value));
+        //ListPrint(thou);
         GraphicalDump(thou);
     }
     return 0;
