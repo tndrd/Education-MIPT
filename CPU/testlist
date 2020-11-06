@@ -1,0 +1,111 @@
+Signature: MYASS
+Version 0.1
+RIP   |     CODE     |   COMMAND
+0x0        D        in
+0x1        42 64        pop rdx
+0x3        21 0 0 0 0 0 0 59 40        push 100
+0xc        42 61        pop rax
+0xe        21 0 0 0 0 0 0 59 40        push 100
+0x17        42 62        pop rbx
+0x19        21 0 0 0 0 0 0 59 40        push 100
+0x22        42 61        pop rax
+0x24        21 0 0 0 0 0 0 59 40        push 100
+0x2d        41 61        push rax
+0x2f        5        sub
+0x30        21 0 0 0 0 0 0 59 40        push 100
+0x39        41 61        push rax
+0x3b        5        sub
+0x3c        6        mul
+0x3d        21 0 0 0 0 0 0 59 40        push 100
+0x46        41 62        push rbx
+0x48        5        sub
+0x49        21 0 0 0 0 0 0 59 40        push 100
+0x52        41 62        push rbx
+0x54        5        sub
+0x55        6        mul
+0x56        4        add
+0x57        A        sqrt
+0x58        41 64        push rdx
+0x5a        5        sub
+0x5b        42 63        pop rcx
+0x5d        21 0 0 0 0 0 0 F0 BF        push -1
+0x66        41 63        push rcx
+0x68        10 2        ja skip
+0x6a        21 0 0 0 0 0 0 F0 3F        push 1
+0x73        41 63        push rcx
+0x75        12 2        jb skip
+0x77        41 62        push rbx
+0x79        21 0 0 0 0 0 0 69 40        push 200
+0x82        6        mul
+0x83        41 61        push rax
+0x85        4        add
+0x86        42 63        pop rcx
+0x88        21 0 0 0 0 0 0 F0 3F        push 1
+0x91        C2 63        pop [ rcx ]
+0x93        41 62        push rbx
+0x95        21 0 0 0 0 0 0 69 40        push 200
+0x9e        6        mul
+0x9f        21 0 0 0 0 0 0 59 40        push 100
+0xa8        41 61        push rax
+0xaa        5        sub
+0xab        21 0 0 0 0 0 0 0 40        push 2
+0xb4        6        mul
+0xb5        41 61        push rax
+0xb7        5        sub
+0xb8        4        add
+0xb9        42 63        pop rcx
+0xbb        21 0 0 0 0 0 0 F0 3F        push 1
+0xc4        C2 63        pop [ rcx ]
+0xc6        21 0 0 0 0 0 0 59 40        push 100
+0xcf        41 62        push rbx
+0xd1        5        sub
+0xd2        21 0 0 0 0 0 0 0 40        push 2
+0xdb        6        mul
+0xdc        41 62        push rbx
+0xde        5        sub
+0xdf        21 0 0 0 0 0 0 69 40        push 200
+0xe8        6        mul
+0xe9        41 61        push rax
+0xeb        4        add
+0xec        42 63        pop rcx
+0xee        21 0 0 0 0 0 0 F0 3F        push 1
+0xf7        C2 63        pop [ rcx ]
+0xf9        21 0 0 0 0 0 0 59 40        push 100
+0x102        41 62        push rbx
+0x104        5        sub
+0x105        21 0 0 0 0 0 0 0 40        push 2
+0x10e        6        mul
+0x10f        41 62        push rbx
+0x111        5        sub
+0x112        21 0 0 0 0 0 0 69 40        push 200
+0x11b        6        mul
+0x11c        21 0 0 0 0 0 0 59 40        push 100
+0x125        41 61        push rax
+0x127        5        sub
+0x128        21 0 0 0 0 0 0 0 40        push 2
+0x131        6        mul
+0x132        41 61        push rax
+0x134        5        sub
+0x135        4        add
+0x136        42 63        pop rcx
+0x138        21 0 0 0 0 0 0 F0 3F        push 1
+0x141        C2 63        pop [ rcx ]
+0x143        41 61        push rax
+0x145        21 0 0 0 0 0 0 F0 3F        push 1
+0x14e        4        add
+0x14f        42 61        pop rax
+0x151        41 61        push rax
+0x153        21 0 0 0 0 0 0 59 40        push 100
+0x15c        41 64        push rdx
+0x15e        4        add
+0x15f        13 1        jbe loopx
+0x161        41 62        push rbx
+0x163        21 0 0 0 0 0 0 F0 3F        push 1
+0x16c        4        add
+0x16d        42 62        pop rbx
+0x16f        41 62        push rbx
+0x171        21 0 0 0 0 0 0 59 40        push 100
+0x17a        41 64        push rdx
+0x17c        4        add
+0x17d        13 0        jbe loopy
+0x17f        18        show

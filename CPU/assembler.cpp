@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
     Label* labels = (Label*)calloc(MAX_LABELS, sizeof(Label));
     int nlabels = 0;
     
-    if(!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
+    if (!Assemble(lines, begin, &end, 0, 1, "empty", labels, &nlabels, number_of_lines)){
         printf("Assembly failed\n");
         return (1);
     }
@@ -122,7 +122,6 @@ int Assemble(MyStr* lines, char* begin, char** endptr, int writeAssemblyList, in
     assert(lines);
     assert(begin);
     assert(endptr);
-    assert(assemblyList_name);
 
     #define NECESSARY_PLUS\
         if ((REGISTER_BIT * CONST_BIT) && (narg == (1 + (RAM_BIT >> 7))) && strcmp(command, "+")){\

@@ -117,14 +117,14 @@ int Load(CPU* thou, const char* name){
 int Init(CPU* thou){
     
     Stack* stack_ptr = (Stack*)calloc(1, sizeof(Stack));
-    if(newStack(10, &stack_ptr) != OK){
+    if (newStack(10, &stack_ptr) != OK){
         printf("Initialisation failed: cannot create stack\n");
         return 0;
     }
     CPU_Stack_ptr = stack_ptr;
 
     Stack* callstack = (Stack*)calloc(1, sizeof(Stack));
-    if(newStack(10, &callstack) != OK){
+    if (newStack(10, &callstack) != OK){
         printf("Initialisation failed: cannot create callstack\n");
         return 0;
     }
@@ -145,9 +145,12 @@ int Init(CPU* thou){
 int main(int argc, char* argv[]){
     
     switch(argc){
-        case 2:  break;
-        default: printf("Wrong arguments\n");
-                 exit(-1);
+        case 2:  
+            break;
+        default: 
+            printf("Wrong arguments\n");
+            exit(-1);
+            break;
     }
     CPU* CPU_ptr = (CPU*)calloc(1,sizeof(CPU));
     if(!(Init(CPU_ptr) && Load(CPU_ptr, argv[1]))) return 1;
