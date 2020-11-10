@@ -4,7 +4,7 @@
 #define NEXT_OF(i) elements[elements[i].next]
 #define PREV_OF(i) elements[elements[i].prev]
 
-#define LIST_ASSERT                                                                                              \
+#define LIST_CHECK                                                                                               \
     if (ValidateList(thou) == LIST_PTR_UNAVAILABLE) return LIST_PTR_UNAVAILABLE;                                 \
     else if (list_status != OK){                                                                                 \
         printf("List error: %s (dumped)\n", GET_ERROR_NAME(list_status));                                        \
@@ -19,28 +19,35 @@
 const char* GET_ERROR_NAME(LIST_STATUS status){
     
     switch(status){
-        CASE_ERROR(OK)
-        CASE_ERROR(WRONG_QUANTITY_OF_FREE_ELEMENTS)
-        CASE_ERROR(OUT_OF_MEMORY)
-        CASE_ERROR(CREATION_FAILED_NOT_ENOUGH_MEMORY)
-        CASE_ERROR(LIST_NAME_ERROR)
-        CASE_ERROR(LIST_PTR_UNAVAILABLE)
-        CASE_ERROR(DATA_PTR_UNAVAILABLE)
-        CASE_ERROR(SIZE_LESS_ZERO)
-        CASE_ERROR(SIZE_GREATER_THAN_CAPACITY)
-        CASE_ERROR(BROKEN_NUMERATION)
-        CASE_ERROR(FREE_HEAD_LESS_ZERO)
-        CASE_ERROR(TAIL_LESS_ZERO)
-        CASE_ERROR(HEAD_LESS_ZERO)
-        CASE_ERROR(CAPACITY_LESS_ZERO)
-        CASE_ERROR(ERROR_ON_FREE_ELEMENT_SEARCH)
+        
+        CASE_ERROR (CREATION_FAILED_NOT_ENOUGH_MEMORY)
+        CASE_ERROR   (WRONG_QUANTITY_OF_FREE_ELEMENTS)
+        CASE_ERROR      (ERROR_ON_FREE_ELEMENT_SEARCH)
+        CASE_ERROR        (SIZE_GREATER_THAN_CAPACITY)
+        CASE_ERROR              (LIST_PTR_UNAVAILABLE)
+        CASE_ERROR              (DATA_PTR_UNAVAILABLE)
+        CASE_ERROR               (FREE_HEAD_LESS_ZERO)
+        CASE_ERROR                (CAPACITY_LESS_ZERO)
+        CASE_ERROR                 (BROKEN_NUMERATION)
+        CASE_ERROR                 (SEARCH_NO_RESULTS)
+        CASE_ERROR                   (ALREADY_ORDERED)
+        CASE_ERROR                   (LIST_NAME_ERROR)
+        CASE_ERROR                    (SIZE_LESS_ZERO)
+        CASE_ERROR                    (TAIL_LESS_ZERO)
+        CASE_ERROR                    (HEAD_LESS_ZERO)
+        CASE_ERROR                    (WRONG_POSITION)
+        CASE_ERROR                     (OUT_OF_MEMORY)
+        CASE_ERROR                                (OK)
+        
         default: return "Unknown error";
     }
 
 }
 
+
 #define CREATE_LIST(name, capacity)\
     List* name = NewList( #name, capacity );
+
 
 List* NewList(const char* name, int capacity){
     
@@ -89,17 +96,22 @@ List* NewList(const char* name, int capacity){
 #define isOrdered   thou -> isOrdered
 #define list_name   thou -> name
 
+
 int FindFree(List* thou){
-    LIST_ASSERT
+    
+    LIST_CHECK
+    
     if(free_head == 0) list_status = ERROR_ON_FREE_ELEMENT_SEARCH;
-    LIST_ASSERT
+    
+    LIST_CHECK
+    
     return free_head;
 }
 
 
-int ResizeUp(List* thou){
+LIST_STATUS ResizeUp(List* thou){
     
-    LIST_ASSERT
+    LIST_CHECK
     
     int new_capacity = capacity * 2;
 
@@ -117,19 +129,21 @@ int ResizeUp(List* thou){
         elements[nelement].prev  = -1;
         elements[nelement].next  = nelement + 1;
     }
+    
     elements[new_capacity - 1].next = free_head;
     
     free_head = capacity;
     capacity  = new_capacity;
 
-    LIST_ASSERT
+    LIST_CHECK
 
-    return 0;
+    return OK;
 }
+
 
 int InsertFirst(List* thou, double value){
     
-    LIST_ASSERT
+    LIST_CHECK
 
     int new_pos = FindFree(thou);
     if (new_pos < 0) return new_pos;
@@ -146,16 +160,17 @@ int InsertFirst(List* thou, double value){
     size++;
     isOrdered = 1;
     
-    LIST_ASSERT
+    LIST_CHECK
     return new_pos;
 }
 
+
 int InsertAfterTail(List* thou, double value){
     
-    LIST_ASSERT
+    LIST_CHECK
 
     int new_pos = FindFree(thou);
-    if (new_pos < 0) return new_pos;
+    if (new_pos < 0) return new_pos; //Error code
     
     free_head = elements[new_pos].next;
     
@@ -167,25 +182,23 @@ int InsertAfterTail(List* thou, double value){
     tail = new_pos;
     size++;
     
-    LIST_ASSERT
+    LIST_CHECK
     return new_pos;
 }  
 
+
 int InsertAfter(List* thou, int pos, double value){
 
-    LIST_ASSERT
+    LIST_CHECK
 
-    if (pos > capacity) return 0;
-
-    if (size == 0 && pos == 0) return InsertFirst (thou, value);
-
-    if (isnan(elements[pos].value)) return 0;
+    if (pos > capacity || pos < 0)  return WRONG_POSITION;
+    
+    if (size == 0 && pos == 0)      return InsertFirst (thou, value);
+    
+    if (isnan(elements[pos].value)) return WRONG_POSITION;
 
     if (free_head == 0){
-        
-        int RESIZE_STATUS = ResizeUp(thou);
-        
-        if (RESIZE_STATUS != 0) return list_status;
+        if (ResizeUp(thou) != OK) return list_status;
     }
 
     if (pos == tail) return InsertAfterTail(thou, value);
@@ -204,13 +217,15 @@ int InsertAfter(List* thou, int pos, double value){
     isOrdered = 0;
     size++;
     
-    LIST_ASSERT
+    LIST_CHECK
     return new_pos; 
 }
 
 
 int InsertBeforeHead(List* thou, double value){
     
+    LIST_CHECK
+
     int new_pos = FindFree(thou);
     if (new_pos < 0) return new_pos; 
     
@@ -225,26 +240,24 @@ int InsertBeforeHead(List* thou, double value){
     head = new_pos;
     isOrdered = 0;
     
-    LIST_ASSERT
+    LIST_CHECK
 
     return new_pos;
 }
 
+
 int InsertBefore(List* thou, int pos, double value){
     
-    LIST_ASSERT
+    LIST_CHECK
 
-    if (pos > capacity) return 0;
-
-    if (size == 0 && pos == 0) return InsertFirst (thou, value);
+    if (pos > capacity || pos < 0 ) return WRONG_POSITION;
     
-    if (isnan(elements[pos].value)) return 0;
+    if (size == 0 && pos == 0)      return InsertFirst (thou, value);
+    
+    if (isnan(elements[pos].value)) return WRONG_POSITION;
 
     if (free_head == 0){
-
-        int RESIZE_STATUS = ResizeUp(thou);
-        
-        if (RESIZE_STATUS != 0) return list_status;
+        if (ResizeUp(thou) != OK) return list_status;
     }
 
     if (pos == head) return InsertBeforeHead(thou, value);
@@ -263,13 +276,14 @@ int InsertBefore(List* thou, int pos, double value){
     size++;
     isOrdered = 0;
     
-    LIST_ASSERT
+    LIST_CHECK
     return new_pos; 
 }
 
-int DeleteTail(List* thou){
+
+LIST_STATUS DeleteTail(List* thou){
     
-    LIST_ASSERT
+    LIST_CHECK
 
     int old_tail = tail;
     tail         = elements[tail].prev;
@@ -290,13 +304,14 @@ int DeleteTail(List* thou){
         tail      = 0;
     }
     
-    LIST_ASSERT
-    return 0;
+    LIST_CHECK
+    return OK;
 }
 
-int DeleteHead(List* thou){
 
-    LIST_ASSERT
+LIST_STATUS DeleteHead(List* thou){
+
+    LIST_CHECK
 
     int old_head = head;
     head         = elements[head].next;
@@ -312,19 +327,20 @@ int DeleteHead(List* thou){
     size--;
     isOrdered = 0;
 
-    LIST_ASSERT
-    return 0;
+    LIST_CHECK
+    return OK;
 
 }
 
-int Delete(List* thou, int pos){
+
+LIST_STATUS Delete(List* thou, int pos){
     
-    LIST_ASSERT
+    LIST_CHECK
 
     if (pos == tail) return DeleteTail(thou);
     if (pos == head) return DeleteHead(thou);
     
-    if (isnan(elements[pos].value)) return 0;
+    if (isnan(elements[pos].value)) return WRONG_POSITION;
     
     PREV_OF(pos).next    = elements[pos].next;
     NEXT_OF(pos).prev    = elements[pos].prev;
@@ -338,25 +354,26 @@ int Delete(List* thou, int pos){
     isOrdered = 0;
     size--;
 
-    LIST_ASSERT
-    return 1;
+    LIST_CHECK
+    return OK;
 }
 
-int DeleteList(List* thou){
+
+LIST_STATUS DeleteList(List* thou){
     
-    LIST_ASSERT
-    if (!list_name) return 1;
+    LIST_CHECK
+    if (!thou) return LIST_PTR_UNAVAILABLE;
     free(elements);
     free(thou);
-    return 0;
+    return OK;
 }
 
 
-int LogicalOrdering(List* thou){
+LIST_STATUS LogicalOrdering(List* thou){
     
-    LIST_ASSERT
+    LIST_CHECK
     
-    if (isOrdered) return 1;
+    if (isOrdered) return ALREADY_ORDERED;
     
     Element* elements_buffer = (Element*)calloc(sizeof(Element), capacity);
     
@@ -392,15 +409,16 @@ int LogicalOrdering(List* thou){
     free(elements);
     elements = elements_buffer;
     
-    LIST_ASSERT
-    return 0;
+    LIST_CHECK
+    return OK;
 }
+
 
 int PhysIndexFromLogic(List* thou, int logic_index){
 
-    LIST_ASSERT
+    LIST_CHECK
     
-    if (logic_index > size - 1) return -1;
+    if (logic_index > size - 1) return WRONG_POSITION;
 
     if (isOrdered) return logic_index;
     
@@ -411,11 +429,12 @@ int PhysIndexFromLogic(List* thou, int logic_index){
     return phys_index;
 }
 
+
 int LogicIndexFromPhys(List* thou, int phys_index){
 
-    LIST_ASSERT
+    LIST_CHECK
     
-    if (phys_index > capacity - 1) return -1;
+    if (phys_index > capacity - 1) return WRONG_POSITION;
 
     if (isOrdered) return phys_index;
     
@@ -426,22 +445,27 @@ int LogicIndexFromPhys(List* thou, int phys_index){
     return logic_index;
 }
 
-int Search(List* thou, double value, SearchResult* found){
+
+LIST_STATUS Search(List* thou, double value, SearchResult* found){
     
-    LIST_ASSERT;
+    LIST_CHECK;
     
     int nelement = head;
     
     for (int i = 0; i < size; i++, nelement = elements[nelement].next){
+        
         if (elements[nelement].value == value){
+            
             found -> logic_index = i;
             found -> phys_index  = nelement;
-            return 0;
+            
+            return OK;
         }
     }
 
-    return -1;
+    return SEARCH_NO_RESULTS;
 }
+
 
 void GraphicalDump(List* thou){
 
@@ -456,13 +480,15 @@ void GraphicalDump(List* thou){
     fprintf(fp, "%d [ style=invis ];", capacity);
     fprintf(fp, "%d [ style=invis ];", 0);
     fprintf(fp, "subgraph cluster {\nstyle=filled;\ncolor=%s;\n", color);
+    
     fprintf(fp, "%d [shape=record, fillcolor=lightgrey rank = same style=filled label=\"    %lf | {  %d | %d | %d }\" ];\n",
     0, elements[0].value, elements[0].prev, 0, elements[0].next);
+    
     fprintf(fp, "0 -> 1 [ style = invis rank = same]; \n");
 
     for (int nelement = 1; nelement < capacity; nelement++){
 
-        if      (PREV_OF(nelement).next != NEXT_OF(nelement).prev && nelement != head && nelement != tail && !isnan(elements[nelement].value)) color = "red";
+        if (PREV_OF(nelement).next != NEXT_OF(nelement).prev && nelement != head && nelement != tail && !isnan(elements[nelement].value)) color = "red";
         
         else if (isnan(elements[nelement].value)) color = "chartreuse";
         else                                      color = "deepskyblue";
@@ -520,6 +546,7 @@ int TextDump(List* thou){
     return 0;    
 }
 
+
 LIST_STATUS ValidateData(List* thou){
     
     unsigned char numeration_is_broken = 0;
@@ -536,8 +563,10 @@ LIST_STATUS ValidateData(List* thou){
 
     if (numeration_is_broken) list_status = BROKEN_NUMERATION;
     if (sum != capacity - size - 1) list_status = WRONG_QUANTITY_OF_FREE_ELEMENTS;
+    
     return list_status;
 }
+
 
 LIST_STATUS ValidateList(List* thou){
     
@@ -557,6 +586,7 @@ LIST_STATUS ValidateList(List* thou){
     return list_status;
 }
 
+
 int main(){
     
     CREATE_LIST(thou, 10)
@@ -564,25 +594,39 @@ int main(){
     GraphicalDump(thou);
     
     for (int i = 0; i < capacity - 5; i++){
-        printf("%d\n", InsertAfter(thou, i, i + 1));
+        InsertAfter(thou, i, i + 1);
         GraphicalDump(thou);
     }
     
     char* command = (char*)calloc(10,1);
     int pos = 0;
     double value = 0;
+    SearchResult found = {0};
 
     while (true){
         
         scanf("%s %d %lf", command, &pos, &value);
         
-        if (!strcmp(command, "ia"))   printf("%d\n", InsertAfter(thou, pos, value));
+        if (!strcmp(command, "ia"))   InsertAfter (thou, pos, value);
         if (!strcmp(command, "ib"))   InsertBefore(thou, pos, value);
-        if (!strcmp(command, "del"))  Delete(thou, pos);
+        
+        if (!strcmp(command, "del"))  Delete  (thou, pos);
         if (!strcmp(command, "rup"))  ResizeUp(thou);
+        
         if (!strcmp(command, "pi"))   printf("%d\n", PhysIndexFromLogic(thou, pos));
         if (!strcmp(command, "li"))   printf("%d\n", LogicIndexFromPhys(thou, pos));
+        
         if (!strcmp(command, "sort")) LogicalOrdering(thou);
+        
+        if (!strcmp(command, "srch")) {
+
+            if (Search(thou, value, &found) == OK){
+                printf("Found %lf at p{%d} or l{%d}\n", value, found.phys_index, found.logic_index);
+            }
+            else{
+                printf("Haven't found\n");
+            }
+        }
 
         GraphicalDump(thou);
     }

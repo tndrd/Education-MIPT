@@ -20,7 +20,8 @@ enum LIST_STATUS{ //занумеровать
     TAIL_LESS_ZERO                    = -12,
     HEAD_LESS_ZERO                    = -13,
     CAPACITY_LESS_ZERO                = -14,
-    ERROR_ON_FREE_ELEMENT_SEARCH      = -15
+    ERROR_ON_FREE_ELEMENT_SEARCH      = -15,
+    WRONG_ELEMENT                     = -16
 };
 
 struct SearchResult{
@@ -29,19 +30,23 @@ struct SearchResult{
 };
 
 struct Element{
-    double value  = NAN;
-    Element* next = nullptr;
-    Element* prev = nullptr;
+    double value = NAN;
+    int next = -1;
+    int prev = -1;
 };
 
 struct List{
 
-    const char*   name        = nullptr;
-    int           capacity    = -1;
-    int           size        = -1;
-    Element*      head        = nullptr;
-    Element*      tail        = nullptr;
-    Element*      free_head   = nullptr;
+    const char*   name         = nullptr;
+    
+    int           capacity     = -1;
+    int           size         = -1;
+    
+    Element*      head         = nullptr;
+    Element*      tail         = nullptr;
+    Element*      free_head    = nullptr;
+    Element*      new_elem_ptr = nullptr;
+    
     unsigned char isOrdered   = 1; 
     LIST_STATUS   list_status = OK;
 };

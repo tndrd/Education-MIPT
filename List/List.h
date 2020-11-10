@@ -4,7 +4,7 @@
 #include <math.h>
 #include <string.h>
 
-enum LIST_STATUS{ //занумеровать
+enum LIST_STATUS{
 
     OK                                = 0,
     LIST_PTR_UNAVAILABLE              = -2,
@@ -20,7 +20,10 @@ enum LIST_STATUS{ //занумеровать
     TAIL_LESS_ZERO                    = -12,
     HEAD_LESS_ZERO                    = -13,
     CAPACITY_LESS_ZERO                = -14,
-    ERROR_ON_FREE_ELEMENT_SEARCH      = -15
+    ERROR_ON_FREE_ELEMENT_SEARCH      = -15,
+    WRONG_POSITION                    = -16,
+    ALREADY_ORDERED                   = -17,
+    SEARCH_NO_RESULTS                 = -18
 };
 
 struct SearchResult{
@@ -53,20 +56,37 @@ List* NewList(int capacity);
 
 int FindFree(List* thou);
 
-int ResizeUp(List* thou);
+LIST_STATUS ResizeUp(List* thou);
 
 int InsertAfter(List* thou, int pos, double value);
 
 int InsertBefore(List* thou, int pos, double value);
 
-int Delete(List* thou, int pos);
+LIST_STATUS Delete(List* thou, int pos);
 
 void GraphicalDump(List* thou);
 
 LIST_STATUS ValidateData(List* thou);
 
-int DeleteList(List* thou);
+LIST_STATUS DeleteList(List* thou);
 
 int TextDump(List* thou);
 
-int Search(List* thou, double value, SearchResult* found);
+LIST_STATUS Search(List* thou, double value, SearchResult* found);
+
+int InsertFirst(List* thou, double value);
+
+int InsertAfterTail(List* thou, double value);
+
+int InsertBeforeHead(List* thou, double value);
+
+LIST_STATUS DeleteTail(List* thou);
+
+LIST_STATUS DeleteHead(List* thou);
+
+LIST_STATUS LogicalOrdering(List* thou);
+
+int PhysIndexFromLogic(List* thou, int logic_index);
+
+int LogicIndexFromPhys(List* thou, int phys_index);
+
