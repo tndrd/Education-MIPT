@@ -362,7 +362,6 @@ LIST_STATUS Delete(List* thou, int pos){
 LIST_STATUS DeleteList(List* thou){
     
     LIST_CHECK
-    if (!thou) return LIST_PTR_UNAVAILABLE;
     free(elements);
     free(thou);
     return OK;
@@ -385,8 +384,8 @@ LIST_STATUS LogicalOrdering(List* thou){
 
     for (int i = 1; i < size + 1; i++){
         elements_buffer[i].value  = elements[nelement].value;
-        elements_buffer[i].next   = i+1;
-        elements_buffer[i].prev   = i-1;
+        elements_buffer[i].next   = i + 1;
+        elements_buffer[i].prev   = i - 1;
         
         nelement = elements[nelement].next;
     }
@@ -418,7 +417,7 @@ int PhysIndexFromLogic(List* thou, int logic_index){
 
     LIST_CHECK
     
-    if (logic_index > size - 1) return WRONG_POSITION;
+    if (logic_index > size - 1 || logic_index < 0) return WRONG_POSITION;
 
     if (isOrdered) return logic_index;
     
@@ -434,7 +433,7 @@ int LogicIndexFromPhys(List* thou, int phys_index){
 
     LIST_CHECK
     
-    if (phys_index > capacity - 1) return WRONG_POSITION;
+    if (phys_index > capacity - 1 || phys_index < 1) return WRONG_POSITION;
 
     if (isOrdered) return phys_index;
     

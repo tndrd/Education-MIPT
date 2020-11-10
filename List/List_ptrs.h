@@ -21,12 +21,14 @@ enum LIST_STATUS{ //занумеровать
     HEAD_LESS_ZERO                    = -13,
     CAPACITY_LESS_ZERO                = -14,
     ERROR_ON_FREE_ELEMENT_SEARCH      = -15,
-    WRONG_ELEMENT                     = -16
+    WRONG_ELEMENT                     = -16,
+    ALREADY_ORDERED                   = -17,
+    SEARCH_NO_RESULTS                 = -18
 };
 
 struct SearchResult{
-    int phys_index  = 0;
-    int logic_index = 0;
+    Element* element_ptr  = nullptr;
+    int logic_index       = 0;
 };
 
 struct Element{

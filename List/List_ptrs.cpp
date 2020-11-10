@@ -86,14 +86,17 @@ LIST_STATUS FindFree(List* thou){
     
     LIST_ASSERT
     
-    if(free_head == nullptr) list_status = ERROR_ON_FREE_ELEMENT_SEARCH;
+    if(free_head == nullptr) {
+        list_status = ERROR_ON_FREE_ELEMENT_SEARCH;
+        return ERROR_ON_FREE_ELEMENT_SEARCH;
+    }
     
     thou -> new_elem_ptr =         free_head;
     free_head            = free_head -> next;
 
     LIST_ASSERT
 
-    return list_status;
+    return OK;
 }
 
 
@@ -121,7 +124,7 @@ LIST_STATUS ResizeUp(List* thou){
 
     LIST_ASSERT
 
-    return list_status;
+    return OK;
 }
 
 
@@ -131,8 +134,8 @@ LIST_STATUS InsertFirst(List* thou, double value){
 
     if (FindFree(thou) != OK) return list_status;
     
-    new_elem_ptr -> next  = 0;
-    new_elem_ptr -> prev  = 0;
+    new_elem_ptr -> next  = nullptr;
+    new_elem_ptr -> prev  = nullptr;
     new_elem_ptr -> value = value;
     
     tail = new_elem_ptr;
@@ -142,7 +145,7 @@ LIST_STATUS InsertFirst(List* thou, double value){
     isOrdered = 1;
     
     LIST_ASSERT
-    return new_pos;
+    return OK;
 }
 
 
@@ -161,7 +164,7 @@ LIST_STATUS InsertAfterTail(List* thou, double value){
     size++;
     
     LIST_ASSERT
-    return list_status;
+    return OK;
 }  
 
 
@@ -178,251 +181,219 @@ LIST_STATUS InsertAfter(List* thou, Element* element_ptr, double value){
 
     if (pos == tail) return InsertAfterTail(thou, value);
     
-    int new_pos = FindFree(thou);
-    if (new_pos < 0) return new_pos;
+    if (FindFree(thou) != OK) return list_status;
     
-    free_head = elements[new_pos].next;
-    
-    elements[new_pos].next  = elements[pos].next;
-    elements[new_pos].prev  = pos;
-    NEXT_OF(pos).prev       = new_pos;
-    elements[pos].next      = new_pos;
-    elements[new_pos].value = value;
+    new_elem_ptr         -> next    = element_ptr -> next;
+    new_elem_ptr         -> prev    = element_ptr;
+    NEXT_OF(element_ptr) -> prev    = new_elem_ptr;
+    element_ptr          -> next    = new_pos;
+    new_elem_ptr         -> value   = value;
     
     isOrdered = 0;
     size++;
     
     LIST_ASSERT
-    return new_pos; 
+    return OK; 
 }
 
 
-int InsertBeforeHead(List* thou, double value){
+LIST_STATUS InsertBeforeHead(List* thou, double value){
     
-    int new_pos = FindFree(thou);
-    if (new_pos < 0) return new_pos; 
+    LIST_ASSERT
     
-    free_head = elements[new_pos].next;
+    if (FindFree(thou) != OK) return list_status;
     
-    elements[new_pos].prev  = 0;
-    elements[new_pos].next  = head;
-    elements[head].prev     = new_pos;
-    elements[new_pos].value = value;
+    new_elem_ptr -> prev  = nullptr;
+    new_elem_ptr -> next  = head;
+    head         -> prev  = new_pos;
+    new_elem_ptr -> value = value;
     
     size++;
-    head = new_pos;
+    head = new_elem_ptr;
     isOrdered = 0;
     
     LIST_ASSERT
 
-    return new_pos;
+    return OK;
 }
 
 
-int InsertBefore(List* thou, int pos, double value){
+LIST_STATUS InsertBefore(List* thou, Element* element_ptr, double value){
     
     LIST_ASSERT
 
-    if (pos > capacity) return 0;
+    if (size == 0 && element_ptr == head) return InsertFirst (thou, value);
+    if (isnan(element_ptr -> value))      return WRONG_ELEMENT;
 
-    if (size == 0 && pos == 0) return InsertFirst (thou, value);
-    
-    if (isnan(elements[pos].value)) return 0;
-
-    if (free_head == 0){
-
-        int RESIZE_STATUS = ResizeUp(thou);
-        
-        if (RESIZE_STATUS != 0) return list_status;
+    if (free_head == nullptr){
+        if (ResizeUp(thou) != OK) return list_status;
     }
 
     if (pos == head) return InsertBeforeHead(thou, value);
     
-    int new_pos = FindFree(thou);
-    if (new_pos < 0) return new_pos;
-
-    free_head = elements[new_pos].next;
+    if (FindFree(thou) != OK) return list_status;
     
-    elements[new_pos].prev  = elements[pos].prev;
-    elements[new_pos].next  = pos;
-    PREV_OF(pos).next       = new_pos;
-    elements[pos].prev      = new_pos;
-    elements[new_pos].value = value;
+    new_element_ptr      -> prev   = element_ptr -> prev;
+    new_element_ptr      -> next   = element_ptr;
+    PREV_OF(element_ptr) -> next   = new_elem_ptr;
+    element_ptr          -> prev   = new_pos;
+    new_element_ptr      -> value  = value;
     
     size++;
     isOrdered = 0;
     
     LIST_ASSERT
-    return new_pos; 
+    return OK; 
 }
 
 
-int DeleteTail(List* thou){
+LIST_STATUS DeleteTail(List* thou){
     
     LIST_ASSERT
 
-    int old_tail = tail;
-    tail         = elements[tail].prev;
+    Element* old_tail = tail;
+    tail              = tail -> prev;
 
-    elements[old_tail].value  = NAN;
-    elements[old_tail].prev   = -1;
+    old_tail -> value = NAN;
+    old_tail -> prev  = nullptr;
 
-    elements[old_tail].next   = free_head;
-    free_head                 = old_tail;
+    old_tail -> next  = free_head;
+    free_head         = old_tail;
     
-    elements[tail].next       = 0;
+    tail -> next      = nullptr;
     
     size--;
     
     if (size == 0){
         isOrdered = 1;
-        head      = 0;
-        tail      = 0;
+        head      = nullptr;
+        tail      = nullptr;
     }
     
     LIST_ASSERT
-    return 0;
+    return OK;
 }
 
 
-int DeleteHead(List* thou){
+LIST_STATUS DeleteHead(List* thou){
 
     LIST_ASSERT
 
-    int old_head = head;
-    head         = elements[head].next;
+    Element* old_head = head;
+    head              = head -> next;
 
-    elements[old_head].value  = NAN;
-    elements[old_head].prev   = -1;
+    old_head -> value  = NAN;
+    old_head -> prev   = nullptr;
 
-    elements[old_head].next   = free_head;
-    free_head                 = old_head;
+    old_head -> next   = free_head;
+    free_head          = old_head;
     
-    elements[head].prev       = 0;
+    head -> prev       = 0;
     
     size--;
     isOrdered = 0;
 
     LIST_ASSERT
-    return 0;
+    return OK;
 
 }
 
 
-int Delete(List* thou, int pos){
+LIST_STATUS Delete(List* thou, Element* element_ptr){
     
     LIST_ASSERT
 
-    if (pos == tail) return DeleteTail(thou);
-    if (pos == head) return DeleteHead(thou);
+    if (element_ptr == tail) return DeleteTail(thou);
+    if (element_ptr == head) return DeleteHead(thou);
     
-    if (isnan(elements[pos].value)) return 0;
+    if (isnan(element_ptr -> value)) return 0;
     
-    PREV_OF(pos).next    = elements[pos].next;
-    NEXT_OF(pos).prev    = elements[pos].prev;
+    PREV_OF(element_ptr).next    = element_ptr -> next;
+    NEXT_OF(element_ptr).prev    = element_ptr -> prev;
     
-    elements[pos].value  = NAN;
-    elements[pos].prev   = -1;
+    element_ptr -> value  = NAN;
+    element_ptr -> prev   = -1;
     
-    elements[pos].next   = free_head;
-    free_head            = pos;
+    element_ptr -> next   = free_head;
+    free_head             = element_ptr;
     
     isOrdered = 0;
     size--;
 
     LIST_ASSERT
-    return 1;
+    return OK;
 }
 
 
-int DeleteList(List* thou){
+LIST_STATUS DeleteList(List* thou){ // TODO
     
     LIST_ASSERT
-    if (!list_name) return 1;
-    free(elements);
+    //free(elements);
     free(thou);
-    return 0;
+    return OK;
 }
 
 
-int LogicalOrdering(List* thou){
+LIST_STATUS LogicalOrdering(List* thou){
     
     LIST_ASSERT
     
-    if (isOrdered) return 1;
+    if (isOrdered) return ALREADY_ORDERED;
     
     Element* elements_buffer = (Element*)calloc(sizeof(Element), capacity);
     
     elements_buffer[0].value = NAN;
-    elements_buffer[0].next  = 0;
-    elements_buffer[0].prev  = 0;
+    elements_buffer[0].next  = nullptr;
+    elements_buffer[0].prev  = nullptr;
     
-    int nelement = head;
+    Element* current_element = head;
 
     for (int i = 1; i < size + 1; i++){
-        elements_buffer[i].value  = elements[nelement].value;
-        elements_buffer[i].next   = i+1;
-        elements_buffer[i].prev   = i-1;
+        elements_buffer[i].value  = current_element -> value;
+        elements_buffer[i].next   = elements_buffer + i + 1;
+        elements_buffer[i].prev   = elements_buffer + i - 1;
         
-        nelement = elements[nelement].next;
+        current_element = current_element -> next;
     }
     for (int i = size + 1; i < capacity; i++){
-        elements_buffer[i].next = i + 1;
-        elements_buffer[i].prev = -1;
+        elements_buffer[i].next  = elements_buffer + i + 1;
+        elements_buffer[i].prev  = nullptr;
         elements_buffer[i].value = NAN;
     }
     
-    head      = 1;
-    tail      = size;
-    free_head = size + 1;
+    head      = elements_buffer + 1;
+    tail      = elements_buffer + size;
+    free_head = elements_buffer + size + 1;
 
-    elements_buffer[head].prev         = 0;
-    elements_buffer[tail].next         = 0;
-    elements_buffer[capacity - 1].next = 0; //free_tail
+    head -> prev         = nullptr;
+    tail -> next         = nullptr;
+    elements_buffer[capacity - 1].next = nullptr; //free_tail
     
     isOrdered = 1;
 
-    free(elements);
-    elements = elements_buffer;
+    //TODO Free old elements
+    //free(elements);
+    //elements = elements_buffer;
     
     LIST_ASSERT
-    return 0;
+    return OK;
 }
 
 
-int PhysIndexFromLogic(List* thou, int logic_index){
+LIST_STATUS GetElement(List* thou, int logic_index, Element** element_ptr){
 
     LIST_ASSERT
     
-    if (logic_index > size - 1) return -1;
-
-    if (isOrdered) return logic_index;
+    if (logic_index > size - 1 || logic_index < 1) return WRONG_ELEMENT;
     
-    int phys_index = head;
+    *element_ptr = head;
 
-    for(int i = 0; i < logic_index; i++) phys_index = elements[phys_index].next;
+    for(int i = 0; i < logic_index; i++) *element_ptr = *(element_ptr) -> next;
     
-    return phys_index;
+    return OK;
 }
 
-
-int LogicIndexFromPhys(List* thou, int phys_index){
-
-    LIST_ASSERT
-    
-    if (phys_index > capacity - 1) return -1;
-
-    if (isOrdered) return phys_index;
-    
-    int logic_index = 0;
-
-    for(; elements[phys_index].prev != 0; phys_index = elements[phys_index].prev) logic_index++;
-    
-    return logic_index;
-}
-
-
-int Search(List* thou, double value, SearchResult* found){
+LIST_STATUS Search(List* thou, double value, SearchResult* found){
     
     LIST_ASSERT;
     
@@ -436,7 +407,7 @@ int Search(List* thou, double value, SearchResult* found){
         }
     }
 
-    return -1;
+    return SEARCH_NO_RESULTS;
 }
 
 
