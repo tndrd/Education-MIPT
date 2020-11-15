@@ -592,8 +592,11 @@ int main(){
 
     GraphicalDump(thou);
     
+    int saved_position = 0;
+
     for (int i = 0; i < capacity - 5; i++){
-        InsertAfter(thou, i, i + 1);
+        saved_position = InsertAfter(thou, i, i + 1);
+        printf("{%d}: \n", saved_position, elements[saved_position].value);
         GraphicalDump(thou);
     }
     
@@ -602,18 +605,20 @@ int main(){
     double value = 0;
     SearchResult found = {0};
 
+    
+
     while (true){
         
         scanf("%s %d %lf", command, &pos, &value);
         
-        if (!strcmp(command, "ia"))   InsertAfter (thou, pos, value);
-        if (!strcmp(command, "ib"))   InsertBefore(thou, pos, value);
+        if (!strcmp(command, "ia"))   printf("{%d}\n", InsertAfter (thou, pos, value));
+        if (!strcmp(command, "ib"))   printf("{%d}\n", InsertBefore(thou, pos, value));
         
         if (!strcmp(command, "del"))  Delete  (thou, pos);
         if (!strcmp(command, "rup"))  ResizeUp(thou);
         
-        if (!strcmp(command, "pi"))   printf("%d\n", PhysIndexFromLogic(thou, pos));
-        if (!strcmp(command, "li"))   printf("%d\n", LogicIndexFromPhys(thou, pos));
+        if (!strcmp(command, "pi"))   printf("p: %d\n", PhysIndexFromLogic(thou, pos));
+        if (!strcmp(command, "li"))   printf("l: %d\n", LogicIndexFromPhys(thou, pos));
         
         if (!strcmp(command, "sort")) LogicalOrdering(thou);
         
