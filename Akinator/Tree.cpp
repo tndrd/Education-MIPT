@@ -240,8 +240,6 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     if (node -> parent == node ->  left && node -> left)                           return NODES_LOOPED;
     if (node -> parent == node -> right && node -> right)                          return NODES_LOOPED;
     if (node -> left   == node -> right && node -> left)                           return SAME_LEFT_AND_RIGHT_CHILDS;
-    
-    
 
     *(counter_ptr)++;
 
