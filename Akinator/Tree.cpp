@@ -31,6 +31,7 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
     }
 }
 
+
 Tree* NewTree(char* RootValue){
 
     Tree*    new_tree = (Tree*)calloc(1, sizeof(Tree));
@@ -42,6 +43,7 @@ Tree* NewTree(char* RootValue){
     
     return new_tree;
 }
+
 
 TREE_STATUS AttachLeftNode(Node* to_attach, Node* Parent){
 
@@ -105,6 +107,7 @@ TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
     return AttachRightNode(new_node, Parent);
 }
 
+
 int DumpNode(FILE* fp, Node* node){
     
     if (!node) return 1;
@@ -120,6 +123,7 @@ int DumpNode(FILE* fp, Node* node){
     
     return 0;
 }
+
 
 TREE_STATUS GraphicalDump(Tree* tree){
 
@@ -137,6 +141,7 @@ TREE_STATUS GraphicalDump(Tree* tree){
     system("viewnior show.png");
     return OK;
 }
+
 
 TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
@@ -161,6 +166,7 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
     return OK;
 }
 
+
 TREE_STATUS SaveTree(Tree* tree, const char* filename){
     
     TREE_CHECK(tree)
@@ -172,6 +178,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename){
     fclose(fp);
     return OK;
 }
+
 
 Node* ReadNode(Tree* tree, char** ptr){
     
@@ -213,6 +220,7 @@ Node* ReadNode(Tree* tree, char** ptr){
     return new_node;
 }
 
+
 Tree* ReadTree(char* filename){
     
     assert(filename);
@@ -226,6 +234,7 @@ Tree* ReadTree(char* filename){
     
     return new_tree;
 }
+
 
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     
@@ -252,6 +261,7 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     
     return child_status;
 }
+
 
 TREE_STATUS ValidateTree(Tree* thou){    
     int counter = 0;
