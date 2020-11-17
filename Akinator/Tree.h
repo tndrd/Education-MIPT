@@ -50,7 +50,7 @@ int DumpNode(FILE* fp, Node* node);
 
 TREE_STATUS GraphicalDump(Tree* tree);
 
-int SaveNode(FILE* fp, Node* Parent);
+TREE_STATUS SaveNode(FILE* fp, Node* Parent);
 
 TREE_STATUS SaveTree(Tree* tree, const char* filename);
 

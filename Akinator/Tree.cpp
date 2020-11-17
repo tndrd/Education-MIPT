@@ -1,5 +1,15 @@
 #include "Tree.h"
 
+TREE_STATUS check_status = OK;
+
+
+#define TREE_CHECK(tree_ptr)\
+    check_status = ValidateTree(tree_ptr);\
+    if (check_status != OK){\
+        if (tree_ptr) GraphicalDump(tree_ptr);\
+        return check_status;\
+    }
+
 #define CASE_ERROR(error_code) case error_code: return #error_code;
 
 const char* GET_ERROR_NAME(TREE_STATUS status){
@@ -10,6 +20,12 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
         CASE_ERROR(NODES_LOOPED)
         CASE_ERROR(INVALID_POINTER)
         CASE_ERROR(TOO_MANY_NODES_FOR_CURRENT_SIZE)
+        CASE_ERROR(EDGE_ALREADY_EXISTS)
+        CASE_ERROR(SAME_LEFT_AND_RIGHT_CHILDS)
+        CASE_ERROR(STRAY_NODE)
+        CASE_ERROR(INVALID_NODE_VALUE_PTR)
+        CASE_ERROR(WRONG_TREE_PTR)
+        CASE_ERROR(WRONG_PARENT_PTR)
         default: return "Unknown Error";
     }
 }
@@ -29,20 +45,25 @@ TREE_STATUS AttachLeftNode(Node* to_attach, Node* Parent){
     if (!Parent || !to_attach) return INVALID_POINTER;
     if (Parent -> left)        return EDGE_ALREADY_EXISTS;
 
+    TREE_CHECK(Parent -> tree)
+
     Parent    -> left   = to_attach;
     to_attach -> parent = Parent;
     to_attach -> tree   = Parent -> tree;
     
     ((Parent -> tree) -> size)++;
 
+    TREE_CHECK(Parent -> tree)
     return OK;
 }
 
 
 TREE_STATUS AddLeftNode(Node* Parent, char* NodeValue){
-    
+
     if (!Parent || !NodeValue) return INVALID_POINTER;
     
+    TREE_CHECK(Parent -> tree)
+
     Node* new_node     = (Node*)calloc(1, sizeof(Node));
     new_node -> value  = NodeValue;
     
@@ -55,41 +76,31 @@ TREE_STATUS AttachRightNode(Node* to_attach, Node* Parent){
     if (!Parent || !to_attach) return INVALID_POINTER;
     if (Parent -> right)       return EDGE_ALREADY_EXISTS;
 
+    TREE_CHECK(Parent -> tree)
+
     Parent    -> right  = to_attach;
     to_attach -> parent = Parent;
     to_attach -> tree   = Parent -> tree;
     
     ((Parent -> tree) -> size)++;
-
+    
+    TREE_CHECK(Parent -> tree)
     return OK;
 }
 
 
 TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
     
+
     if (!Parent || !NodeValue) return INVALID_POINTER;
     
+    TREE_CHECK(Parent -> tree)
+
     Node* new_node     = (Node*)calloc(1, sizeof(Node));
     new_node -> value  = NodeValue;
     
     return AttachRightNode(new_node, Parent);
 }
-/*
-TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
-    
-    if (!Parent || !NodeValue) return INVALID_POINTER;
-    if (Parent -> right)                return EDGE_ALREADY_EXISTS;
-    
-    Parent  -> right            = (Node*)calloc(1, sizeof(Node));
-    (Parent -> right) -> value  = NodeValue;
-    (Parent -> right) -> parent = Parent;
-    (Parent -> right) -> tree   = Parent -> tree;
-
-    ((Parent -> tree) -> size)++;
-
-    return OK;
-}
-*/
 
 int DumpNode(FILE* fp, Node* node){
     
@@ -118,11 +129,13 @@ TREE_STATUS GraphicalDump(Tree* tree){
     fclose(fp);
     system("dot -Tpng show -n -o show.png");
     system("viewnior show.png");
+    return OK;
 }
 
-int SaveNode(FILE* fp, Node* Parent){
+TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
-    if (!Parent) return 0;
+    if (!Parent) return INVALID_POINTER;
+    TREE_CHECK(Parent -> tree);
     assert (Parent -> value);
     
     fprintf(fp, "[\n");
@@ -136,12 +149,14 @@ int SaveNode(FILE* fp, Node* Parent){
     }
     
     fprintf(fp, "]\n");
-    return 1;
+    
+    TREE_CHECK(Parent -> tree);
+    return OK;
 }
-
 
 TREE_STATUS SaveTree(Tree* tree, const char* filename){
     
+
     if (!tree) return INVALID_POINTER;
 
     FILE* fp = fopen(filename, "w");
@@ -208,7 +223,6 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     if (node -> parent == node ->  left && node -> left)                           return NODES_LOOPED;
     if (node -> parent == node -> right && node -> right)                          return NODES_LOOPED;
     if (node -> left   == node -> right && node -> left)                           return SAME_LEFT_AND_RIGHT_CHILDS;
-    if (node -> left && !(node -> right) || node -> right && !(node -> left))      return ONLY_ONE_CHILD;
     
     if (!(node -> value)) return INVALID_NODE_VALUE_PTR;
 
@@ -220,9 +234,9 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     return child_status;
 }
 
-TREE_STATUS ValidateTree(Tree* thou){
-    
+TREE_STATUS ValidateTree(Tree* thou){    
     int counter = 0;
+    if (!thou) return INVALID_POINTER;
     return ValidateNode(thou -> root, &counter);
 }
 /*
