@@ -6,16 +6,21 @@
     printf(text "\n");\
     SAY(text)\
 
+
 Tree* AkinatorChooseDatabase(){
     
     printf("Type [l]oad or [n]ew: ");
+    
     char mode = getc(stdin);
     Tree* DataBase = nullptr;
+    
     if (mode == 'l'){
-        char filename[15];
         printf("Specify database name: ");
+        
+        char filename[20];
         scanf("%s", filename);
         DataBase = ReadTree(filename);
+        
         if(!DataBase){
             printf("There's no file with this name!\n-------\n");
             getc(stdin);
@@ -37,11 +42,15 @@ TREE_STATUS SplitByAtribute(char* new_attribute, Node* Parent_Node, char* NewObj
     if (!new_attribute || !Parent_Node || !NewObject) return INVALID_POINTER;
     
     TREE_STATUS status = OK;
+    
     status = AddLeftNode(Parent_Node, NewObject);
     if (status != OK) return status;
+    
     status = AddRightNode(Parent_Node, Parent_Node -> value);
     if (status != OK) return status;
+    
     Parent_Node -> value = new_attribute;
+    
     return status;    
 }
 
@@ -92,9 +101,11 @@ void SwitchNode(Node* current_node){
     }
 }
 
+
 void AkinatorPlayGuess(Tree* DataBase){    
     SwitchNode(DataBase -> root);
 }
+
 
 Node* SearchAtNode(char* value, Node* current, int* node_counter){
 
