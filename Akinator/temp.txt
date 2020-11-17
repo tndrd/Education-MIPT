@@ -1,0 +1,21 @@
+[
+?First tree!?
+[
+?Left?
+[
+`aaaaa`
+]
+[
+`bbbb`
+]
+]
+[
+?Right?
+[
+`cccc`
+]
+[
+`dddd`
+]
+]
+]
