@@ -12,6 +12,7 @@ TREE_STATUS check_status = OK;
 
 #define CASE_ERROR(error_code) case error_code: return #error_code;
 
+
 const char* GET_ERROR_NAME(TREE_STATUS status){
     
     switch(status){
@@ -35,8 +36,10 @@ Tree* NewTree(char* RootValue){
     Tree*    new_tree = (Tree*)calloc(1, sizeof(Tree));
     new_tree  -> root = (Node*)calloc(1, sizeof(Node));
     new_tree  -> size = 1;
+    
     (new_tree -> root) -> value = RootValue;
     (new_tree -> root) -> tree = new_tree;
+    
     return new_tree;
 }
 
@@ -109,7 +112,7 @@ int DumpNode(FILE* fp, Node* node){
     
     fprintf(fp, "%ld [label=\"%s\"];\n", node, node -> value);
     fprintf(fp, "%ld -> %ld [color = grey]\n", node, node -> parent);
-    if(node -> left) fprintf(fp, "%ld -> %ld [color=green]\n", node, node -> left);
+    if(node -> left)  fprintf(fp, "%ld -> %ld [color=green]\n", node, node -> left);
     if(node -> right) fprintf(fp, "%ld -> %ld [color=red]\n", node, node -> right);
     
     DumpNode(fp, node -> left);
@@ -124,9 +127,12 @@ TREE_STATUS GraphicalDump(Tree* tree){
 
     FILE* fp = fopen("show", "w");
     fprintf(fp, "digraph G {\n");
+    
     DumpNode(fp, tree -> root);
+    
     fprintf(fp, "}");
     fclose(fp);
+    
     system("dot -Tpng show -n -o show.png");
     system("viewnior show.png");
     return OK;
@@ -135,15 +141,16 @@ TREE_STATUS GraphicalDump(Tree* tree){
 TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
     if (!Parent) return INVALID_POINTER;
-    TREE_CHECK(Parent -> tree);
-    assert (Parent -> value);
+    
+    TREE_CHECK   (Parent -> tree);
+    assert       (Parent -> value);
     
     fprintf(fp, "[\n");
 
     if (!(Parent -> left) && !(Parent -> right))
-        fprintf(fp, "`%s`\n", Parent -> value);
+        fprintf (fp, "`%s`\n", Parent -> value);
     else{
-        fprintf(fp, "?%s?\n", Parent -> value);
+        fprintf (fp, "?%s?\n", Parent -> value);
         SaveNode(fp, Parent -> left);
         SaveNode(fp, Parent -> right);
     }
@@ -156,6 +163,7 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
 TREE_STATUS SaveTree(Tree* tree, const char* filename){
     
+    TREE_CHECK(tree)
 
     if (!tree) return INVALID_POINTER;
 
@@ -166,6 +174,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename){
 }
 
 Node* ReadNode(Tree* tree, char** ptr){
+    
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
     for(;**ptr != '`' && **ptr != '?'; (*ptr)++){
@@ -175,12 +184,12 @@ Node* ReadNode(Tree* tree, char** ptr){
     }
     
 
-    char node_type = **ptr;
+    char node_type    = **ptr;
     new_node -> value = *ptr + 1;
     new_node -> tree  = tree;
     (tree -> size)++;
 
-    *ptr = strchr(*ptr+1, **ptr);
+    *ptr  = strchr(*ptr+1, **ptr);
     **ptr = '\0';
     
     if (node_type == '`'){    
@@ -188,12 +197,15 @@ Node* ReadNode(Tree* tree, char** ptr){
         new_node -> right = nullptr;
     }
     else if(node_type == '?'){
+        
         *ptr = strchr(*ptr + 1, '[');
+        
         new_node  -> left  =  ReadNode(tree, ptr);
         assert(new_node -> left);
         (new_node -> left) -> parent = new_node;
 
         *ptr = strchr(*ptr + 1, '[');
+        
         new_node -> right = ReadNode(tree, ptr);
         assert(new_node -> right);
         (new_node -> right) -> parent = new_node;
@@ -204,10 +216,14 @@ Node* ReadNode(Tree* tree, char** ptr){
 Tree* ReadTree(char* filename){
     
     assert(filename);
+    
     Tree* new_tree = (Tree*)calloc(1, sizeof(Tree));
-    char* buffer = ReadFile(filename);
+    
+    char* buffer   = ReadFile(filename);
     if (!buffer) return nullptr;
+    
     new_tree -> root = ReadNode(new_tree, &buffer);
+    
     return new_tree;
 }
 
@@ -215,8 +231,9 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     
     if (!node) return OK;
 
-    if (!(node -> tree))  return WRONG_TREE_PTR;
+    if (!(node -> tree))                                     return WRONG_TREE_PTR;
     if (!(node -> parent) && node != (node -> tree) -> root) return WRONG_PARENT_PTR;
+    if (!(node -> value))                                    return INVALID_NODE_VALUE_PTR;
 
     if (*counter_ptr == (node -> tree) -> size && (node -> left || node -> right)) return TOO_MANY_NODES_FOR_CURRENT_SIZE;
 
@@ -224,13 +241,17 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     if (node -> parent == node -> right && node -> right)                          return NODES_LOOPED;
     if (node -> left   == node -> right && node -> left)                           return SAME_LEFT_AND_RIGHT_CHILDS;
     
-    if (!(node -> value)) return INVALID_NODE_VALUE_PTR;
+    
 
     *(counter_ptr)++;
+
     TREE_STATUS child_status = OK;
+
     child_status = ValidateNode(node -> left, counter_ptr);
     if (child_status != OK) return child_status;
+    
     child_status = ValidateNode(node -> right, counter_ptr);
+    
     return child_status;
 }
 
@@ -239,22 +260,3 @@ TREE_STATUS ValidateTree(Tree* thou){
     if (!thou) return INVALID_POINTER;
     return ValidateNode(thou -> root, &counter);
 }
-/*
-int main(){
-    
-    /*
-    Tree* thou = NewTree("First tree!");
-    AddLeftNode( thou -> root, "Left");
-    AddRightNode(thou -> root, "Right");
-    AddLeftNode((thou -> root) -> left, "aaaaa");
-    AddRightNode((thou -> root) -> left, "bbbb");
-    AddLeftNode((thou -> root) -> right, "cccc");
-    AddRightNode((thou -> root) -> right, "dddd");
-    SaveTree(thou, "mytree.txt");
-    GraphicalDump(thou);
-    
-    Tree* thou = ReadTree("mytree.txt");
-    GraphicalDump(thou);
-    printf("%s\n", GET_ERROR_NAME(ValidateTree(thou)));
-}
-*/
