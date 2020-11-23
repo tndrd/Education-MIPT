@@ -96,7 +96,6 @@ TREE_STATUS AttachRightNode(Node* to_attach, Node* Parent){
 
 TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
     
-
     if (!Parent || !NodeValue) return INVALID_POINTER;
     
     TREE_CHECK(Parent -> tree)
@@ -111,10 +110,12 @@ TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
 int DumpNode(FILE* fp, Node* node){
     
     if (!node) return 1;
+    
     assert(node -> value);
     
     fprintf(fp, "%ld [label=\"%s\"];\n", node, node -> value);
     fprintf(fp, "%ld -> %ld [color = grey]\n", node, node -> parent);
+    
     if(node -> left)  fprintf(fp, "%ld -> %ld [color=green]\n", node, node -> left);
     if(node -> right) fprintf(fp, "%ld -> %ld [color=red]\n", node, node -> right);
     
@@ -130,6 +131,7 @@ TREE_STATUS GraphicalDump(Tree* tree){
     if (!tree) return INVALID_POINTER;
 
     FILE* fp = fopen("show", "w");
+    
     fprintf(fp, "digraph G {\n");
     
     DumpNode(fp, tree -> root);
@@ -156,6 +158,7 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
         fprintf (fp, "`%s`\n", Parent -> value);
     else{
         fprintf (fp, "?%s?\n", Parent -> value);
+        
         SaveNode(fp, Parent -> left);
         SaveNode(fp, Parent -> right);
     }
@@ -163,6 +166,7 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
     fprintf(fp, "]\n");
     
     TREE_CHECK(Parent -> tree);
+    
     return OK;
 }
 
@@ -174,8 +178,11 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename){
     if (!tree) return INVALID_POINTER;
 
     FILE* fp = fopen(filename, "w");
+    
     SaveNode(fp, tree -> root);
+    
     fclose(fp);
+    
     return OK;
 }
 
@@ -192,6 +199,7 @@ Node* ReadNode(Tree* tree, char** ptr){
     
 
     char node_type    = **ptr;
+    
     new_node -> value = *ptr + 1;
     new_node -> tree  = tree;
     (tree -> size)++;
@@ -208,13 +216,17 @@ Node* ReadNode(Tree* tree, char** ptr){
         *ptr = strchr(*ptr + 1, '[');
         
         new_node  -> left  =  ReadNode(tree, ptr);
+        
         assert(new_node -> left);
+        
         (new_node -> left) -> parent = new_node;
 
         *ptr = strchr(*ptr + 1, '[');
         
         new_node -> right = ReadNode(tree, ptr);
+        
         assert(new_node -> right);
+    
         (new_node -> right) -> parent = new_node;
     }
     return new_node;
@@ -264,7 +276,9 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
 
 
 TREE_STATUS ValidateTree(Tree* thou){    
+    
     int counter = 0;
     if (!thou) return INVALID_POINTER;
+    
     return ValidateNode(thou -> root, &counter);
 }

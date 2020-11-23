@@ -1,10 +1,21 @@
 #include "Tree.cpp"
 
+TREE_STATUS func_status = OK;
+
 #define SAY(text) system("echo " text " | festival --tts");\
 
 #define SAY_AND_PRINT(text)\
     printf(text "\n");\
     SAY(text)\
+
+
+#define EXIT_ON_ERROR(func)\
+    func_status = func;\
+    if (func_status != OK){\
+        printf("CRITICAL ERROR: %s\n", GET_ERROR_NAME(func_status));\
+        printf("Shutting down");\
+        exit(func_status);\
+    }
 
 
 Tree* AkinatorChooseDatabase(){
@@ -56,7 +67,7 @@ TREE_STATUS SplitByAtribute(char* new_attribute, Node* Parent_Node, char* NewObj
 }
 
 
-void AddAttribute(Node* current_node){
+TREE_STATUS AddAttribute(Node* current_node){
     
     char* new_object    = (char*)calloc(20, sizeof(char));
     char* new_attribute = (char*)calloc(20, sizeof(char));
@@ -67,7 +78,7 @@ void AddAttribute(Node* current_node){
     printf("What's the difference between %s and %s: ", new_object, current_node -> value);
     scanf("%s", new_attribute);
     
-    SplitByAtribute(new_attribute, current_node, new_object);
+    return SplitByAtribute(new_attribute, current_node, new_object);
 }
 
 
@@ -88,17 +99,21 @@ void SwitchNode(Node* current_node){
     }
     
     else if (answer == 'n'){
-        if (current_node -> right){
-            SwitchNode(current_node -> right);
-        }
-        else{
+
+        if (current_node -> right) SwitchNode(current_node -> right);
+        
+        else{    
             printf("Oh No! I'm so stupid I don't know this word!\n");
-            AddAttribute(current_node);
+            
+            EXIT_ON_ERROR(AddAttribute(current_node))
         }
+
     }
     else{
+        
         printf("I dont know what this answer mean((\n");
         SwitchNode(current_node);
+    
     }
 }
 
@@ -108,7 +123,7 @@ void AkinatorPlayGuess(Tree* DataBase){
 }
 
 
-Node* SearchNodeRecursively(char* value, Node* current, int* node_counter){
+Node* SearchObjectRecursively(char* value, Node* current, int* node_counter){
 
     assert(current -> value);
     assert(value);
@@ -117,22 +132,27 @@ Node* SearchNodeRecursively(char* value, Node* current, int* node_counter){
     if (*node_counter > (current -> tree) -> size) return nullptr;
     (*node_counter)++;
     
-    if (!strcmp(current -> value, value)) return current;
-    
+    if (!strcmp(current -> value, value)){
+        if (current -> left || current -> right) return nullptr;
+        else                                     return current;
+    }
+
     Node* found = nullptr;
     
-    if (current -> left) found = SearchNodeRecursively(value, current -> left, node_counter);
+    if (current -> left) found = SearchObjectRecursively(value, current -> left, node_counter);
     if (found) return found;
     
-    if (current -> right) found = SearchNodeRecursively(value, current -> right, node_counter);
+    if (current -> right) found = SearchObjectRecursively(value, current -> right, node_counter);
     
     return found;
 
 }
 
+
 Node* SearchFromRoot(char* value, Node* root){
+    
     int counter = 0;
-    return SearchNodeRecursively(value, root, &counter);
+    return SearchObjectRecursively(value, root, &counter);
 }
 
 
@@ -158,13 +178,22 @@ void DefineObject(Node* current, Node* endpoint, int last, int state){
 int Definition(Node* object, Node* endpoint){
         
         assert(object);
-        assert((object -> parent) -> right);
+        assert((object -> parent));
         
-        if (object == (object -> parent) -> right)
-            DefineObject(object -> parent, endpoint, 1, 0);
-        else
-            DefineObject(object -> parent, endpoint, 1, 1);
-        
+        if (object == (object -> parent) -> right){
+            if ((object -> parent) -> parent != endpoint){
+                DefineObject(object -> parent, endpoint, 1, 0);
+            }
+            else
+                DefineObject(object -> parent, endpoint, 0, 0);
+        }
+        else{
+            if ((object -> parent) -> parent != endpoint){
+                DefineObject(object -> parent, endpoint, 1, 1);
+            }
+            else
+                DefineObject(object -> parent, endpoint, 0, 1);
+        }
         printf("\n");
         return 0;
 }
@@ -190,16 +219,18 @@ void AkinatorPlayDefinition(Tree* tree){
 }
 
 
-int GetPath(Node** path, Node* current_node, int* counter){
-        
-    if (current_node -> parent) GetPath(path, current_node -> parent, counter);
-    
-    if (*counter > (current_node -> tree) -> size) return 0;
+TREE_STATUS GetPath(Node** path, Node* current_node, int* counter){
+
+    if (current_node -> parent) {
+        if (GetPath(path, current_node -> parent, counter) != OK) return NODES_LOOPED;
+    }
+
+    if (*counter > (current_node -> tree) -> size) return NODES_LOOPED;
     
     path[*counter] = current_node;
     (*counter)++;
 
-    return 1; 
+    return OK; 
     
 }
 
@@ -212,8 +243,8 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
     int first_counter = 0;
     int second_counter = 0;
     
-    if(!GetPath(first_path, first,   &first_counter)) return 1;
-    if(!GetPath(second_path, second, &second_counter)) return 2;
+    EXIT_ON_ERROR(GetPath(first_path, first,   &first_counter))
+    EXIT_ON_ERROR(GetPath(second_path, second, &second_counter))
 
     if (first_counter > second_counter) first_counter = second_counter; //choose minimal of counters not to leave the arrays
 
