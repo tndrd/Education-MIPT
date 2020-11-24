@@ -10,7 +10,7 @@ const size_t SAY_BUFFER_LENGTH = 400;
 TREE_STATUS func_status = OK;
 char* SAY_BUFFER = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
 
-#define DO_SPEAK ;
+//#define DO_SPEAK ;
 
 #ifdef DO_SPEAK
 
@@ -375,6 +375,7 @@ void AkinatorPlay(Tree* tree){
 
     printf("Хотите играть снова? ([y] - да или [n] - нет): ");
     
+    getc(stdin);
     mode = getc(stdin);
 
     if (mode == 'y'){
@@ -409,12 +410,4 @@ int main(){
     getc(stdin);
     
     AkinatorPlay(DataBase);
-    char* teststr = (char*)calloc(40, 1);
-    printf("\n");
-    sprintf(teststr, "%s", "aaaaaaaa");
-    printf(teststr);
-    printf("\n");
-    sprintf(teststr, "%s", "ssss");
-    printf(teststr);
-    printf("\n");
 }
