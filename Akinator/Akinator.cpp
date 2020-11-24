@@ -257,11 +257,15 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
         }
     }
 
-    printf("%s and %s both are ", first -> value, second -> value);
-    
-    Definition(first_different, nullptr);
-    
-    printf("\nBut %s is ", first -> value);
+    assert(first_different);
+
+    if (first_different -> parent){
+        printf("%s and %s both are ", first -> value, second -> value);
+        Definition(first_different, nullptr);
+        printf("\nBut ");
+    }
+    else printf("\n");
+    printf("%s is ", first -> value);
     Definition(first, first_different -> parent);
     printf("\nAnd %s is ", second -> value);
     Definition(second, first_different -> parent);

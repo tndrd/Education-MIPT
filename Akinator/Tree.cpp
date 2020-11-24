@@ -192,8 +192,9 @@ Node* ReadNode(Tree* tree, char** ptr){
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
     for(;**ptr != '`' && **ptr != '?'; (*ptr)++){
-        if (**ptr == ']'){
-            printf("File format error, unexpected \"]\"\n");
+        if (**ptr == ']' || **ptr == ']'){
+            printf("File format error, unexpected \"%c\"\n", **ptr);
+            return nullptr;
         }
     }
     
@@ -217,7 +218,7 @@ Node* ReadNode(Tree* tree, char** ptr){
         
         new_node  -> left  =  ReadNode(tree, ptr);
         
-        assert(new_node -> left);
+        if(!new_node -> left) return nullptr;
         
         (new_node -> left) -> parent = new_node;
 
@@ -225,7 +226,7 @@ Node* ReadNode(Tree* tree, char** ptr){
         
         new_node -> right = ReadNode(tree, ptr);
         
-        assert(new_node -> right);
+        if(!new_node -> left) return nullptr;
     
         (new_node -> right) -> parent = new_node;
     }
