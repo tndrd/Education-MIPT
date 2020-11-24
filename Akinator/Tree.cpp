@@ -131,14 +131,14 @@ TREE_STATUS GraphicalDump(Tree* tree){
     if (!tree) return INVALID_POINTER;
 
     FILE* fp = fopen("show", "w");
-    
+    printf("%p\n", fp);
     fprintf(fp, "digraph G {\n");
     
     DumpNode(fp, tree -> root);
     
     fprintf(fp, "}");
     fclose(fp);
-    
+    printf("here\n");
     system("dot -Tpng show -n -o show.png");
     system("viewnior show.png");
     return OK;
@@ -282,23 +282,4 @@ TREE_STATUS ValidateTree(Tree* thou){
     if (!thou) return INVALID_POINTER;
     
     return ValidateNode(thou -> root, &counter);
-}
-
-TREE_STATUS DeleteTree(Tree* tree){
-
-    TREE_CHECK(tree);
-    
-    DeleteNodeRecursively(tree -> root);
-    free(tree);
-    
-    return OK;
-}
-
-void DeleteNodeRecursively(Node* current){
-    
-    if (current){
-        DeleteNodeRecursively(current -> left);
-        DeleteNodeRecursively(current -> right);
-        free(current);
-    }
 }

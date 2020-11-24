@@ -4,14 +4,36 @@
 const size_t FILENAME_LENGTH = 20;
 const size_t OBJECT_NAME_LENGTH = 20;
 const size_t ATTRIBUTE_NAME_LENGTH = 20;
+const size_t SAY_BUFFER_LENGTH = 400;
+
 
 TREE_STATUS func_status = OK;
+char* SAY_BUFFER = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
 
-#define SAY(text) system("echo " text " | festival --tts");\
+#define DO_SPEAK ;
 
-#define SAY_AND_PRINT(text)\
-    printf(text "\n");\
-    SAY(text)\
+#ifdef DO_SPEAK
+
+#define SAY(format, ...)\
+    sprintf(SAY_BUFFER, "echo \"" format "\" | festival --tts --language russian", __VA_ARGS__);\
+    system(SAY_BUFFER);\
+
+#else
+
+#define SAY(format, ...) ; 
+
+#endif
+
+
+#define SAY_NOARG(string) SAY(string, nullptr);
+
+
+#define SAY_AND_PRINT(format, ...)\
+    printf(format, __VA_ARGS__);\
+    fflush(stdout);\
+    SAY(format, __VA_ARGS__);\
+
+#define SAY_AND_PRINT_NOARG(string) SAY_AND_PRINT(string, nullptr);
 
 
 #define EXIT_ON_ERROR(func)\
@@ -26,7 +48,6 @@ TREE_STATUS func_status = OK;
 Tree* AkinatorChooseDatabase(){
     
     printf("Напечатайте [l] - загрузить, или [n] - cоздать: ");
-    
     char mode = getc(stdin);
     Tree* DataBase = nullptr;
     
@@ -38,7 +59,7 @@ Tree* AkinatorChooseDatabase(){
         DataBase = ReadTree(filename);
         
         if(!DataBase){
-            printf("Упс, нет такого файла!\n-------\n");
+            SAY_AND_PRINT_NOARG("Упс, нет такого файла!\n-------\n")
             getc(stdin);
             return AkinatorChooseDatabase();
         }
@@ -47,7 +68,7 @@ Tree* AkinatorChooseDatabase(){
         DataBase = NewTree("Аноним");
     }
     else{
-        printf("Неизвестный режим\n");
+        SAY_AND_PRINT_NOARG("Неизвестный режим\n")
         getc(stdin);
         return AkinatorChooseDatabase();
     }
@@ -78,10 +99,10 @@ TREE_STATUS AddAttribute(Node* current_node){
     char* new_object    = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     char* new_attribute = (char*)calloc(ATTRIBUTE_NAME_LENGTH, sizeof(char));
     
-    printf("Кого вы загадали: ");
+    SAY_AND_PRINT_NOARG("Кого вы загадали: ")
     scanf("%s", new_object);
     
-    printf("Чем %s отличается от %s: ", new_object, current_node -> value);
+    SAY_AND_PRINT("Чем %s отличается от %s: ", new_object, current_node -> value)
     scanf("%s", new_attribute);
     
     return SplitByAtribute(new_attribute, current_node, new_object);
@@ -90,8 +111,8 @@ TREE_STATUS AddAttribute(Node* current_node){
 
 void SwitchNode(Node* current_node){
 
-    printf("Ваш объект %s? ([y] - да или [n] - нет): ", current_node -> value);
-    
+    SAY_AND_PRINT("Ваш объект %s?: ", current_node -> value)
+
     getc(stdin);
     char answer = getc(stdin);
     
@@ -100,7 +121,7 @@ void SwitchNode(Node* current_node){
             SwitchNode(current_node -> left);
         }
         else{
-            SAY_AND_PRINT("Ура! Я угадал, жалкий ты человек");
+            SAY_AND_PRINT_NOARG("Ура! Я угадал, жалкий ты человек\n")
         }
     }
     
@@ -109,7 +130,7 @@ void SwitchNode(Node* current_node){
         if (current_node -> right) SwitchNode(current_node -> right);
         
         else{    
-            printf("Я не знаю загаданный объект! Помогите мне:\n");
+            SAY_AND_PRINT_NOARG("Я не знаю загаданный объект! Помогите мне:\n")
             
             EXIT_ON_ERROR(AddAttribute(current_node))
         }
@@ -117,7 +138,7 @@ void SwitchNode(Node* current_node){
     }
     else{
         
-        printf("Бип-бип. Принимаются только да или нет\n");
+        SAY_AND_PRINT_NOARG("Бип-бип. Принимаются только да или нет\n");
         SwitchNode(current_node);
     
     }
@@ -125,6 +146,9 @@ void SwitchNode(Node* current_node){
 
 
 void AkinatorPlayGuess(Tree* DataBase){    
+    SAY_AND_PRINT_NOARG("Загадайте объект и отвечайте на мои вопросы\n")
+    SAY_AND_PRINT_NOARG("Вводите [y], чтобы отвечать \"да\", или [n], чтобы отвечать \"нет\"\n");
+    printf("--------\n");
     SwitchNode(DataBase -> root);
 }
 
@@ -171,13 +195,16 @@ void DefineObjectRecursively(Node* current, Node* endpoint, int last, int state)
         else DefineObjectRecursively(current -> parent, endpoint, 0, 1);
     }
     
-    if (last) printf(" и "); 
-    else if (current -> parent != endpoint) printf(", ");
-
-    if (!state){
-        printf("не ");
+    if (last){
+        SAY_AND_PRINT_NOARG(" и ") 
     }
-    printf("%s", current -> value);
+    else if (current -> parent != endpoint){
+        printf(", ");
+    }
+    if (!state){
+        SAY_AND_PRINT_NOARG("не ")
+    }
+    SAY_AND_PRINT("%s", current -> value);
 }
 
 
@@ -209,17 +236,17 @@ void AkinatorPlayDefinition(Tree* tree){
 
     char* definition = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     
-    printf("О ком или о чем вам рассказать: ");
+    SAY_AND_PRINT_NOARG("О ком или о чем вам рассказать: ")
     scanf("%s", definition);
     
     
     Node* object = SearchFromRoot(definition, tree -> root);
     if (!object){
-        printf("Я не знаю ничего об этом. Попробуй что-нибудь другое\n");
+        SAY_AND_PRINT_NOARG("Я не знаю ничего об этом. Попробуйте что-нибудь другое\n")
         AkinatorPlayDefinition(tree);
     }
     else{
-        printf("%s ", object -> value);
+        SAY_AND_PRINT("%s ", object -> value)
         Definition(object, nullptr);
     }
 }
@@ -311,8 +338,15 @@ int AkinatorPlayCompare(Tree* tree){
 
 void AkinatorPlay(Tree* tree){
     
-    printf("Я могу угадать что-то (введите [g]), или сформулировать определение (введите [d]), или сравнить два объекта (введите [c]), или могу показать вам свои знания (введите [s]): ");
+    SAY_AND_PRINT_NOARG("Я могу угадать что-то, сформулировать определение, сравнить два объекта, или могу показать вам свои знания\n");
     
+    printf("Выбор режима игры\nВведите указанный символ, чтобы начать игру\n");
+    printf("    [g] - \"Угадайка\"\n");
+    printf("    [d] - \"Определение\"\n");
+    printf("    [c] - \"Сравнение\"\n");
+    printf("    [s] - \"Показать базу данных\"\n");
+    printf("Ваш выбор: ");
+
     char mode = getc(stdin);
     
     if (mode == 'g'){
@@ -328,6 +362,7 @@ void AkinatorPlay(Tree* tree){
         AkinatorPlayCompare(tree);
     }
     else if (mode == 's'){
+        printf("%p\n", tree);
         GraphicalDump(tree);
     }
     else{
@@ -339,7 +374,7 @@ void AkinatorPlay(Tree* tree){
     }
 
     printf("Хотите играть снова? ([y] - да или [n] - нет): ");
-    getc(stdin);
+    
     mode = getc(stdin);
 
     if (mode == 'y'){
@@ -365,9 +400,21 @@ void AkinatorPlay(Tree* tree){
 
 
 int main(){
-    setlocale(LC_ALL, "1251");
-    printf("Привет! Это Акинатор. Хотите использовать существую базу данных или создать новую?\n");
+    
+    setlocale(LC_ALL, "Russian");
+
+    SAY_AND_PRINT_NOARG("Привет! Это Акинатор. Хотите использовать существущую базу данных или создать новую?\n")
+    
     Tree* DataBase = AkinatorChooseDatabase();    
+    getc(stdin);
     
     AkinatorPlay(DataBase);
+    char* teststr = (char*)calloc(40, 1);
+    printf("\n");
+    sprintf(teststr, "%s", "aaaaaaaa");
+    printf(teststr);
+    printf("\n");
+    sprintf(teststr, "%s", "ssss");
+    printf(teststr);
+    printf("\n");
 }
