@@ -187,7 +187,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename){
 }
 
 
-Node* ReadNode(Tree* tree, char** ptr){
+Node* ReadNodeRecursively(Tree* tree, char** ptr){
     
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
@@ -216,7 +216,7 @@ Node* ReadNode(Tree* tree, char** ptr){
         
         *ptr = strchr(*ptr + 1, '[');
         
-        new_node  -> left  =  ReadNode(tree, ptr);
+        new_node  -> left  =  ReadNodeRecursively(tree, ptr);
         
         if(!new_node -> left) return nullptr;
         
@@ -224,7 +224,7 @@ Node* ReadNode(Tree* tree, char** ptr){
 
         *ptr = strchr(*ptr + 1, '[');
         
-        new_node -> right = ReadNode(tree, ptr);
+        new_node -> right = ReadNodeRecursively(tree, ptr);
         
         if(!new_node -> left) return nullptr;
     
@@ -243,7 +243,8 @@ Tree* ReadTree(char* filename){
     char* buffer   = ReadFile(filename);
     if (!buffer) return nullptr;
     
-    new_tree -> root = ReadNode(new_tree, &buffer);
+    char* first_node_ptr = strchr(buffer, '[');
+    new_tree -> root = ReadNodeRecursively(new_tree, &first_node_ptr);
     
     return new_tree;
 }
@@ -275,11 +276,29 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     return child_status;
 }
 
-
 TREE_STATUS ValidateTree(Tree* thou){    
     
     int counter = 0;
     if (!thou) return INVALID_POINTER;
     
     return ValidateNode(thou -> root, &counter);
+}
+
+TREE_STATUS DeleteTree(Tree* tree){
+
+    TREE_CHECK(tree);
+    
+    DeleteNodeRecursively(tree -> root);
+    free(tree);
+    
+    return OK;
+}
+
+void DeleteNodeRecursively(Node* current){
+    
+    if (current){
+        DeleteNodeRecursively(current -> left);
+        DeleteNodeRecursively(current -> right);
+        free(current);
+    }
 }

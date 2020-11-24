@@ -61,3 +61,7 @@ Tree* ReadTree(const char* filename);
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr);
 
 TREE_STATUS ValidateTree(Tree* thou);
+
+TREE_STATUS DeleteTree(Tree* tree);
+
+void DeleteNodeRecursively(Node* current);
