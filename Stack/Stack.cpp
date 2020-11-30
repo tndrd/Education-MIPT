@@ -373,7 +373,7 @@ void RecomputeHashes(Stack* thou){
     thou -> data_hash = ComputeHash((char*)(thou -> data), sizeof(StackElement) * (thou -> stack_size + 2));
 }
 
-
+/*
 int main(){
 
     Stack* firstStack = (Stack*)calloc(1,sizeof(Stack*));
@@ -394,3 +394,4 @@ int main(){
 
     return 0;
 }
+*/

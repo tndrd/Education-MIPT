@@ -4,36 +4,56 @@
 const size_t FILENAME_LENGTH = 20;
 const size_t OBJECT_NAME_LENGTH = 20;
 const size_t ATTRIBUTE_NAME_LENGTH = 20;
-const size_t SAY_BUFFER_LENGTH = 400;
-
+const size_t SAY_BUFFER_LENGTH = 1024;
+const float  SPEECH_SPEED = 1.5;
 
 TREE_STATUS func_status = OK;
-char* SAY_BUFFER = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
 
-//#define DO_SPEAK ;
+char*  SAY_BUFFER              = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
+size_t PHRASE_BEGINNING_OFFSET = 0;
+
+#define DO_SPEAK ;
 
 #ifdef DO_SPEAK
 
-#define SAY(format, ...)\
-    sprintf(SAY_BUFFER, "echo \"" format "\" | festival --tts --language russian", __VA_ARGS__);\
+#define SAY_PHRASE\
+    sprintf(strchr(SAY_BUFFER, '\0'), "\" | text2wave -eval '(voice_msu_ru_nsh_clunits)' | play -q - tempo %f", SPEECH_SPEED);\
+    /*printf("\n|%s|\n", SAY_BUFFER);\*/\
     system(SAY_BUFFER);\
 
 #else
 
-#define SAY(format, ...) ; 
+#define SAY_PHRASE ; 
 
 #endif
 
+#define SAY_AND_PRINT(format, ...)\
+    START_PHRASE\
+    ADD_WORD_TO_PHRASE(format, __VA_ARGS__)\
+    SAY_AND_PRINT_ALL_PHRASE\
+
+#define SAY(format, ...)\
+    START_PHRASE\
+    ADD_WORD_TO_PHRASE(format, __VA_ARGS__)\
+    SAY_PHRASE\
+
+#define SAY_AND_PRINT_ALL_PHRASE\
+    printf("%s",SAY_BUFFER + PHRASE_BEGINNING_OFFSET);\
+    fflush(stdout);\
+    SAY_PHRASE\
+
+#define ADD_WORD_TO_PHRASE_NOARG(string) ADD_WORD_TO_PHRASE(string, nullptr);
+
+#define SAY_AND_PRINT_NOARG(string) SAY_AND_PRINT(string, nullptr);
 
 #define SAY_NOARG(string) SAY(string, nullptr);
 
+#define START_PHRASE\
+    sprintf(SAY_BUFFER, "echo \"" "%n", &PHRASE_BEGINNING_OFFSET);\
 
-#define SAY_AND_PRINT(format, ...)\
-    printf(format, __VA_ARGS__);\
-    fflush(stdout);\
-    SAY(format, __VA_ARGS__);\
+#define ADD_WORD_TO_PHRASE(format, ...)\
+    sprintf( strchr(SAY_BUFFER, '\0') , format, __VA_ARGS__);\
 
-#define SAY_AND_PRINT_NOARG(string) SAY_AND_PRINT(string, nullptr);
 
 
 #define EXIT_ON_ERROR(func)\
@@ -99,7 +119,6 @@ TREE_STATUS AddAttribute(Node* current_node){
     char* new_object    = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     char* new_attribute = (char*)calloc(ATTRIBUTE_NAME_LENGTH, sizeof(char));
     
-    SAY_AND_PRINT_NOARG("Кого вы загадали: ")
     scanf("%s", new_object);
     
     SAY_AND_PRINT("Чем %s отличается от %s: ", new_object, current_node -> value)
@@ -130,7 +149,7 @@ void SwitchNode(Node* current_node){
         if (current_node -> right) SwitchNode(current_node -> right);
         
         else{    
-            SAY_AND_PRINT_NOARG("Я не знаю загаданный объект! Помогите мне:\n")
+            SAY_AND_PRINT_NOARG("Я не знаю загаданный объект! Помогите мне:\nКого вы загадали: ")
             
             EXIT_ON_ERROR(AddAttribute(current_node))
         }
@@ -146,9 +165,8 @@ void SwitchNode(Node* current_node){
 
 
 void AkinatorPlayGuess(Tree* DataBase){    
-    SAY_AND_PRINT_NOARG("Загадайте объект и отвечайте на мои вопросы\n")
-    SAY_AND_PRINT_NOARG("Вводите [y], чтобы отвечать \"да\", или [n], чтобы отвечать \"нет\"\n");
-    printf("--------\n");
+    SAY_AND_PRINT_NOARG("Загадайте объект и отвечайте на мои вопросы.\nВводите [y], чтобы отвечать \"да\", или [n], чтобы отвечать \"нет\".\n")
+    printf("----------\n");
     SwitchNode(DataBase -> root);
 }
 
@@ -196,15 +214,15 @@ void DefineObjectRecursively(Node* current, Node* endpoint, int last, int state)
     }
     
     if (last){
-        SAY_AND_PRINT_NOARG(" и ") 
+        ADD_WORD_TO_PHRASE_NOARG(" и ") 
     }
     else if (current -> parent != endpoint){
-        printf(", ");
+        ADD_WORD_TO_PHRASE_NOARG(", ");
     }
     if (!state){
-        SAY_AND_PRINT_NOARG("не ")
+        ADD_WORD_TO_PHRASE_NOARG("не ")
     }
-    SAY_AND_PRINT("%s", current -> value);
+    ADD_WORD_TO_PHRASE("%s", current -> value);
 }
 
 
@@ -227,7 +245,6 @@ int Definition(Node* object, Node* endpoint){
             else
                 DefineObjectRecursively(object -> parent, endpoint, 0, 1);
         }
-        printf("\n");
         return 0;
 }
 
@@ -246,8 +263,11 @@ void AkinatorPlayDefinition(Tree* tree){
         AkinatorPlayDefinition(tree);
     }
     else{
-        SAY_AND_PRINT("%s ", object -> value)
+        START_PHRASE
+        ADD_WORD_TO_PHRASE("%s ", object -> value)
         Definition(object, nullptr);
+        ADD_WORD_TO_PHRASE_NOARG(".\n");
+        SAY_AND_PRINT_ALL_PHRASE
     }
 }
 
@@ -291,20 +311,22 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
     }
 
     assert(first_different);
-
+    START_PHRASE
     if (first_different -> parent){
-        printf("Как и %s, %s ", first -> value, second -> value);
+        ADD_WORD_TO_PHRASE("Как и %s, %s ", first -> value, second -> value);
         Definition(first_different, nullptr);
-        printf("\nНо ");
+        ADD_WORD_TO_PHRASE_NOARG(".\nНо ");
     }
     
     else printf("\n");
 
-    printf("%s ", first -> value);
+    
+    ADD_WORD_TO_PHRASE("%s ", first -> value);
     Definition(first, first_different -> parent);
-    printf("\nА %s ", second -> value);
+    ADD_WORD_TO_PHRASE(".\nА %s ", second -> value);
     Definition(second, first_different -> parent);
-    printf("\n");
+    ADD_WORD_TO_PHRASE_NOARG(".\n");
+    SAY_AND_PRINT_ALL_PHRASE
     return 0;
 }
 
@@ -313,6 +335,12 @@ int AkinatorPlayCompare(Tree* tree){
 
     char* first_value = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     char* second_value = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
+    
+    assert(first_value);
+    assert(second_value);
+
+    SAY_AND_PRINT_NOARG("Порой даже камень походит на кошку. Хаха.\nДавайте сравним что-нибудь.\n");
+    printf("----------\n");
 
     printf("Первый объект для сравнения: ");
     scanf("%s", first_value);
@@ -340,13 +368,14 @@ void AkinatorPlay(Tree* tree){
     
     SAY_AND_PRINT_NOARG("Я могу угадать что-то, сформулировать определение, сравнить два объекта, или могу показать вам свои знания\n");
     
-    printf("Выбор режима игры\nВведите указанный символ, чтобы начать игру\n");
+    printf("*Выбор режима игры*\nВведите указанный символ, чтобы начать игру:\n");
     printf("    [g] - \"Угадайка\"\n");
     printf("    [d] - \"Определение\"\n");
     printf("    [c] - \"Сравнение\"\n");
     printf("    [s] - \"Показать базу данных\"\n");
     printf("Ваш выбор: ");
 
+    getc(stdin);
     char mode = getc(stdin);
     
     if (mode == 'g'){
@@ -362,7 +391,8 @@ void AkinatorPlay(Tree* tree){
         AkinatorPlayCompare(tree);
     }
     else if (mode == 's'){
-        printf("%p\n", tree);
+        printf("----------\n");
+        SAY_AND_PRINT_NOARG("У меня на сердце лежит тяжкий груз знаний. Шутка.\n")
         GraphicalDump(tree);
     }
     else{
@@ -373,9 +403,9 @@ void AkinatorPlay(Tree* tree){
         AkinatorPlay(tree);
     }
 
+    getc(stdin);
     printf("Хотите играть снова? ([y] - да или [n] - нет): ");
     
-    getc(stdin);
     mode = getc(stdin);
 
     if (mode == 'y'){
@@ -384,8 +414,8 @@ void AkinatorPlay(Tree* tree){
     }
     else{
         
-        printf("Хотите сохранить базу? ([y] - да или [n] - нет): ");
         getc(stdin);
+        printf("Хотите сохранить базу? ([y] - да или [n] - нет): ");
         mode = getc(stdin);
 
         if (mode == 'y'){
@@ -407,7 +437,6 @@ int main(){
     SAY_AND_PRINT_NOARG("Привет! Это Акинатор. Хотите использовать существущую базу данных или создать новую?\n")
     
     Tree* DataBase = AkinatorChooseDatabase();    
-    getc(stdin);
     
     AkinatorPlay(DataBase);
 }

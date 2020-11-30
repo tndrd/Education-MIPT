@@ -1,37 +1,67 @@
 digraph structs {
 rankdir=LR rank=same;
-10 [ style=invis ];0 [ style=invis ];subgraph cluster {
+20 [ style=invis ];0 [ style=invis ];subgraph cluster {
 style=filled;
-color=lemonchiffon;
+color=aquamarine;
 0 [shape=record, fillcolor=lightgrey rank = same style=filled label="    nan | {  0 | 0 | 0 }" ];
 0 -> 1 [ style = invis rank = same]; 
-1 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    1.000000 | {  7 | 1 | 2 }" ];
+1 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    1.000000 | {  0 | 1 | 2 }" ];
 1 -> 2 [ style = invis rank = same]; 
 1 -> 2 [constraint=false color=deepskyblue]; 
-2 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    2.000000 | {  1 | 2 | 6 }" ];
+2 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    3.000000 | {  1 | 2 | 3 }" ];
 2 -> 3 [ style = invis rank = same]; 
-2 -> 6 [constraint=false color=deepskyblue]; 
-3 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 3 | 8 }" ];
+2 -> 3 [constraint=false color=deepskyblue]; 
+3 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    8.000000 | {  2 | 3 | 4 }" ];
 3 -> 4 [ style = invis rank = same]; 
-4 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    4.000000 | {  6 | 4 | 5 }" ];
+3 -> 4 [constraint=false color=deepskyblue]; 
+4 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    7.000000 | {  3 | 4 | 5 }" ];
 4 -> 5 [ style = invis rank = same]; 
 4 -> 5 [constraint=false color=deepskyblue]; 
-5 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    5.000000 | {  4 | 5 | 0 }" ];
+5 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    8.000000 | {  4 | 5 | 6 }" ];
 5 -> 6 [ style = invis rank = same]; 
-6 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    5.000000 | {  2 | 6 | 4 }" ];
+5 -> 6 [constraint=false color=deepskyblue]; 
+6 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    3.000000 | {  5 | 6 | 7 }" ];
 6 -> 7 [ style = invis rank = same]; 
-6 -> 4 [constraint=false color=deepskyblue]; 
-7 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    8.000000 | {  0 | 7 | 1 }" ];
+6 -> 7 [constraint=false color=deepskyblue]; 
+7 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    4.000000 | {  6 | 7 | 8 }" ];
 7 -> 8 [ style = invis rank = same]; 
-7 -> 1 [constraint=false color=deepskyblue]; 
-8 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 8 | 9 }" ];
+7 -> 8 [constraint=false color=deepskyblue]; 
+8 [shape=record, fillcolor=deepskyblue rank = same style=filled label="    5.000000 | {  7 | 8 | 0 }" ];
 8 -> 9 [ style = invis rank = same]; 
-9 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 9 | 0 }" ];
+9 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 9 | 10 }" ];
 9 -> 10 [ style = invis rank = same]; 
+10 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 10 | 11 }" ];
+10 -> 11 [ style = invis rank = same]; 
+11 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 11 | 12 }" ];
+11 -> 12 [ style = invis rank = same]; 
+12 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 12 | 13 }" ];
+12 -> 13 [ style = invis rank = same]; 
+13 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 13 | 14 }" ];
+13 -> 14 [ style = invis rank = same]; 
+14 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 14 | 15 }" ];
+14 -> 15 [ style = invis rank = same]; 
+15 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 15 | 16 }" ];
+15 -> 16 [ style = invis rank = same]; 
+16 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 16 | 17 }" ];
+16 -> 17 [ style = invis rank = same]; 
+17 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 17 | 18 }" ];
+17 -> 18 [ style = invis rank = same]; 
+18 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 18 | 19 }" ];
+18 -> 19 [ style = invis rank = same]; 
+19 [shape=record, fillcolor=chartreuse rank = same style=filled label="    nan | {  -1 | 19 | 0 }" ];
+19 -> 20 [ style = invis rank = same]; 
 }
-3 -> 8 [constraint=false color=grey]; 
-8 -> 9 [constraint=false color=grey]; 
-HEAD -> 7
-TAIL -> 5
-FREE_HEAD -> 3
+9 -> 10 [constraint=false color=grey]; 
+10 -> 11 [constraint=false color=grey]; 
+11 -> 12 [constraint=false color=grey]; 
+12 -> 13 [constraint=false color=grey]; 
+13 -> 14 [constraint=false color=grey]; 
+14 -> 15 [constraint=false color=grey]; 
+15 -> 16 [constraint=false color=grey]; 
+16 -> 17 [constraint=false color=grey]; 
+17 -> 18 [constraint=false color=grey]; 
+18 -> 19 [constraint=false color=grey]; 
+HEAD -> 1
+TAIL -> 8
+FREE_HEAD -> 9
 }
