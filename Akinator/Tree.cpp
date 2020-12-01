@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include "../Onegin/onegin.h"
 
 TREE_STATUS check_status = OK;
 
@@ -150,7 +151,6 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
     if (!Parent) return INVALID_POINTER;
     
-    TREE_CHECK   (Parent -> tree);
     assert       (Parent -> value);
     
     fprintf(fp, "[\n");
@@ -165,8 +165,6 @@ TREE_STATUS SaveNode(FILE* fp, Node* Parent){
     }
     
     fprintf(fp, "]\n");
-    
-    TREE_CHECK(Parent -> tree);
     
     return OK;
 }
@@ -257,6 +255,7 @@ Tree* ReadTree(char* filename){
 
     return new_tree;
 }
+
 
 TREE_STATUS DeleteNodeRecursively(Node* node){
     

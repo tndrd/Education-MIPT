@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "../Onegin/foperations.cpp"
 
 enum TREE_STATUS{
     OK              = -1,
@@ -64,7 +63,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename);
 
 Node* ReadNode(Tree* tree, char** ptr);
 
-Tree* ReadTree(const char* filename);
+Tree* ReadTree(char* filename);
 
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr);
 
