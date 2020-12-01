@@ -193,21 +193,25 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
     for(;**ptr != '`' && **ptr != '?'; (*ptr)++){
-        if (**ptr == ']' || **ptr == ']'){
+        if (**ptr == ']'){
             printf("File format error, unexpected \"%c\"\n", **ptr);
             return nullptr;
         }
     }
     
-
+    char* node_begin  = *ptr;
     char node_type    = **ptr;
     
-    new_node -> value = *ptr + 1;
     new_node -> tree  = tree;
     (tree -> size)++;
 
     *ptr  = strchr(*ptr+1, **ptr);
     **ptr = '\0';
+    
+    new_node -> value = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
+    assert(new_node -> value);
+    
+    strcpy(new_node -> value, node_begin + 1);
     
     if (node_type == '`'){    
         new_node -> left  = nullptr;
@@ -245,11 +249,36 @@ Tree* ReadTree(char* filename){
     if (!buffer) return nullptr;
     
     char* first_node_ptr = strchr(buffer, '[');
+    if (!first_node_ptr) return nullptr;
+
     new_tree -> root = ReadNodeRecursively(new_tree, &first_node_ptr);
     
     return new_tree;
 }
 
+TREE_STATUS DeleteNodeRecursively(Node* node){
+    
+    if (!node) return OK;
+
+    free(node -> value);
+
+    DeleteNodeRecursively(node -> left);
+    DeleteNodeRecursively(node -> right);
+
+    free(node);
+
+    return OK;
+}
+
+TREE_STATUS DeleteTree(Tree* tree){
+    
+    if (!tree) return INVALID_POINTER;
+    
+    DeleteNodeRecursively(tree -> root);
+
+    free(tree);
+    return OK;
+}
 
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     

@@ -1,12 +1,6 @@
 #include "Tree.cpp"
 #include "locale.h"
 
-const size_t FILENAME_LENGTH = 20;
-const size_t OBJECT_NAME_LENGTH = 20;
-const size_t ATTRIBUTE_NAME_LENGTH = 20;
-const size_t SAY_BUFFER_LENGTH = 1024;
-const float  SPEECH_SPEED = 1.5;
-
 TREE_STATUS func_status = OK;
 
 char*  SAY_BUFFER              = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
@@ -66,7 +60,7 @@ size_t PHRASE_BEGINNING_OFFSET = 0;
 
 
 Tree* AkinatorChooseDatabase(){
-    
+    printf("Хотите использовать существущую базу данных или создать новую?\n");
     printf("Напечатайте [l] - загрузить, или [n] - cоздать: ");
     char mode = getc(stdin);
     Tree* DataBase = nullptr;
@@ -152,6 +146,7 @@ void SwitchNode(Node* current_node){
             SAY_AND_PRINT_NOARG("Я не знаю загаданный объект! Помогите мне:\nКого вы загадали: ")
             
             EXIT_ON_ERROR(AddAttribute(current_node))
+            SAY_AND_PRINT_NOARG("Спасибо, человек, я теперь стал умнее.\n")
         }
 
     }
@@ -253,7 +248,7 @@ void AkinatorPlayDefinition(Tree* tree){
 
     char* definition = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     
-    SAY_AND_PRINT_NOARG("О ком или о чем вам рассказать: ")
+    SAY_AND_PRINT_NOARG("Давайте формализуем ваши представления.\nО ком или о чем вам рассказать: ")
     scanf("%s", definition);
     
     
@@ -264,6 +259,7 @@ void AkinatorPlayDefinition(Tree* tree){
     }
     else{
         START_PHRASE
+        ADD_WORD_TO_PHRASE_NOARG("Доподлинно известно, что:\n")
         ADD_WORD_TO_PHRASE("%s ", object -> value)
         Definition(object, nullptr);
         ADD_WORD_TO_PHRASE_NOARG(".\n");
@@ -312,6 +308,9 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
 
     assert(first_different);
     START_PHRASE
+    ADD_WORD_TO_PHRASE_NOARG("Детальный анализ показал, что:\n");
+
+
     if (first_different -> parent){
         ADD_WORD_TO_PHRASE("Как и %s, %s ", first -> value, second -> value);
         Definition(first_different, nullptr);
@@ -349,13 +348,13 @@ int AkinatorPlayCompare(Tree* tree){
 
     Node* first = SearchFromRoot(first_value, tree -> root);
     if (!first){
-        printf("Я не знаю ничего о %s\n", first_value);
+        SAY_AND_PRINT("Бип-Бип. Понятие \"%s\" мне неизвестно.\n", first_value);
         return 0;
     }
 
     Node* second = SearchFromRoot(second_value, tree -> root);
     if (!second){
-        printf("Я не знаю ничего о %s\n", second_value);
+        SAY_AND_PRINT("Бип-Бип. Понятие \"%s\" мне неизвестно.\n", second_value);
         return 0;
     }
 
@@ -404,7 +403,7 @@ void AkinatorPlay(Tree* tree){
     }
 
     getc(stdin);
-    printf("Хотите играть снова? ([y] - да или [n] - нет): ");
+    SAY_AND_PRINT_NOARG("Хотите играть снова? ([y] - да или [n] - нет): ");
     
     mode = getc(stdin);
 
@@ -413,9 +412,9 @@ void AkinatorPlay(Tree* tree){
         AkinatorPlay(tree);
     }
     else{
-        
+        SAY_AND_PRINT_NOARG("До свидания, человек. Не забудьте сохранить изменения.\n")
         getc(stdin);
-        printf("Хотите сохранить базу? ([y] - да или [n] - нет): ");
+        SAY_AND_PRINT_NOARG("Хотите сохранить базу? ([y] - да или [n] - нет): ");
         mode = getc(stdin);
 
         if (mode == 'y'){
@@ -434,9 +433,11 @@ int main(){
     
     setlocale(LC_ALL, "Russian");
 
-    SAY_AND_PRINT_NOARG("Привет! Это Акинатор. Хотите использовать существущую базу данных или создать новую?\n")
+    SAY_AND_PRINT_NOARG("Привет! Это Акинатор. Я высший интеллект, черпающий знания из баз данных. У вас есть таковые?\n")
     
     Tree* DataBase = AkinatorChooseDatabase();    
     
     AkinatorPlay(DataBase);
+
+    DeleteTree(DataBase);
 }

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 #include "../Onegin/foperations.cpp"
 
 enum TREE_STATUS{
@@ -12,7 +13,6 @@ enum TREE_STATUS{
     EDGE_ALREADY_EXISTS = -4,
     INVALID_POINTER = -5,
     SAME_LEFT_AND_RIGHT_CHILDS = -6,
-    ONLY_ONE_CHILD = -7,
     STRAY_NODE = -8,
     INVALID_NODE_VALUE_PTR = -9,
     WRONG_TREE_PTR = -10,
@@ -20,15 +20,55 @@ enum TREE_STATUS{
     TOO_MANY_NODES_FOR_CURRENT_SIZE = -12,
 };
 
+
+enum TYPE{
+    CONST = 0,
+    OPER  = 1,
+    VAR   = 2,
+}
+
+
+enum OPERATION{
+
+    ADD  = '+',
+    SUB  = '-',
+    MUL  = '*',
+    DIV  = '/',
+    SIN  = 's',
+    COS  = 'c',
+    LOG  = 'l',
+    LN   = 'n',
+    EXP  = 'e',
+    NEG  = 'g',
+    TAN  = 't',
+    COT  = 'o',
+    ATAN = 'T',
+    ACOT = 'O',
+    ACOS = 'C',
+    ASIN = 'S'
+}
+
+
+}
+
 struct Node;
 struct Tree;
 
+
+union node_value {
+    double    CONST_VAL;
+    OPERATION OPER_VAL;
+    int       VAR_VAL;
+};
+
 struct Node{
-    char* value  = nullptr;
-    Tree* tree   = nullptr;
-    Node* parent = nullptr;
-    Node* left   = nullptr;
-    Node* right  = nullptr;
+
+    TYPE       type   = CONST;
+    node_value value  = {0};
+    Tree*      tree   = nullptr;
+    Node*      parent = nullptr;
+    Node*      left   = nullptr;
+    Node*      right  = nullptr;
 };
 
 struct Tree{

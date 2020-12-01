@@ -10,8 +10,6 @@ TREE_STATUS check_status = OK;
         return check_status;\
     }
 
-
-
 #define CASE_ERROR(error_code) case error_code: return #error_code;
 
 
@@ -34,8 +32,8 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
     }
 }
 
-
-Tree* NewTree(char* RootValue){
+/*
+Tree* NewTree(node_value RootValue){
 
     Tree*    new_tree = (Tree*)calloc(1, sizeof(Tree));
     new_tree  -> root = (Node*)calloc(1, sizeof(Node));
@@ -46,7 +44,7 @@ Tree* NewTree(char* RootValue){
     
     return new_tree;
 }
-
+*/
 
 TREE_STATUS AttachLeftNode(Node* to_attach, Node* Parent){
 
@@ -110,17 +108,53 @@ TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
 }
 
 
+#define CASE_OPERATION(OPER) case OPER: return #OPER;
+
+
+const char* GET_OPERATOR(OPERATION operation){
+
+    switch(operation){
+        CASE_OPERATION(ADD)
+        CASE_OPERATION(SUB)
+        CASE_OPERATION(MUL)
+        CASE_OPERATION(DIV)
+        CASE_OPERATION(SIN)
+        CASE_OPERATION(COS)
+        CASE_OPERATION(LOG)
+        CASE_OPERATION(LN)
+        CASE_OPERATION(EXP)
+        CASE_OPERATION(NEG)
+        CASE_OPERATION(TAN)
+        CASE_OPERATION(COT)
+        CASE_OPERATION(ATAN)
+        CASE_OPERATION(ACOT)
+        CASE_OPERATION(ACOS)
+        CASE_OPERATION(ASIN)
+        default: return "Unknown operation";
+    }
+}
+
 int DumpNode(FILE* fp, Node* node){
     
     if (!node) return 1;
     
-    assert(node -> value);
+    //assert(node -> value);
+
+    switch(node -> type){
+
+        case CONST: fprintf(fp, "%ld [label = \"%lf\"];\n", node, (node -> value).CONST_VAL);
+                    break;
+
+        case OPER:  fprintf(fp, "%ld [label = \"%s\" ];\n", node, GET_OPERATOR((node -> value).OPER_VAL));
+                    break;
+        
+        case VAR:   fprintf(fp, "%ld [label = \"%s\" ];\n", node, "TEMPVAR");
+                    break;
+
+    }
     
-    fprintf(fp, "%ld [label=\"%s\"];\n", node, node -> value);
-    fprintf(fp, "%ld -> %ld [color = grey]\n", node, node -> parent);
-    
-    if(node -> left)  fprintf(fp, "%ld -> %ld [color=green]\n", node, node -> left);
-    if(node -> right) fprintf(fp, "%ld -> %ld [color=red]\n", node, node -> right);
+    if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
+    if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
     
     DumpNode(fp, node -> left);
     DumpNode(fp, node -> right);
@@ -145,7 +179,7 @@ TREE_STATUS GraphicalDump(Tree* tree){
     return OK;
 }
 
-
+/*
 TREE_STATUS SaveNode(FILE* fp, Node* Parent){
 
     if (!Parent) return INVALID_POINTER;
@@ -186,7 +220,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename){
     
     return OK;
 }
-
+*/
 
 Node* ReadNodeRecursively(Tree* tree, char** ptr){
     

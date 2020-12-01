@@ -36,6 +36,14 @@ struct Tree{
     int size = 0;
 };
 
+
+const size_t FILENAME_LENGTH = 40;
+const size_t OBJECT_NAME_LENGTH = 40;
+const size_t ATTRIBUTE_NAME_LENGTH = 40;
+const size_t SAY_BUFFER_LENGTH = 1024;
+const float  SPEECH_SPEED = 1.5;
+
+
 const char* GET_ERROR_NAME(TREE_STATUS status);
 
 Tree* NewTree(char* RootValue);
@@ -63,5 +71,3 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr);
 TREE_STATUS ValidateTree(Tree* thou);
 
 TREE_STATUS DeleteTree(Tree* tree);
-
-void DeleteNodeRecursively(Node* current);
