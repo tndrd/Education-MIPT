@@ -1,4 +1,4 @@
-#include "Tree.h"
+#include "exprtree.h"
 
 TREE_STATUS check_status = OK;
 
@@ -44,7 +44,7 @@ Tree* NewTree(node_value RootValue){
     
     return new_tree;
 }
-*/
+
 
 TREE_STATUS AttachLeftNode(Node* to_attach, Node* Parent){
 
@@ -106,7 +106,7 @@ TREE_STATUS AddRightNode(Node* Parent, char* NodeValue){
     
     return AttachRightNode(new_node, Parent);
 }
-
+*/
 
 #define CASE_OPERATION(OPER) case OPER: return #OPER;
 
@@ -226,17 +226,79 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
     
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
-    for(;**ptr != '`' && **ptr != '?'; (*ptr)++){
-        if (**ptr == ']' || **ptr == ']'){
-            printf("File format error, unexpected \"%c\"\n", **ptr);
-            return nullptr;
+    *ptr = strchr(*ptr, '(');
+
+    char* left_node_begin = *ptr;
+    
+    (*ptr)++;
+
+    int bracket_counter = 1;
+    
+    char LeftNodeIsConst = 1;
+    char LeftNodeIsVar = 1;
+
+    for(; bracket_counter != 0; (*ptr)++ ){
+        if (**ptr == '('){
+            bracket_counter++;
+            LeftNodeIsConst = 0;
+            LeftNodeIsVar = 0;
         }
+        else if (**ptr == ')'){
+            bracket_counter--;
+        }
+        else{
+            if (!isdigit(**ptr) && **ptr != '.') LeftNodeIsConst = 0;
+            if (!isalpha(**ptr)) LeftNodeIsVar = 0;
+        }
+        //printf("%c %d\n", **ptr, bracket_counter);
+        fflush(stdout);
     }
     
 
-    char node_type    = **ptr;
+    for(; isspace(**ptr); (*ptr)++);
     
+    char* operand = *ptr;
+    
+    for(; !isspace(**ptr); (*ptr)++);
+    
+    **ptr = '\0';
+    (*ptr)++;
+
+
+    char* right_node_begin = strchr(*ptr, '(');
+    (*ptr)++;
+    bracket_counter = 1;
+    
+    char RightNodeIsConst = 1;
+    char RightNodeIsVar = 1;
+
+    for(; bracket_counter != 0; (*ptr)++ ){
+        if (**ptr == '('){
+            bracket_counter++;
+            RightNodeIsConst = 0;
+            RightNodeIsVar = 0;
+        }
+        else if (**ptr == ')'){
+            bracket_counter--;
+        }
+        else{
+            //printf("%c (v: %d c: %d) -> ", **ptr, RightNodeIsVar, RightNodeIsConst);
+            if (!isdigit(**ptr) && **ptr != '.') RightNodeIsConst = 0;
+            if (!isalpha(**ptr)) RightNodeIsVar = 0;
+            //printf("%c (v: %d c: %d)\n", **ptr, RightNodeIsVar, RightNodeIsConst);
+        }
+        fflush(stdout);
+    }
+
+    printf("|%s| (v: %d, c: %d) |%s| |%s| (v: %d, c: %d)\n", left_node_begin, LeftNodeIsVar, LeftNodeIsConst, operand, right_node_begin, RightNodeIsVar, RightNodeIsConst);
+
+    /*
+    for (; !isdigit(**ptr) && !isalpha(**ptr) &&  
+    
+    if (isdigit(node_val_begin))
+
     new_node -> value = *ptr + 1;
+    
     new_node -> tree  = tree;
     (tree -> size)++;
 
@@ -265,6 +327,7 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
     
         (new_node -> right) -> parent = new_node;
     }
+    */
     return new_node;
 }
 
@@ -278,13 +341,15 @@ Tree* ReadTree(char* filename){
     char* buffer   = ReadFile(filename);
     if (!buffer) return nullptr;
     
-    char* first_node_ptr = strchr(buffer, '[');
-    new_tree -> root = ReadNodeRecursively(new_tree, &first_node_ptr);
+    char* buffer_ptr = buffer;
+    new_tree -> root = ReadNodeRecursively(new_tree, &buffer_ptr);
     
+    free(buffer);
+
     return new_tree;
 }
 
-
+/*
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     
     if (!node) return OK;
@@ -317,4 +382,12 @@ TREE_STATUS ValidateTree(Tree* thou){
     if (!thou) return INVALID_POINTER;
     
     return ValidateNode(thou -> root, &counter);
+}
+*/
+
+int main(){
+
+    char* filename = (char*)calloc(40, sizeof(char));
+    scanf("%s", filename);
+    ReadTree(filename);
 }

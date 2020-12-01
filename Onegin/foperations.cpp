@@ -90,8 +90,8 @@ char* ReadFile(const char* name){
 
     long int filesize = GetFileSize(fp);
     buffer = (char*)realloc(buffer, filesize + 1);
-    int read = fread(buffer + 1, sizeof(char), filesize, fp);
-    buffer = buffer + 1;
+    int read = fread(buffer, sizeof(char), filesize, fp);
+    //buffer = buffer + 1;
     fclose(fp);
     return buffer;
 }

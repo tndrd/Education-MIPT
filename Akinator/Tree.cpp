@@ -253,6 +253,8 @@ Tree* ReadTree(char* filename){
 
     new_tree -> root = ReadNodeRecursively(new_tree, &first_node_ptr);
     
+    free(buffer);
+
     return new_tree;
 }
 

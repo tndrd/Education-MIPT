@@ -25,7 +25,7 @@ enum TYPE{
     CONST = 0,
     OPER  = 1,
     VAR   = 2,
-}
+};
 
 
 enum OPERATION{
@@ -46,10 +46,7 @@ enum OPERATION{
     ACOT = 'O',
     ACOS = 'C',
     ASIN = 'S'
-}
-
-
-}
+};
 
 struct Node;
 struct Tree;
