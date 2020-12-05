@@ -137,11 +137,12 @@ int main(){
     
     Tree* tree = ReadTree(filename);
     GraphicalDump(tree);
-    FoldConstants(tree);
+    SimplifyTree(tree);
     GraphicalDump(tree);
     Tree* diff_tree = DifferentiateTree(tree);
     GraphicalDump(diff_tree);
-    FoldConstants(diff_tree);
+    
+    SimplifyTree(diff_tree);
     GraphicalDump(diff_tree);
     
     //printf("{%d}\n", CompareStringWithOperator("sadfa", "sadf "));

@@ -30,8 +30,8 @@ void CPU_DUMP(CPU* thou, FILE* stream){
     fprintf(stream, "rax: %lf\nrbx: %lf\nrcx: %lf\nrdx: %lf\nstatus: %d\nRIP: %d\nRAM[%p]: {\n", RAX, RBX, RCX, RDX, CPU_Status, RIP, CPU_RAM);
     for (int i = 0; i < 10; i++) fprintf(stream, "    %lf\n", CPU_RAM[i]);
     fprintf(stream,"}\nCallStack:\n");
-    StackPrint(CALLSTACK, OK, stream);
-    StackPrint(CPU_Stack_ptr, OK, stream);
+    StackPrint(CALLSTACK, STACK_OK, stream);
+    StackPrint(CPU_Stack_ptr, STACK_OK, stream);
     fprintf(stream, "\n-----------------\n");
 }
 
@@ -117,14 +117,14 @@ int Load(CPU* thou, const char* name){
 int Init(CPU* thou){
     
     Stack* stack_ptr = (Stack*)calloc(1, sizeof(Stack));
-    if (newStack(10, &stack_ptr) != OK){
+    if (newStack(10, &stack_ptr) != STACK_OK){
         printf("Initialisation failed: cannot create stack\n");
         return 0;
     }
     CPU_Stack_ptr = stack_ptr;
 
     Stack* callstack = (Stack*)calloc(1, sizeof(Stack));
-    if (newStack(10, &callstack) != OK){
+    if (newStack(10, &callstack) != STACK_OK){
         printf("Initialisation failed: cannot create callstack\n");
         return 0;
     }

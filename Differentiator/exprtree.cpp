@@ -135,14 +135,15 @@ int DumpNode(FILE* fp, Node* node){
                     break;
 
         case OPER:  fprintf(fp, "%ld [label = \"%s\" style=filled fillcolor=yellow];\n", node, GET_OPERATOR((OPERATION)(node -> value)));
-                    if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
-                    if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
                     break;
         
         case VAR:   fprintf(fp, "%ld [label = \"%s\" style=filled fillcolor=aquamarine];\n", node, ((node -> tree) -> variables).name_arr[(int)(node -> value)]);
                     break;
 
     }
+    
+    if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
+    if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
     
     DumpNode(fp, node -> left);
     DumpNode(fp, node -> right);
@@ -473,8 +474,7 @@ double acotan(double value){
 
 #define CASE_EVAL_UNARY(oper_name, oper) case oper_name: return oper((node -> right) -> value);
 
-#define CASE_EVAL_BINAR_INFIX(oper_name, oper) case oper_name:  printf("%lf " #oper " %lf = %lf\n", ((node -> right) -> value), ((node -> left) -> value), ((node -> right) -> value) oper ((node -> left) -> value));\
-                                                                return ((node -> right) -> value) oper ((node -> left) -> value);
+#define CASE_EVAL_BINAR_INFIX(oper_name, oper) case oper_name:  return ((node -> right) -> value) oper ((node -> left) -> value);
                                                                
 #define CASE_EVAL_BINAR_PREFIX(oper_name, oper) case oper_name: return oper(((node -> left) -> value), ((node -> right) -> value));  
 
@@ -505,34 +505,124 @@ double EvaluateOperation(Node* node){
     }
 }
 
-void RecursiveNodeConstantFolding(Node* node){
+void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
 
     if ((node -> type) == OPER){
-        if ((node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left);
-        if ((node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right);
+        if ((node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
+        if ((node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right, simplify_counter_ptr);
 
         if ((node -> left) -> type == CONST && (node -> right) -> type == CONST){
+            
             node -> value = EvaluateOperation(node);
             node -> type = CONST;
             free(node -> left);
             free(node -> right);
             node -> left = nullptr;
             node -> right = nullptr;
+
+            (*simplify_counter_ptr)++;
+            GraphicalDump(node -> tree);
+        }
+    }
+}
+
+#define MAKE_SUBTREE_CONST_IF_LEFT_NODE_EQUALS(value_to_make, criterion)\
+        if ((node -> left) -> type == CONST && (node -> left) -> value == criterion){\
+            node -> type = CONST;\
+            node -> value = value_to_make;\
+            /*delete left and right nodes*/\
+            node -> left = nullptr;\
+            node -> right = nullptr;\
+            (*simplify_counter_ptr)++;\
+            break;\
+        }
+
+#define MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(value_to_make, criterion)\
+        if ((node -> right) -> type == CONST && (node -> right) -> value == criterion){\
+            node -> type = CONST;\
+            node -> value = value_to_make;\
+            /*delete left and right nodes*/\
+            node -> left = nullptr;\
+            node -> right = nullptr;\
+            (*simplify_counter_ptr)++;\
+            break;\
         }
 
 
-    }
+#define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
+    if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
+        node -> type   = (node -> right) -> type;\
+        node -> value  = (node -> right) -> value;\
+        node -> left   = (node -> right) -> left;\
+        node -> right  = (node -> right) -> right;\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
+
+#define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
+    if ((node -> right) -> type == CONST && (node -> right) -> value == term){\
+        node -> type   = (node -> left) -> type;\
+        node -> value  = (node -> left) -> value;\
+        node -> right  = (node -> left) -> right;\
+        node -> left   = (node -> left) -> left;\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
+    
+    
+
+void SimplifyObviousNodesRecursively(Node* node, int* simplify_counter_ptr){ //IDK how to name it
+    if ((node -> type) == OPER){
+
+        switch ((OPERATION)(node -> value)){
+
+            case MUL:
+                MAKE_SUBTREE_CONST_IF_LEFT_NODE_EQUALS(0,0)
+                MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,0)
+                REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(1)
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+            case ADD:
+                REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(0)
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0)
+            case SUB:
+                REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(0)
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0)
+            case DIV:
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+            case SIN:
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0) //NEED TO ADD PI CHECKS
+            case COS: break;                            //SAME
+            case LOG:
+                MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,1)
+            case LN:
+                MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,1)
+            case EXP:
+                MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(1,0)
+                MAKE_SUBTREE_CONST_IF_LEFT_NODE_EQUALS(1,1)
+                REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+            default:
+                break;
+        }
     GraphicalDump(node -> tree);
+    if ((node -> left))   SimplifyObviousNodesRecursively(node -> left,  simplify_counter_ptr);
+    if ((node -> right))  SimplifyObviousNodesRecursively(node -> right, simplify_counter_ptr);
+
+    }
 }
 
-void FoldConstants(Tree* tree){
-    RecursiveNodeConstantFolding(tree -> root);
+
+void SimplifyTree(Tree* tree){
+
+    int simplify_counter = 0;
+
+    do{
+        simplify_counter = 0;
+        RecursiveNodeConstantFolding   (tree -> root, &simplify_counter);
+        SimplifyObviousNodesRecursively(tree -> root, &simplify_counter);
+        printf("Simplified %d times\n", simplify_counter);
+    } while (simplify_counter > 0);
+    
 }
-
-
-
-
-
 
 /*
 int main(){

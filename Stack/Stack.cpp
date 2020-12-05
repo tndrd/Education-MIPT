@@ -4,7 +4,7 @@
 #define case_of_switch(en) case en: return #en;
 #define POISON NAN
 
-#define ELEMENT_FORMAT "%lf"
+#define ELEMENT_FORMAT "%p"
 
 #define STRUCT_CANNARY_VALUE 0xFFFFFFFFFFFFFFFF
 #define STRUCT_CANNARY_FORMAT "%08X"
@@ -12,12 +12,12 @@
 #define DATA_CANNARY_FORMAT "%lf"
 #define MAXSIZE 1000
 
-typedef double StackElement;
+typedef void* StackElement;
 //const int AVAILABLE_MEMORY = 4096;
 
 enum ERROR{
 
-    OK,//numbers
+    STACK_OK,//numbers
     CREATION_FAILED_NOT_ENOUGH_MEMORY,
     CREATION_FAILED_ALREADY_EXISTS,
     STACK_ALREADY_DEAD,
@@ -54,7 +54,7 @@ struct Stack{
 void ASSERTED(Stack* thou);
 void StackDump(Stack* thou, ERROR status, FILE* stream);
 int CheckPointer(void* ptr);
-int StackPop(Stack* thou, StackElement* popped);
+StackElement StackPop(Stack* thou, int* status_ptr);
 int StackPush(Stack* thou, StackElement value);
 int ResizeDown(Stack* thou);
 int ResizeUp(Stack* thou);
@@ -80,7 +80,7 @@ int ComputeStructHash(Stack* thou);
 static const char* getERRORName(ERROR error){
 
     switch(error){
-        case_of_switch(OK)
+        case_of_switch(STACK_OK)
         case_of_switch(CREATION_FAILED_NOT_ENOUGH_MEMORY)
         case_of_switch(CREATION_FAILED_ALREADY_EXISTS)
         case_of_switch(STACK_PTR_UNAVAILABLE)
@@ -111,7 +111,7 @@ ERROR newStack(int capacity, Stack** new_stack_pointer_adress){
     if (!CheckPointer(thou)) return CREATION_FAILED_NOT_ENOUGH_MEMORY;
 
     ERROR status = StackCtor(thou, capacity);
-    if (status == OK) *new_stack_pointer_adress = thou;
+    if (status == STACK_OK) *new_stack_pointer_adress = thou;
     return status;
 }
 
@@ -269,7 +269,7 @@ void ASSERTED(Stack* thou){
     ERROR status = StackOK(thou);
     switch(status){
 
-    case OK: return;
+    case STACK_OK: return;
     case STACK_PTR_UNAVAILABLE: INSTANT_DEATH(thou, status);
     default: LAST_WORDS(thou, status);
     }
@@ -309,7 +309,7 @@ ERROR StackOK(Stack* thou){
     RecomputeHashes(thou);
     if (current_data_hash != thou -> data_hash)      return DATA_CORRUPTED_WRONG_HASH;
     if (current_struct_hash != thou-> struct_hash)  return STRUCT_CORRUPTED_WRONG_HASH;
-    return OK;
+    return STACK_OK;
 
 }
 
@@ -339,7 +339,7 @@ ERROR StackDtor(Stack* thou){
     if (!thou -> EXISTS) return STACK_ALREADY_DEAD;
     free(thou -> data);
     free(thou);
-    return OK;
+    return STACK_OK;
 }
 
 
@@ -355,7 +355,7 @@ ERROR StackClear(Stack* thou){
 
     RecomputeHashes(thou);
     ASSERTED(thou);
-    return OK;
+    return STACK_OK;
 
 }
 
@@ -378,7 +378,7 @@ int main(){
 
     Stack* firstStack = (Stack*)calloc(1,sizeof(Stack*));
 
-    if(newStack(10, &firstStack) != OK) exit(-1);
+    if(newStack(10, &firstStack) != STACK_OK) exit(-1);
     StackPrint(firstStack, StackOK(firstStack), stdout);
     int command = 0;
     double value = 1;
@@ -388,7 +388,7 @@ int main(){
             StackPush(firstStack, value);
             value++;
             }
-        else StackPop(firstStack, &value);
+        else value = StackPop(firstStack, &command);
         StackPrint(firstStack, StackOK(firstStack), stdout);
     }
 
