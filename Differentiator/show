@@ -1,0 +1,29 @@
+digraph G {
+94056182296464 [label = "*" style=filled fillcolor=yellow];
+94056182296464 -> 94056182296400 [color=black]
+94056182296464 -> 94056182296208 [color=black]
+94056182296400 [label = "^" style=filled fillcolor=yellow];
+94056182296400 -> 94056182296336 [color=black]
+94056182296400 -> 94056182296272 [color=black]
+94056182296336 [label = "x" style=filled fillcolor=aquamarine];
+94056182296272 [label = "60.000000" style=filled fillcolor=green];
+94056182296208 [label = "+" style=filled fillcolor=yellow];
+94056182296208 -> 94056182296144 [color=black]
+94056182296208 -> 94056182295760 [color=black]
+94056182296144 [label = "*" style=filled fillcolor=yellow];
+94056182296144 -> 94056182296080 [color=black]
+94056182296144 -> 94056182295824 [color=black]
+94056182296080 [label = "/" style=filled fillcolor=yellow];
+94056182296080 -> 94056182296016 [color=black]
+94056182296080 -> 94056182295952 [color=black]
+94056182296016 [label = "1.000000" style=filled fillcolor=green];
+94056182295952 [label = "x" style=filled fillcolor=aquamarine];
+94056182295824 [label = "60.000000" style=filled fillcolor=green];
+94056182295760 [label = "*" style=filled fillcolor=yellow];
+94056182295760 -> 94056182295696 [color=black]
+94056182295760 -> 94056182295568 [color=black]
+94056182295696 [label = "0.000000" style=filled fillcolor=green];
+94056182295568 [label = "ln" style=filled fillcolor=yellow];
+94056182295568 -> 94056182295632 [color=black]
+94056182295632 [label = "x" style=filled fillcolor=aquamarine];
+}

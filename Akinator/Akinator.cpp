@@ -364,6 +364,10 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
     ADD_WORD_TO_PHRASE_NOARG(".\n");
     SAY_AND_PRINT_ALL_PHRASE
     
+    free(first_path);
+    free(second_path);
+    free(SAY_BUFFER);
+
     return 0;
 }
 
@@ -532,4 +536,5 @@ int main(){
     AkinatorPlay(DataBase);
 
     DeleteTree(DataBase);
+    free(SAY_BUFFER);
 }

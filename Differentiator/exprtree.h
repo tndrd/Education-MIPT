@@ -6,6 +6,11 @@
 #include <ctype.h>
 #include "../Onegin/foperations.cpp"
 
+const size_t INITIAL_VAR_NAME_TABLE_CAPACITY = 4;
+const size_t MAX_VAR_NAME_LENGTH = 10;
+
+const double PI = 3.1415927;
+
 enum TREE_STATUS{
     OK              = -1,
     SIZE_LESS_ONE   = -2,
@@ -20,57 +25,67 @@ enum TREE_STATUS{
     TOO_MANY_NODES_FOR_CURRENT_SIZE = -12,
 };
 
-
 enum TYPE{
-    CONST = 0,
-    OPER  = 1,
-    VAR   = 2,
+    CONST = 'C',
+    OPER  = 'O',
+    VAR   = 'V',
+    EMPTY = '#'
 };
 
 
 enum OPERATION{
 
-    ADD  = '+',
-    SUB  = '-',
-    MUL  = '*',
-    DIV  = '/',
-    SIN  = 's',
-    COS  = 'c',
-    LOG  = 'l',
-    LN   = 'n',
-    EXP  = 'e',
-    NEG  = 'g',
-    TAN  = 't',
-    COT  = 'o',
-    ATAN = 'T',
-    ACOT = 'O',
-    ACOS = 'C',
-    ASIN = 'S'
+    ERROR_OPERATION = '#', 
+
+    ADD   = '+', //
+    SUB   = '-', //
+    MUL   = '*', //
+    DIV   = '/', //
+    SIN   = 's', //
+    COS   = 'c', //
+    LOG   = 'l', //
+    LN    = 'n', //
+    EXP   = 'e', //
+    TAN   = 't', //
+    COT   = 'o', //
+    ATAN  = 'T',
+    ACOT  = 'O',
+    ACOS  = 'C',
+    ASIN  = 'S'
+};
+
+enum OPERATION_TYPE{
+    UNARY,
+    BINARY
 };
 
 struct Node;
 struct Tree;
 
 
-union node_value {
-    double    CONST_VAL;
-    OPERATION OPER_VAL;
-    int       VAR_VAL;
-};
 
 struct Node{
 
     TYPE       type   = CONST;
-    node_value value  = {0};
+    double     value  = NAN;
     Tree*      tree   = nullptr;
     Node*      parent = nullptr;
     Node*      left   = nullptr;
     Node*      right  = nullptr;
 };
 
+struct VarNameTable{
+    
+    char** name_arr = nullptr;
+    size_t size     = 0;
+    size_t capacity = 0;
+};
+
 struct Tree{
-    Node* root = nullptr;
-    int size = 0;
+    
+    Node*        root      = nullptr;
+    size_t       size      = 0;
+    VarNameTable variables = {0};
 };
 
 const char* GET_ERROR_NAME(TREE_STATUS status);
