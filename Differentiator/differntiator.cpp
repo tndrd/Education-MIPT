@@ -19,7 +19,6 @@ Node* CopyNode(Node* source_node){
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
     *new_node = *source_node;
-
     if (source_node -> left) new_node -> left = CopyNode(source_node -> left);
     if (source_node -> right) new_node -> right = CopyNode(source_node -> right);
     
@@ -139,12 +138,14 @@ int main(){
     GraphicalDump(tree);
     SimplifyTree(tree);
     GraphicalDump(tree);
+    
+    
     Tree* diff_tree = DifferentiateTree(tree);
     GraphicalDump(diff_tree);
     
     SimplifyTree(diff_tree);
     GraphicalDump(diff_tree);
-    
+    TeXDumpExpressionTree(diff_tree);
     //printf("{%d}\n", CompareStringWithOperator("sadfa", "sadf "));
     
 }

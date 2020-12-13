@@ -1,5 +1,12 @@
 #include "RecursiveDescent.h"
 
+const int expression_buffer_length = 1024;
+
+const char* SIN_OPER = "sin";
+const char* COS_OPER = "cos";
+    
+
+
 char* s = nullptr;
 int p = 0;
 
@@ -21,12 +28,14 @@ double GetN();
 double GetP();
 double GetT1();
 double GetT2();
+double GetT3();
 double GetE();
 double GetG(char* str);
 
 
 #define SKIP_SPACES\
     for(; isspace(s[p]); p++);
+
 
 double GetN(){
 
@@ -42,6 +51,7 @@ double GetN(){
     if (p == prev_p) SyntaxError;
     return val;
 }
+
 
 double GetE(){
 
@@ -72,6 +82,7 @@ double GetE(){
     }
     return lvalue;
 }
+
 
 double GetT1(){
 
@@ -107,7 +118,7 @@ double GetT2(){
 
     SKIP_SPACES
 
-    double  lvalue = GetP();
+    double  lvalue = GetT3();
     double  rvalue = 0;
     
     SKIP_SPACES
@@ -123,13 +134,33 @@ double GetT2(){
         
         SKIP_SPACES
 
-        rvalue = GetP();
+        rvalue = GetT3();
         
         SKIP_SPACES
 
         lvalue = pow(lvalue, rvalue);
     }
     return lvalue;
+}
+
+double GetT3(){
+
+    SKIP_SPACES
+    
+    int current_operator_begginning = p;
+    
+    if (!strncmp(SIN_OPER, s + current_operator_begginning, strlen(SIN_OPER))){
+        
+        p+=strlen(SIN_OPER);
+        return sin(GetP());
+    }
+    if (!strncmp(COS_OPER, s + current_operator_begginning, strlen(COS_OPER))){
+        
+        p+=strlen(COS_OPER);
+        return cos(GetP());
+    }
+
+    return GetP();
 }
 
 double GetP(){
@@ -178,7 +209,7 @@ double GetG(char* str){
 int main(){
 
     char* expression = (char*)calloc(1024, sizeof(char));
-    scanf("%s", expression);
+    fgets(expression, 1024, stdin);
     
     printf("%lf\n", GetG(expression));
 }

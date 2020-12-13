@@ -1,29 +1,25 @@
 digraph G {
-94791000010256 [label = "*" style=filled fillcolor=yellow];
-94791000010256 -> 94791000010192 [color=black]
-94791000010256 -> 94791000010000 [color=black]
-94791000010192 [label = "^" style=filled fillcolor=yellow];
-94791000010192 -> 94791000010128 [color=black]
-94791000010192 -> 94791000010064 [color=black]
-94791000010128 [label = "x" style=filled fillcolor=aquamarine];
-94791000010064 [label = "2.000000" style=filled fillcolor=green];
-94791000010000 [label = "+" style=filled fillcolor=yellow];
-94791000010000 -> 94791000009936 [color=black]
-94791000010000 -> 94791000009552 [color=black]
-94791000009936 [label = "*" style=filled fillcolor=yellow];
-94791000009936 -> 94791000009872 [color=black]
-94791000009936 -> 94791000009616 [color=black]
-94791000009872 [label = "/" style=filled fillcolor=yellow];
-94791000009872 -> 94791000009808 [color=black]
-94791000009872 -> 94791000009744 [color=black]
-94791000009808 [label = "1.000000" style=filled fillcolor=green];
-94791000009744 [label = "x" style=filled fillcolor=aquamarine];
-94791000009616 [label = "2.000000" style=filled fillcolor=green];
-94791000009552 [label = "*" style=filled fillcolor=yellow];
-94791000009552 -> 94791000009488 [color=black]
-94791000009552 -> 94791000009360 [color=black]
-94791000009488 [label = "0.000000" style=filled fillcolor=green];
-94791000009360 [label = "ln" style=filled fillcolor=yellow];
-94791000009360 -> 94791000009424 [color=black]
-94791000009424 [label = "x" style=filled fillcolor=aquamarine];
+93929283923472 [label = "* " style=filled fillcolor=yellow];
+93929283923472 -> 93929283923408 [color=black]
+93929283923472 -> 93929283923216 [color=black]
+93929283923408 [label = "^ " style=filled fillcolor=yellow];
+93929283923408 -> 93929283923344 [color=black]
+93929283923408 -> 93929283923280 [color=black]
+93929283923344 [label = "x " style=filled fillcolor=aquamarine];
+93929283923280 [label = "x " style=filled fillcolor=aquamarine];
+93929283923216 [label = "+ " style=filled fillcolor=yellow];
+93929283923216 -> 93929283923152 [color=black]
+93929283923216 -> 93929283922768 [color=black]
+93929283923152 [label = "* " style=filled fillcolor=yellow];
+93929283923152 -> 93929283923088 [color=black]
+93929283923152 -> 93929283922832 [color=black]
+93929283923088 [label = "/ " style=filled fillcolor=yellow];
+93929283923088 -> 93929283923024 [color=black]
+93929283923088 -> 93929283922960 [color=black]
+93929283923024 [label = "1 " style=filled fillcolor=green];
+93929283922960 [label = "x " style=filled fillcolor=aquamarine];
+93929283922832 [label = "x " style=filled fillcolor=aquamarine];
+93929283922768 [label = "ln " style=filled fillcolor=yellow];
+93929283922768 -> 93929283922640 [color=black]
+93929283922640 [label = "x " style=filled fillcolor=aquamarine];
 }

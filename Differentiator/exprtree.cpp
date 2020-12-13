@@ -50,6 +50,12 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
     }
 }
 
+
+char* GetVarName(Node* node){
+    if (node -> type != VAR) return nullptr;
+    return ((node -> tree) -> variables).name_arr[(int)(node -> value)];
+}
+
 /*
 Tree* NewTree(node_value RootValue){
 
@@ -64,37 +70,37 @@ Tree* NewTree(node_value RootValue){
 }
 */
 
-TREE_STATUS AttachLeftNode(Node* to_attach, Node* Parent){
+TREE_STATUS AttachLeftNode(Node* to_attach, Node* node){
 
-    if (!Parent || !to_attach) return INVALID_POINTER;
-    if (Parent -> left)        return EDGE_ALREADY_EXISTS;
+    if (!node || !to_attach) return INVALID_POINTER;
+    if (node -> left)        return EDGE_ALREADY_EXISTS;
 
-    //TREE_CHECK(Parent -> tree)
+    //TREE_CHECK(node -> tree)
 
-    Parent    -> left   = to_attach;
-    to_attach -> parent = Parent;
-    to_attach -> tree   = Parent -> tree;
+    node    -> left   = to_attach;
+    to_attach -> parent = node;
+    to_attach -> tree   = node -> tree;
     
-    ((Parent -> tree) -> size)++;
+    ((node -> tree) -> size)++;
 
-    //TREE_CHECK(Parent -> tree)
+    //TREE_CHECK(node -> tree)
     return OK;
 }
 
-TREE_STATUS AttachRightNode(Node* to_attach, Node* Parent){
+TREE_STATUS AttachRightNode(Node* to_attach, Node* node){
 
-    if (!Parent || !to_attach) return INVALID_POINTER;
-    if (Parent -> right)       return EDGE_ALREADY_EXISTS;
+    if (!node || !to_attach) return INVALID_POINTER;
+    if (node -> right)       return EDGE_ALREADY_EXISTS;
 
-    //TREE_CHECK(Parent -> tree)
+    //TREE_CHECK(node -> tree)
 
-    Parent    -> right  = to_attach;
-    to_attach -> parent = Parent;
-    to_attach -> tree   = Parent -> tree;
+    node    -> right  = to_attach;
+    to_attach -> parent = node;
+    to_attach -> tree   = node -> tree;
     
-    ((Parent -> tree) -> size)++;
+    ((node -> tree) -> size)++;
     
-    //TREE_CHECK(Parent -> tree)
+    //TREE_CHECK(node -> tree)
     return OK;
 }
 
@@ -124,20 +130,20 @@ const char* GET_OPERATOR(OPERATION operation){
 }
 
 int DumpNode(FILE* fp, Node* node){
-    
+
     if (!node) return 1;
     
     //assert(node -> value);
 
     switch(node -> type){
 
-        case CONST: fprintf(fp, "%ld [label = \"%lf\" style=filled fillcolor=green];\n", node, node -> value);
+        case CONST: fprintf(fp, "%ld [label = \"%lg \" style=filled fillcolor=green];\n", node, node -> value);
                     break;
 
-        case OPER:  fprintf(fp, "%ld [label = \"%s\" style=filled fillcolor=yellow];\n", node, GET_OPERATOR((OPERATION)(node -> value)));
+        case OPER:  fprintf(fp, "%ld [label = \"%s \" style=filled fillcolor=yellow];\n", node, GET_OPERATOR((OPERATION)(node -> value)));
                     break;
         
-        case VAR:   fprintf(fp, "%ld [label = \"%s\" style=filled fillcolor=aquamarine];\n", node, ((node -> tree) -> variables).name_arr[(int)(node -> value)]);
+        case VAR:   fprintf(fp, "%ld [label = \"%s \" style=filled fillcolor=aquamarine];\n", node, GetVarName(node));
                     break;
 
     }
@@ -151,6 +157,37 @@ int DumpNode(FILE* fp, Node* node){
     return 0;
 }
 
+
+int DumpNodeDebug(FILE* fp, Node* node){
+    
+    printf("%p\n", node);
+    fflush(stdout);
+
+    if (!node) return 1;
+    
+    //assert(node -> value);
+
+    switch(node -> type){
+
+        case CONST: fprintf(fp, "%ld [label = \"%lf (%p)[%p | %p]\" style=filled fillcolor=green];\n", node, node -> value, node, node -> left, node -> right);
+                    break;
+
+        case OPER:  fprintf(fp, "%ld [label = \"%s (%p)[%p | %p]\" style=filled fillcolor=yellow];\n", node, GET_OPERATOR((OPERATION)(node -> value)), node, node -> left, node -> right);
+                    break;
+        
+        case VAR:   fprintf(fp, "%ld [label = \"%s (%p)[%p | %p]\" style=filled fillcolor=aquamarine];\n", node, ((node -> tree) -> variables).name_arr[(int)(node -> value)], node, node -> left, node -> right);
+                    break;
+
+    }
+    
+    if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
+    if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
+    
+    DumpNodeDebug(fp, node -> left);
+    DumpNodeDebug(fp, node -> right);
+    
+    return 0;
+}
 
 TREE_STATUS GraphicalDump(Tree* tree){
 
@@ -168,25 +205,40 @@ TREE_STATUS GraphicalDump(Tree* tree){
     return OK;
 }
 
+TREE_STATUS GraphicalDumpDebug(Tree* tree){
 
-TREE_STATUS SaveNode(FILE* fp, Node* Parent){
+    if (!tree) return INVALID_POINTER;
 
-    if (!Parent) return INVALID_POINTER;
+    FILE* fp = fopen("show", "w");
+    fprintf(fp, "digraph G {\n");
+    
+    DumpNodeDebug(fp, tree -> root);
+    
+    fprintf(fp, "}");
+    fclose(fp);
+    system("dot -Tpng show -n -o show.png");
+    system("viewnior show.png");
+    return OK;
+}
+
+TREE_STATUS SaveNode(FILE* fp, Node* node){
+
+    if (!node) return INVALID_POINTER;
     
     fprintf(fp, "(");
 
-    switch(Parent -> type){
+    switch(node -> type){
 
-        case CONST: fprintf(fp, "%lf", Parent -> value);
+        case CONST: fprintf(fp, "%lf", node -> value);
                     break;
 
-        case VAR:   fprintf(fp, "%s", ((Parent -> tree) -> variables).name_arr[(int)(Parent -> value)]);
+        case VAR:   fprintf(fp, "%s", GetVarName(node));
                     break;
         
         case OPER:
-                    SaveNode(fp, Parent -> left);
-                    fprintf(fp, " %s ", GET_OPERATOR((OPERATION)(Parent -> value)));
-                    SaveNode(fp, Parent -> right);
+                    SaveNode(fp, node -> left);
+                    fprintf(fp, " %s ", GET_OPERATOR((OPERATION)(node -> value)));
+                    SaveNode(fp, node -> right);
                     break;
 
     }
@@ -506,12 +558,15 @@ double EvaluateOperation(Node* node){
 }
 
 void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
-
+    
+    printf("%p\n", node);
+    fflush(stdout);
+    
     if ((node -> type) == OPER){
-        if ((node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
+        if ((node -> left) && (node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
         if ((node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right, simplify_counter_ptr);
 
-        if ((node -> left) -> type == CONST && (node -> right) -> type == CONST){
+        if ((!(node -> left) || (node -> left) -> type == CONST) && (node -> right) -> type == CONST){
             
             node -> value = EvaluateOperation(node);
             node -> type = CONST;
@@ -521,15 +576,16 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
             node -> right = nullptr;
 
             (*simplify_counter_ptr)++;
-            GraphicalDump(node -> tree);
         }
     }
 }
 
 #define MAKE_SUBTREE_CONST_IF_LEFT_NODE_EQUALS(value_to_make, criterion)\
+        printf("left %s %p\n", GET_OPERATOR((OPERATION) node -> value), node);\
+        assert(node -> left);\
         if ((node -> left) -> type == CONST && (node -> left) -> value == criterion){\
             node -> type = CONST;\
-            node -> value = value_to_make;\
+            node -> value = (double) value_to_make;\
             /*delete left and right nodes*/\
             node -> left = nullptr;\
             node -> right = nullptr;\
@@ -538,9 +594,11 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         }
 
 #define MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(value_to_make, criterion)\
+    printf("right %s %p\n", GET_OPERATOR((OPERATION) node -> value), node);\
+        assert(node -> right);\
         if ((node -> right) -> type == CONST && (node -> right) -> value == criterion){\
             node -> type = CONST;\
-            node -> value = value_to_make;\
+            node -> value = (double) value_to_make;\
             /*delete left and right nodes*/\
             node -> left = nullptr;\
             node -> right = nullptr;\
@@ -548,7 +606,7 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
             break;\
         }
 
-
+/*
 #define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
     if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
         node -> type   = (node -> right) -> type;\
@@ -568,12 +626,29 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         (*simplify_counter_ptr)++;\
         break;\
     }\
+*/
+
+#define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
+    if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
+        assert(node -> right);\
+        *node = *(node -> right);\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
+
+#define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
+    if ((node -> right) -> type == CONST && (node -> right) -> value == term){\
+        assert(node -> left);\
+        *node = *(node -> left);\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
     
+
     
 
 void SimplifyObviousNodesRecursively(Node* node, int* simplify_counter_ptr){ //IDK how to name it
-    if ((node -> type) == OPER){
-
+    if (node && (node -> type) == OPER){
         switch ((OPERATION)(node -> value)){
 
             case MUL:
@@ -581,48 +656,131 @@ void SimplifyObviousNodesRecursively(Node* node, int* simplify_counter_ptr){ //I
                 MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,0)
                 REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(1)
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+                break;
+
             case ADD:
                 REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(0)
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0)
+                break;
+
             case SUB:
                 REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(0)
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0)
+                break;
+
             case DIV:
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+                break;
+
             case SIN:
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(0) //NEED TO ADD PI CHECKS
+                break;
+
             case COS: break;                            //SAME
+            
             case LOG:
                 MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,1)
+                break;
+
             case LN:
                 MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(0,1)
+                break;
+
             case EXP:
                 MAKE_SUBTREE_CONST_IF_RIGHT_NODE_EQUALS(1,0)
                 MAKE_SUBTREE_CONST_IF_LEFT_NODE_EQUALS(1,1)
                 REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(1)
+                break;
+
             default:
                 break;
         }
-    GraphicalDump(node -> tree);
-    if ((node -> left))   SimplifyObviousNodesRecursively(node -> left,  simplify_counter_ptr);
-    if ((node -> right))  SimplifyObviousNodesRecursively(node -> right, simplify_counter_ptr);
+    if (node && (node -> left))   SimplifyObviousNodesRecursively(node -> left,  simplify_counter_ptr);
+    if (node && (node -> right))  SimplifyObviousNodesRecursively(node -> right, simplify_counter_ptr);
 
     }
 }
 
+
+void SimplifyTreeDebug(Tree* tree){
+
+    int simplify_counter = 0;
+
+    do{
+        simplify_counter = 0;
+        
+        printf("Folding constants...\n");
+        RecursiveNodeConstantFolding   (tree -> root, &simplify_counter);
+        GraphicalDumpDebug(tree);
+
+        printf("Folding obvious...\n");
+        SimplifyObviousNodesRecursively(tree -> root, &simplify_counter);
+        GraphicalDumpDebug(tree);
+        
+        printf("Simplified %d times\n", simplify_counter);
+    } while (simplify_counter > 0);
+    
+}
 
 void SimplifyTree(Tree* tree){
 
     int simplify_counter = 0;
 
     do{
+        GraphicalDump(tree);
+
         simplify_counter = 0;
+        
+        printf("Folding constants...\n");
         RecursiveNodeConstantFolding   (tree -> root, &simplify_counter);
+        //GraphicalDumpDebug(tree);
+
+        printf("Folding obvious...\n");
         SimplifyObviousNodesRecursively(tree -> root, &simplify_counter);
+        
+        
         printf("Simplified %d times\n", simplify_counter);
     } while (simplify_counter > 0);
     
 }
+
+#define TeXBinaryOperatorDump(oper)\
+        TeXDumpNodeRecursively(fp, node -> left);\
+        fprintf(fp, "%s ", oper);\
+        TeXDumpNodeRecursively(fp, node -> right);\
+
+
+int TeXDumpNodeRecursively(FILE* fp, Node* node){
+    if (!node) return 1;
+    fprintf(fp, "{");
+    switch(node -> type){
+        
+        case CONST:
+            fprintf(fp, "%lg ", node -> value);
+            break;
+
+        case VAR:
+            fprintf(fp, "%s ",  GetVarName(node));
+            break;
+
+        case OPER:
+            fprintf(fp, "(");
+            TeXBinaryOperatorDump(GET_OPERATOR((OPERATION) node -> value));
+            fprintf(fp, ")");
+            break;
+    }
+    fprintf(fp, "}");
+    return 0;
+}
+
+void TeXDumpExpressionTree(Tree* tree){
+
+    FILE* fp = fopen("TeXDump.tex", "w");
+    TeXDumpNodeRecursively(fp, tree -> root);
+    fclose(fp);
+
+}
+
 
 /*
 int main(){
@@ -641,3 +799,9 @@ int main(){
     
 }
 */
+
+//убрать войды, сделать возвращаемое значение
+//поработать с фриии
+//проверить используемость дсл
+//проверка кода
+//убрать tree и parent из ноды

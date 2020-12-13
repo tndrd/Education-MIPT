@@ -2,17 +2,19 @@
 #include <math.h>
 #include <stdio.h>
 #define case_of_switch(en) case en: return #en;
-#define POISON NAN
+#define POISON nullptr
 
 #define ELEMENT_FORMAT "%p"
 
-#define STRUCT_CANNARY_VALUE 0xFFFFFFFFFFFFFFFF
+#define STRUCT_CANNARY_VALUE 0xFFFFFFFFFFFFF
 #define STRUCT_CANNARY_FORMAT "%08X"
-#define DATA_CANNARY_VALUE 2.0
-#define DATA_CANNARY_FORMAT "%lf"
+#define DATA_CANNARY_VALUE (void*)(0xFFFFFFFFFFFFFFFF)
+#define DATA_CANNARY_FORMAT "%p"
 #define MAXSIZE 1000
 
 typedef void* StackElement;
+//const int DATA_CANNARY =
+
 //const int AVAILABLE_MEMORY = 4096;
 
 enum ERROR{
@@ -328,7 +330,7 @@ void LAST_WORDS(Stack* thou, ERROR error){
 
 
 int isPOISON(StackElement value){
-    return isnan(value);
+    return (value == 0);
 }
 
 
@@ -381,7 +383,7 @@ int main(){
     if(newStack(10, &firstStack) != STACK_OK) exit(-1);
     StackPrint(firstStack, StackOK(firstStack), stdout);
     int command = 0;
-    double value = 1;
+    void* value = &command;
     while (true){
         scanf("%d", &command);
         if (command == 1){
