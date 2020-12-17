@@ -1,25 +1,149 @@
 digraph G {
-93929283923472 [label = "* " style=filled fillcolor=yellow];
-93929283923472 -> 93929283923408 [color=black]
-93929283923472 -> 93929283923216 [color=black]
-93929283923408 [label = "^ " style=filled fillcolor=yellow];
-93929283923408 -> 93929283923344 [color=black]
-93929283923408 -> 93929283923280 [color=black]
-93929283923344 [label = "x " style=filled fillcolor=aquamarine];
-93929283923280 [label = "x " style=filled fillcolor=aquamarine];
-93929283923216 [label = "+ " style=filled fillcolor=yellow];
-93929283923216 -> 93929283923152 [color=black]
-93929283923216 -> 93929283922768 [color=black]
-93929283923152 [label = "* " style=filled fillcolor=yellow];
-93929283923152 -> 93929283923088 [color=black]
-93929283923152 -> 93929283922832 [color=black]
-93929283923088 [label = "/ " style=filled fillcolor=yellow];
-93929283923088 -> 93929283923024 [color=black]
-93929283923088 -> 93929283922960 [color=black]
-93929283923024 [label = "1 " style=filled fillcolor=green];
-93929283922960 [label = "x " style=filled fillcolor=aquamarine];
-93929283922832 [label = "x " style=filled fillcolor=aquamarine];
-93929283922768 [label = "ln " style=filled fillcolor=yellow];
-93929283922768 -> 93929283922640 [color=black]
-93929283922640 [label = "x " style=filled fillcolor=aquamarine];
+93861967985232 [label = "* " style=filled fillcolor=yellow];
+93861967985232 -> 93861967985168 [color=black]
+93861967985232 -> 93861967979952 [color=black]
+93861967985168 [label = "/ " style=filled fillcolor=yellow];
+93861967985168 -> 93861967985104 [color=black]
+93861967985168 -> 93861967980208 [color=black]
+93861967985104 [label = "- " style=filled fillcolor=yellow];
+93861967985104 -> 93861967985040 [color=black]
+93861967985104 -> 93861967980976 [color=black]
+93861967985040 [label = "* " style=filled fillcolor=yellow];
+93861967985040 -> 93861967984976 [color=black]
+93861967985040 -> 93861967981040 [color=black]
+93861967984976 [label = "* " style=filled fillcolor=yellow];
+93861967984976 -> 93861967984912 [color=black]
+93861967984976 -> 93861967984400 [color=black]
+93861967984912 [label = "^ " style=filled fillcolor=yellow];
+93861967984912 -> 93861967984784 [color=black]
+93861967984912 -> 93861967984464 [color=black]
+93861967984784 [label = "cos " style=filled fillcolor=yellow];
+93861967984784 -> 93861967984848 [color=black]
+93861967984848 [label = "x " style=filled fillcolor=aquamarine];
+93861967984464 [label = "^ " style=filled fillcolor=yellow];
+93861967984464 -> 93861967984528 [color=black]
+93861967984464 -> 93861967984720 [color=black]
+93861967984528 [label = "* " style=filled fillcolor=yellow];
+93861967984528 -> 93861967984592 [color=black]
+93861967984528 -> 93861967984656 [color=black]
+93861967984592 [label = "5 " style=filled fillcolor=green];
+93861967984656 [label = "x " style=filled fillcolor=aquamarine];
+93861967984720 [label = "2 " style=filled fillcolor=green];
+93861967984400 [label = "+ " style=filled fillcolor=yellow];
+93861967984400 -> 93861967984336 [color=black]
+93861967984400 -> 93861967983312 [color=black]
+93861967984336 [label = "* " style=filled fillcolor=yellow];
+93861967984336 -> 93861967984272 [color=black]
+93861967984336 -> 93861967983376 [color=black]
+93861967984272 [label = "/ " style=filled fillcolor=yellow];
+93861967984272 -> 93861967984208 [color=black]
+93861967984272 -> 93861967983760 [color=black]
+93861967984208 [label = "* " style=filled fillcolor=yellow];
+93861967984208 -> 93861967984016 [color=black]
+93861967984208 -> 93861967983952 [color=black]
+93861967984016 [label = "-1 " style=filled fillcolor=green];
+93861967983952 [label = "sin " style=filled fillcolor=yellow];
+93861967983952 -> 93861967983888 [color=black]
+93861967983888 [label = "x " style=filled fillcolor=aquamarine];
+93861967983760 [label = "cos " style=filled fillcolor=yellow];
+93861967983760 -> 93861967983824 [color=black]
+93861967983824 [label = "x " style=filled fillcolor=aquamarine];
+93861967983376 [label = "^ " style=filled fillcolor=yellow];
+93861967983376 -> 93861967983440 [color=black]
+93861967983376 -> 93861967983632 [color=black]
+93861967983440 [label = "* " style=filled fillcolor=yellow];
+93861967983440 -> 93861967983504 [color=black]
+93861967983440 -> 93861967983568 [color=black]
+93861967983504 [label = "5 " style=filled fillcolor=green];
+93861967983568 [label = "x " style=filled fillcolor=aquamarine];
+93861967983632 [label = "2 " style=filled fillcolor=green];
+93861967983312 [label = "* " style=filled fillcolor=yellow];
+93861967983312 -> 93861967983248 [color=black]
+93861967983312 -> 93861967981232 [color=black]
+93861967983248 [label = "* " style=filled fillcolor=yellow];
+93861967983248 -> 93861967983184 [color=black]
+93861967983248 -> 93861967982864 [color=black]
+93861967983184 [label = "^ " style=filled fillcolor=yellow];
+93861967983184 -> 93861967982992 [color=black]
+93861967983184 -> 93861967982928 [color=black]
+93861967982992 [label = "* " style=filled fillcolor=yellow];
+93861967982992 -> 93861967983056 [color=black]
+93861967982992 -> 93861967983120 [color=black]
+93861967983056 [label = "5 " style=filled fillcolor=green];
+93861967983120 [label = "x " style=filled fillcolor=aquamarine];
+93861967982928 [label = "2 " style=filled fillcolor=green];
+93861967982864 [label = "* " style=filled fillcolor=yellow];
+93861967982864 -> 93861967982736 [color=black]
+93861967982864 -> 93861967981872 [color=black]
+93861967982736 [label = "/ " style=filled fillcolor=yellow];
+93861967982736 -> 93861967982672 [color=black]
+93861967982736 -> 93861967982000 [color=black]
+93861967982672 [label = "5 " style=filled fillcolor=green];
+93861967982000 [label = "* " style=filled fillcolor=yellow];
+93861967982000 -> 93861967982064 [color=black]
+93861967982000 -> 93861967982128 [color=black]
+93861967982064 [label = "5 " style=filled fillcolor=green];
+93861967982128 [label = "x " style=filled fillcolor=aquamarine];
+93861967981872 [label = "2 " style=filled fillcolor=green];
+93861967981232 [label = "ln " style=filled fillcolor=yellow];
+93861967981232 -> 93861967981296 [color=black]
+93861967981296 [label = "cos " style=filled fillcolor=yellow];
+93861967981296 -> 93861967981360 [color=black]
+93861967981360 [label = "x " style=filled fillcolor=aquamarine];
+93861967981040 [label = "ln " style=filled fillcolor=yellow];
+93861967981040 -> 93861967981104 [color=black]
+93861967981104 [label = "x " style=filled fillcolor=aquamarine];
+93861967980976 [label = "* " style=filled fillcolor=yellow];
+93861967980976 -> 93861967980912 [color=black]
+93861967980976 -> 93861967980272 [color=black]
+93861967980912 [label = "/ " style=filled fillcolor=yellow];
+93861967980912 -> 93861967980848 [color=black]
+93861967980912 -> 93861967980784 [color=black]
+93861967980848 [label = "1 " style=filled fillcolor=green];
+93861967980784 [label = "x " style=filled fillcolor=aquamarine];
+93861967980272 [label = "^ " style=filled fillcolor=yellow];
+93861967980272 -> 93861967980336 [color=black]
+93861967980272 -> 93861967980464 [color=black]
+93861967980336 [label = "cos " style=filled fillcolor=yellow];
+93861967980336 -> 93861967980400 [color=black]
+93861967980400 [label = "x " style=filled fillcolor=aquamarine];
+93861967980464 [label = "^ " style=filled fillcolor=yellow];
+93861967980464 -> 93861967980528 [color=black]
+93861967980464 -> 93861967980720 [color=black]
+93861967980528 [label = "* " style=filled fillcolor=yellow];
+93861967980528 -> 93861967980592 [color=black]
+93861967980528 -> 93861967980656 [color=black]
+93861967980592 [label = "5 " style=filled fillcolor=green];
+93861967980656 [label = "x " style=filled fillcolor=aquamarine];
+93861967980720 [label = "2 " style=filled fillcolor=green];
+93861967980208 [label = "^ " style=filled fillcolor=yellow];
+93861967980208 -> 93861967980080 [color=black]
+93861967980208 -> 93861967980016 [color=black]
+93861967980080 [label = "ln " style=filled fillcolor=yellow];
+93861967980080 -> 93861967980144 [color=black]
+93861967980144 [label = "x " style=filled fillcolor=aquamarine];
+93861967980016 [label = "2 " style=filled fillcolor=green];
+93861967979952 [label = "cos " style=filled fillcolor=yellow];
+93861967979952 -> 93861967979248 [color=black]
+93861967979248 [label = "/ " style=filled fillcolor=yellow];
+93861967979248 -> 93861967979312 [color=black]
+93861967979248 -> 93861967979824 [color=black]
+93861967979312 [label = "^ " style=filled fillcolor=yellow];
+93861967979312 -> 93861967979376 [color=black]
+93861967979312 -> 93861967979504 [color=black]
+93861967979376 [label = "cos " style=filled fillcolor=yellow];
+93861967979376 -> 93861967979440 [color=black]
+93861967979440 [label = "x " style=filled fillcolor=aquamarine];
+93861967979504 [label = "^ " style=filled fillcolor=yellow];
+93861967979504 -> 93861967979568 [color=black]
+93861967979504 -> 93861967979760 [color=black]
+93861967979568 [label = "* " style=filled fillcolor=yellow];
+93861967979568 -> 93861967979632 [color=black]
+93861967979568 -> 93861967979696 [color=black]
+93861967979632 [label = "5 " style=filled fillcolor=green];
+93861967979696 [label = "x " style=filled fillcolor=aquamarine];
+93861967979760 [label = "2 " style=filled fillcolor=green];
+93861967979824 [label = "ln " style=filled fillcolor=yellow];
+93861967979824 -> 93861967979888 [color=black]
+93861967979888 [label = "x " style=filled fillcolor=aquamarine];
 }

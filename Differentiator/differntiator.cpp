@@ -133,19 +133,35 @@ int main(){
     char* filename = (char*)calloc(40, sizeof(char));
     printf("Open: ");
     scanf("%s", filename);
+    FILE* fp = fopen("TeXDump.tex", "w");
     
+    fprintf(fp, ReadFile("title.txt"));
+    fprintf(fp, "\n");
     Tree* tree = ReadTree(filename);
     GraphicalDump(tree);
-    SimplifyTree(tree);
-    GraphicalDump(tree);
+
+    fprintf(fp, "Выражение, от которого мы будем брать производную:\\\\\n");
+    TeXDumpExpressionTree(fp, tree);
+    fprintf(fp, "Для начала, по возможности упростим наше выражение:\\\\\n");
+    SimplifyTree(fp, tree);
+    //GraphicalDump(tree);
     
     
     Tree* diff_tree = DifferentiateTree(tree);
-    GraphicalDump(diff_tree);
+    fprintf(fp, "Теперь продифференцируем:\\\\\n");
+    TeXDumpExpressionTree(fp, diff_tree);
+    //GraphicalDump(diff_tree);
+    fprintf(fp, "Очевидно, что данное выражение можно причесать:\\\\\n");
     
-    SimplifyTree(diff_tree);
-    GraphicalDump(diff_tree);
-    TeXDumpExpressionTree(diff_tree);
+
+    SimplifyTree(fp, diff_tree);
+    //GraphicalDump(diff_tree);
+    
+    //TeXDumpExpressionTree(diff_tree);
+    fprintf(fp, ReadFile("end.txt"));
+    fclose(fp);
+    system("pdflatex TeXDump.tex");
+    system("qpdfview TeXDump.pdf");
     //printf("{%d}\n", CompareStringWithOperator("sadfa", "sadf "));
     
 }

@@ -1,0 +1,27 @@
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{indentfirst}
+\usepackage{misccorr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\graphicspath{ {./images/} }
+
+\usepackage{caption}
+\captionsetup{labelformat=empty}
+
+\usepackage{titling}
+
+\title{\vspace{-15ex}Лабораторная работа №228}
+\author{\vspace{-2ex}Лехтерев Владимир}
+\date{\vspace{-2ex}14 декабря 2020\vspace{-2ex}}
+
+\begin{document}
+\maketitle
+
+\begin{flushleft}
+Данная работа посвящена теме "Производная и дифференциал".\\
+Цель работы: научиться брать производные от елементарных функций, сложных функций, функций внешнего дыхания, функций языка C и функций нескольких переменных.\\
+Оборудование: Ручка, тетрадь, стол, отсутствие photomath и таблица элементарных производных.\\
+Ход работы:\\  

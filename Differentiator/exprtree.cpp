@@ -722,25 +722,26 @@ void SimplifyTreeDebug(Tree* tree){
     
 }
 
-void SimplifyTree(Tree* tree){
+void SimplifyTree(FILE* fp, Tree* tree){
 
-    int simplify_counter = 0;
+    int constant_simplify_counter = 0;
+    int obvious_simplify_counter = 0;
 
     do{
         GraphicalDump(tree);
 
-        simplify_counter = 0;
-        
+        constant_simplify_counter = 0;
+        obvious_simplify_counter = 0;
+
         printf("Folding constants...\n");
-        RecursiveNodeConstantFolding   (tree -> root, &simplify_counter);
-        //GraphicalDumpDebug(tree);
+        RecursiveNodeConstantFolding   (tree -> root, &constant_simplify_counter);
+        if (constant_simplify_counter > 0) TeXDumpExpressionTree(fp, tree);
 
         printf("Folding obvious...\n");
-        SimplifyObviousNodesRecursively(tree -> root, &simplify_counter);
+        SimplifyObviousNodesRecursively(tree -> root, &obvious_simplify_counter);
+        if (obvious_simplify_counter > 0) TeXDumpExpressionTree(fp, tree);
         
-        
-        printf("Simplified %d times\n", simplify_counter);
-    } while (simplify_counter > 0);
+    } while ((constant_simplify_counter + obvious_simplify_counter) > 0);
     
 }
 
@@ -750,7 +751,17 @@ void SimplifyTree(Tree* tree){
         TeXDumpNodeRecursively(fp, node -> right);\
 
 
-int TeXDumpNodeRecursively(FILE* fp, Node* node){
+#define DEF_OPERATION(code, operator, priority_level, tex_operator, is_infix)\
+    case code:\
+        if (prev_priority > priority_level) fprintf(fp, "(");\
+        if (!is_infix) fprintf(fp, "%s ", tex_operator);\
+        TeXDumpNodeRecursively(fp, node -> left, priority_level);\
+        if (is_infix) fprintf(fp, "%s ", tex_operator);\
+        TeXDumpNodeRecursively(fp, node -> right, priority_level);\
+        if (prev_priority > priority_level) fprintf(fp, ")");\
+        break;
+
+int TeXDumpNodeRecursively(FILE* fp, Node* node, char prev_priority){
     if (!node) return 1;
     fprintf(fp, "{");
     switch(node -> type){
@@ -764,21 +775,20 @@ int TeXDumpNodeRecursively(FILE* fp, Node* node){
             break;
 
         case OPER:
-            fprintf(fp, "(");
-            TeXBinaryOperatorDump(GET_OPERATOR((OPERATION) node -> value));
-            fprintf(fp, ")");
+            switch ((OPERATION) node -> value){
+                #include "operations.h"
+            }
             break;
     }
     fprintf(fp, "}");
     return 0;
 }
 
-void TeXDumpExpressionTree(Tree* tree){
+void TeXDumpExpressionTree(FILE* fp, Tree* tree){
 
-    FILE* fp = fopen("TeXDump.tex", "w");
-    TeXDumpNodeRecursively(fp, tree -> root);
-    fclose(fp);
-
+    fprintf(fp, "\\begin{equation}");
+    TeXDumpNodeRecursively(fp, tree -> root, -1);
+    fprintf(fp, "\\end{equation}\n");
 }
 
 

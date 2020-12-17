@@ -117,3 +117,6 @@ TREE_STATUS ValidateTree(Tree* thou);
 TREE_STATUS DeleteTree(Tree* tree);
 
 void DeleteNodeRecursively(Node* current);
+
+
+void TeXDumpExpressionTree(FILE* fp, Tree* tree);
