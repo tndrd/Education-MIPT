@@ -52,6 +52,10 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
 
 
 char* GetVarName(Node* node){
+    assert(node);
+    assert(node -> type == VAR);
+    assert(node -> tree);
+    assert(((node -> tree) -> variables).name_arr);
     if (node -> type != VAR) return nullptr;
     return ((node -> tree) -> variables).name_arr[(int)(node -> value)];
 }
@@ -106,27 +110,16 @@ TREE_STATUS AttachRightNode(Node* to_attach, Node* node){
 
 #define CASE_OPERATION(OPERATION, OPERATOR) case OPERATION: return OPERATOR;
 
-
 const char* GET_OPERATOR(OPERATION operation){
 
+    #define DEF_OPERATION(operation_name, operator, priority, tex_operator, tex_op_type) case operation_name: return operator;
+
     switch(operation){
-        CASE_OPERATION(ADD, "+")
-        CASE_OPERATION(SUB, "-")
-        CASE_OPERATION(MUL, "*")
-        CASE_OPERATION(DIV, "/")
-        CASE_OPERATION(SIN, "sin")
-        CASE_OPERATION(COS, "cos")
-        CASE_OPERATION(LOG, "log")
-        CASE_OPERATION(LN,  "ln")
-        CASE_OPERATION(EXP, "^")
-        CASE_OPERATION(TAN, "tg")
-        CASE_OPERATION(COT, "ctg")
-        CASE_OPERATION(ATAN, "arctg")
-        CASE_OPERATION(ACOT, "arcctg")
-        CASE_OPERATION(ACOS, "arccos")
-        CASE_OPERATION(ASIN, "arcsin")
+        #include "operations.h"
         default: return "ERROR";
     }
+
+    #undef DEF_OPERATION
 }
 
 int DumpNode(FILE* fp, Node* node){
@@ -150,7 +143,8 @@ int DumpNode(FILE* fp, Node* node){
     
     if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
     if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
-    
+    if (node -> parent) fprintf(fp, "%ld -> %ld [color=gray]\n", node, node -> parent);
+
     DumpNode(fp, node -> left);
     DumpNode(fp, node -> right);
     
@@ -180,8 +174,9 @@ int DumpNodeDebug(FILE* fp, Node* node){
 
     }
     
-    if(node -> left)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
-    if(node -> right) fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
+    if (node -> left)   fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> left);
+    if (node -> right)  fprintf(fp, "%ld -> %ld [color=black]\n", node, node -> right);
+    if (node -> parent) fprintf(fp, "%ld -> %ld [color=gray]\n", node, node -> parent);
     
     DumpNodeDebug(fp, node -> left);
     DumpNodeDebug(fp, node -> right);
@@ -364,28 +359,15 @@ void PrintFirstWord(char* str){
     for(; PROPER_NOTATION_CHAR(*str); str++) printf("%c", *str);
 }
 
-
-#define IF_OPERATOR(OPERATION, OPERATOR) else if (CompareNotationStrings(*ptr, OPERATOR))  return OPERATION;
-
 OPERATION GET_OPERATION_NUM(char** ptr){
 
+    #define DEF_OPERATION(operation_name, operator, priority, tex_operator, tex_op_type) else if (CompareNotationStrings(*ptr, operator))  return operation_name;
+
     if(0) return ERROR_OPERATION;
-    IF_OPERATOR(ADD, "+")
-    IF_OPERATOR(SUB, "-")
-    IF_OPERATOR(MUL, "*")
-    IF_OPERATOR(DIV, "/")
-    IF_OPERATOR(SIN, "sin")
-    IF_OPERATOR(COS, "cos")
-    IF_OPERATOR(LOG, "log")
-    IF_OPERATOR(LN,  "ln")
-    IF_OPERATOR(EXP, "^")
-    IF_OPERATOR(TAN, "tg")
-    IF_OPERATOR(COT, "ctg")
-    IF_OPERATOR(ATAN, "arctg")
-    IF_OPERATOR(ACOT, "arcctg")
-    IF_OPERATOR(ACOS, "arccos")
-    IF_OPERATOR(ASIN, "arcsin")
+    #include "operations.h"
     else return ERROR_OPERATION;
+
+    #undef DEF_OPERATION
 }
 
 
@@ -426,7 +408,6 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
     new_node -> type  = node_type; 
     
     new_node -> tree = tree;
-
     new_node -> right = nullptr;
     new_node -> left  = nullptr;
 
@@ -451,10 +432,14 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
                     PARSER_TRACE
                     (new_node -> right)          = ReadNodeRecursively(tree, ptr);
                     PARSER_TRACE
+
+                    if (new_node -> left)  ((new_node -> left) -> parent) = new_node;
+                    if (new_node -> right) ((new_node -> right) -> parent) = new_node; 
+
                     break;
 
     }
-    
+
     end_reading:
 
     *ptr = strchr(*ptr, ')') + 1;
@@ -557,21 +542,42 @@ double EvaluateOperation(Node* node){
     }
 }
 
+
+void DeleteSubtree(Node* root){
+
+    if (!root) return;
+
+    DeleteSubtree(root -> left);
+    DeleteSubtree(root -> right);
+
+    free(root);
+}
+
+
+void DeleteTree(Tree* tree){
+    DeleteSubtree(tree -> root);
+
+    for (int n_var = 0; n_var < VAR_NAME_ARR_SIZE; n_var++) free(VAR_NAME_ARR[n_var]);
+
+    free(VAR_NAME_ARR);
+    free(tree);
+}
+
 void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
     
     printf("%p\n", node);
     fflush(stdout);
     
     if ((node -> type) == OPER){
-        if ((node -> left) && (node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
+        if ((node -> left) && (node -> left) -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
         if ((node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right, simplify_counter_ptr);
 
         if ((!(node -> left) || (node -> left) -> type == CONST) && (node -> right) -> type == CONST){
             
             node -> value = EvaluateOperation(node);
             node -> type = CONST;
-            free(node -> left);
-            free(node -> right);
+            DeleteSubtree(node -> left);
+            DeleteSubtree(node -> right);
             node -> left = nullptr;
             node -> right = nullptr;
 
@@ -586,7 +592,8 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         if ((node -> left) -> type == CONST && (node -> left) -> value == criterion){\
             node -> type = CONST;\
             node -> value = (double) value_to_make;\
-            /*delete left and right nodes*/\
+            DeleteSubtree(node -> left);\
+            DeleteSubtree(node -> right);\
             node -> left = nullptr;\
             node -> right = nullptr;\
             (*simplify_counter_ptr)++;\
@@ -599,38 +606,18 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         if ((node -> right) -> type == CONST && (node -> right) -> value == criterion){\
             node -> type = CONST;\
             node -> value = (double) value_to_make;\
-            /*delete left and right nodes*/\
+            DeleteSubtree(node -> left);\
+            DeleteSubtree(node -> right);\
             node -> left = nullptr;\
             node -> right = nullptr;\
             (*simplify_counter_ptr)++;\
             break;\
         }
-
 /*
 #define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
     if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
-        node -> type   = (node -> right) -> type;\
-        node -> value  = (node -> right) -> value;\
-        node -> left   = (node -> right) -> left;\
-        node -> right  = (node -> right) -> right;\
-        (*simplify_counter_ptr)++;\
-        break;\
-    }\
-
-#define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
-    if ((node -> right) -> type == CONST && (node -> right) -> value == term){\
-        node -> type   = (node -> left) -> type;\
-        node -> value  = (node -> left) -> value;\
-        node -> right  = (node -> left) -> right;\
-        node -> left   = (node -> left) -> left;\
-        (*simplify_counter_ptr)++;\
-        break;\
-    }\
-*/
-
-#define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
-    if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
         assert(node -> right);\
+        DeleteSubtree(node -> left);\
         *node = *(node -> right);\
         (*simplify_counter_ptr)++;\
         break;\
@@ -639,13 +626,69 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
 #define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
     if ((node -> right) -> type == CONST && (node -> right) -> value == term){\
         assert(node -> left);\
+        DeleteSubtree(node -> right);\
         *node = *(node -> left);\
         (*simplify_counter_ptr)++;\
         break;\
     }\
-    
+*/    
 
-    
+#define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
+    if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
+        assert(node -> right);\
+        DeleteSubtree(node -> left);\
+        \
+        if (node == (node -> tree) -> root){\
+            (node -> tree) -> root = node -> right;\
+            (node -> right) -> parent == nullptr;\
+        }\
+        else{\
+            \
+            assert(node == (node -> parent) -> right || node == (node -> parent) -> left);\
+\
+            if (node == (node -> parent) -> right){\
+                (node -> parent) -> right = node -> right;\
+                (node -> right) -> parent = node -> parent;\
+            }\
+            else if (node == (node -> parent) -> left){\
+                (node -> parent) -> left = node -> right;\
+                (node -> right) -> parent = node -> parent;\
+            }\
+            \
+        }\
+        free(node);\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
+
+#define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
+    if ((node -> right) -> type == CONST && (node -> right) -> value == term){\
+        assert(node -> right);\
+        DeleteSubtree(node -> right);\
+        \
+        if (node == (node -> tree) -> root){\
+            (node -> tree) -> root = node -> left;\
+            (node -> left) -> parent == nullptr;\
+        }\
+        else{\
+            \
+            assert(node == (node -> parent) -> right || node == (node -> parent) -> left);\
+\
+            if (node == (node -> parent) -> right){\
+                (node -> parent) -> right = node -> left;\
+                (node -> left) -> parent = node -> parent;\
+            }\
+            else if (node == (node -> parent) -> left){\
+                (node -> parent) -> left = node -> left;\
+                (node -> left) -> parent = node -> parent;\
+            }\
+            \
+        }\
+        free(node);\
+        (*simplify_counter_ptr)++;\
+        break;\
+    }\
+
 
 void SimplifyObviousNodesRecursively(Node* node, int* simplify_counter_ptr){ //IDK how to name it
     if (node && (node -> type) == OPER){
@@ -745,20 +788,15 @@ void SimplifyTree(FILE* fp, Tree* tree){
     
 }
 
-#define TeXBinaryOperatorDump(oper)\
-        TeXDumpNodeRecursively(fp, node -> left);\
-        fprintf(fp, "%s ", oper);\
-        TeXDumpNodeRecursively(fp, node -> right);\
 
-
-#define DEF_OPERATION(code, operator, priority_level, tex_operator, is_infix)\
-    case code:\
-        if (prev_priority > priority_level) fprintf(fp, "(");\
-        if (!is_infix) fprintf(fp, "%s ", tex_operator);\
-        TeXDumpNodeRecursively(fp, node -> left, priority_level);\
-        if (is_infix) fprintf(fp, "%s ", tex_operator);\
-        TeXDumpNodeRecursively(fp, node -> right, priority_level);\
-        if (prev_priority > priority_level) fprintf(fp, ")");\
+#define DEF_OPERATION(operation_name, operator, priority, tex_operator, tex_op_type)\
+    case operation_name:\
+        if (prev_priority > priority) fprintf(fp, "(");\
+        if (tex_op_type != INFIX) fprintf(fp, "%s ", tex_operator);\
+        TeXDumpNodeRecursively(fp, node -> left, priority);\
+        if (tex_op_type == INFIX) fprintf(fp, "%s ", tex_operator);\
+        TeXDumpNodeRecursively(fp, node -> right, priority);\
+        if (prev_priority > priority) fprintf(fp, ")");\
         break;
 
 int TeXDumpNodeRecursively(FILE* fp, Node* node, char prev_priority){
@@ -783,6 +821,8 @@ int TeXDumpNodeRecursively(FILE* fp, Node* node, char prev_priority){
     fprintf(fp, "}");
     return 0;
 }
+
+#undef DEF_OPERATION
 
 void TeXDumpExpressionTree(FILE* fp, Tree* tree){
 
@@ -812,6 +852,6 @@ int main(){
 
 //убрать войды, сделать возвращаемое значение
 //поработать с фриии
-//проверить используемость дсл
+//помедитировать на дсл -
 //проверка кода
 //убрать tree и parent из ноды

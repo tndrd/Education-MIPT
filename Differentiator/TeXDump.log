@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.12.14)  14 DEC 2020 18:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.12.14)  19 DEC 2020 16:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -407,6 +407,13 @@ See the caption package documentation for explanation.
 Type X to quit or <RETURN> to proceed,
 or enter new name. (Default extension: sty)
 
+Enter file name: cstvar
+
+! LaTeX Error: File `cstvar.sty' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: sty)
+
 Enter file name: 
 (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-06-03 L3 backend support: PDF mode
@@ -472,27 +479,27 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 21.
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (184.29214pt too wide) detected at line 33
+Overfull \hbox (191.62141pt too wide) detected at line 33
 []
  []
 
 
-Overfull \hbox (177.68094pt too wide) detected at line 35
+Overfull \hbox (185.01021pt too wide) detected at line 35
 []
  []
 
 
-Overfull \hbox (114.12218pt too wide) detected at line 36
+Overfull \hbox (121.45145pt too wide) detected at line 36
 []
  []
 
 
-Overfull \hbox (103.79562pt too wide) detected at line 37
+Overfull \hbox (111.1249pt too wide) detected at line 37
 []
  []
 
 
-Overfull \hbox (74.30984pt too wide) detected at line 38
+Overfull \hbox (81.63911pt too wide) detected at line 38
 []
  []
 
@@ -500,13 +507,13 @@ Overfull \hbox (74.30984pt too wide) detected at line 38
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./TeXDump.aux) ) 
 Here is how much of TeX's memory you used:
- 4889 strings out of 480478
- 68039 string characters out of 5905958
- 321358 words of memory out of 5000000
- 20867 multiletter control sequences out of 15000+600000
+ 4891 strings out of 480478
+ 68055 string characters out of 5905958
+ 322358 words of memory out of 5000000
+ 20868 multiletter control sequences out of 15000+600000
  541998 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,14n,43p,557b,207s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,14n,43p,564b,207s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/sha
 re/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}</usr/share/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/pu
@@ -517,7 +524,7 @@ st/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/public/cm-supe
 r/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb>
 </usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
-Output written on TeXDump.pdf (1 page, 100804 bytes).
+Output written on TeXDump.pdf (1 page, 99870 bytes).
 PDF statistics:
  49 PDF objects out of 1000 (max. 8388607)
  35 compressed objects within 1 object stream

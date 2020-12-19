@@ -2,45 +2,67 @@
 
 const double e = 2.71828;
 
-Node* CreateNode(TYPE node_type, double value, Node* left, Node* right){
+Node* CreateNode(TYPE node_type, double value, Node* left, Node* right, Node* parent, Tree* dst_tree){
 
     Node* new_node = (Node*)calloc(1,sizeof(Node));
     
+    assert(new_node);
+
     new_node -> type   = node_type;
-    new_node -> parent = nullptr;
-    new_node -> value = value;
+    new_node -> tree   = dst_tree;
+    new_node -> parent = parent;
+    new_node -> value  = value;
     new_node -> left   = left;
     new_node -> right  = right;
+
+    if (left)  left -> parent = new_node;
+    if (right) right -> parent = new_node;
+
     return new_node;
 }
 
-Node* CopyNode(Node* source_node){
+Node* CopyNode(Node* source_node, Tree* dst_tree, Node* parent){
     
+    assert(source_node);
+    assert(dst_tree);
+
     Node* new_node = (Node*)calloc(1,sizeof(Node));
+    assert(new_node);
     
-    *new_node = *source_node;
-    if (source_node -> left) new_node -> left = CopyNode(source_node -> left);
-    if (source_node -> right) new_node -> right = CopyNode(source_node -> right);
+    new_node -> tree   = dst_tree;
+    new_node -> type   = source_node -> type;
+    new_node -> value  = source_node -> value;
+    new_node -> parent = parent;
+
+    if (source_node -> left) {
+        new_node -> left = CopyNode(source_node -> left, dst_tree, new_node);
+    }
     
+    if (source_node -> right) {
+        new_node ->  right = CopyNode(source_node -> right, dst_tree, new_node);
+    }
+    
+
+
     return new_node;
 }
 
-#define d(arg) Diff(arg, n_var)
+#define d(arg) Diff(tree, arg, n_var)
 
 #define L node -> left
 #define R node -> right
 
 
-#define cL CopyNode(L)
-#define cR CopyNode(R)
+#define cL CopyNode(L, tree, node)
+#define cR CopyNode(R, tree, node)
 
 
-#define dMUL(left, right) ADDITION(MULTIPLY(d(left), CopyNode(right)), MULTIPLY(d(right), CopyNode(left)))
+#define dMUL(left, right) ADDITION(MULTIPLY(d(left), CopyNode(right, tree, node)), MULTIPLY(d(right), CopyNode(left, tree, node)))
 
-#define UNR_OPER_NODE(operation, right)         CreateNode(OPER, (double)(operation), nullptr, right)
-#define BIN_OPER_NODE(operation, left, right)   CreateNode(OPER, (double)(operation), left, right)
+#define UNR_OPER_NODE(operation, right)         CreateNode(OPER, (double)(operation), nullptr, right, node, tree)
+#define BIN_OPER_NODE(operation, left, right)   CreateNode(OPER, (double)(operation), left, right, node, tree)
 
-#define CONSTANT(val)         CreateNode(CONST, val, nullptr, nullptr)     
+#define CONSTANT(val)         CreateNode(CONST, val, nullptr, nullptr, node, tree)     
 
 #define ADDITION(left, right) BIN_OPER_NODE(ADD, left, right)
 #define SUBTRACT(left, right) BIN_OPER_NODE(SUB, left, right)
@@ -54,7 +76,7 @@ Node* CopyNode(Node* source_node){
 
 #define NEG(expr) MULTIPLY(CONSTANT(-1), expr)
 
-Node* Diff (Node* node, int n_var){
+Node* Diff (Tree* tree, Node* node, int n_var){
 
     Node* rdiff = nullptr;
 
@@ -119,13 +141,19 @@ Node* Diff (Node* node, int n_var){
 }
 
 
-Tree* DifferentiateTree(Tree* tree){
+Tree* DifferentiateTree(Tree* src_tree){
 
-    Tree* diff_tree = (Tree*)calloc(1, sizeof(Tree));
+    Tree* tree = (Tree*)calloc(1, sizeof(Tree));
     int n_var = 0;
-    (diff_tree -> root) = d(tree -> root);
+
+    (tree -> variables).size     = (src_tree -> variables).size;
+    (tree -> variables).capacity = (src_tree -> variables).capacity; 
     
-    return diff_tree; 
+    (tree -> variables).name_arr = (src_tree -> variables).name_arr;  
+
+    (tree -> root) = d(src_tree -> root);
+    
+    return tree; 
 }
 
 int main(){
@@ -135,9 +163,15 @@ int main(){
     scanf("%s", filename);
     FILE* fp = fopen("TeXDump.tex", "w");
     
-    fprintf(fp, ReadFile("title.txt"));
+    char* lab_title = ReadFile("title.txt"); 
+    fprintf(fp, lab_title);
+    free(lab_title);
+    
     fprintf(fp, "\n");
+    
     Tree* tree = ReadTree(filename);
+    free(filename);
+
     GraphicalDump(tree);
 
     fprintf(fp, "Выражение, от которого мы будем брать производную:\\\\\n");
@@ -158,8 +192,16 @@ int main(){
     //GraphicalDump(diff_tree);
     
     //TeXDumpExpressionTree(diff_tree);
-    fprintf(fp, ReadFile("end.txt"));
+    
+    char* lab_end = ReadFile("end.txt");
+    fprintf(fp, lab_end);
+    free(lab_end);
+    
     fclose(fp);
+
+    DeleteTree(tree);
+    DeleteTree(diff_tree);
+
     system("pdflatex TeXDump.tex");
     system("qpdfview TeXDump.pdf");
     //printf("{%d}\n", CompareStringWithOperator("sadfa", "sadf "));

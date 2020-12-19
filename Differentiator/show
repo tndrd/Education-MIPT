@@ -1,149 +1,223 @@
 digraph G {
-93861967985232 [label = "* " style=filled fillcolor=yellow];
-93861967985232 -> 93861967985168 [color=black]
-93861967985232 -> 93861967979952 [color=black]
-93861967985168 [label = "/ " style=filled fillcolor=yellow];
-93861967985168 -> 93861967985104 [color=black]
-93861967985168 -> 93861967980208 [color=black]
-93861967985104 [label = "- " style=filled fillcolor=yellow];
-93861967985104 -> 93861967985040 [color=black]
-93861967985104 -> 93861967980976 [color=black]
-93861967985040 [label = "* " style=filled fillcolor=yellow];
-93861967985040 -> 93861967984976 [color=black]
-93861967985040 -> 93861967981040 [color=black]
-93861967984976 [label = "* " style=filled fillcolor=yellow];
-93861967984976 -> 93861967984912 [color=black]
-93861967984976 -> 93861967984400 [color=black]
-93861967984912 [label = "^ " style=filled fillcolor=yellow];
-93861967984912 -> 93861967984784 [color=black]
-93861967984912 -> 93861967984464 [color=black]
-93861967984784 [label = "cos " style=filled fillcolor=yellow];
-93861967984784 -> 93861967984848 [color=black]
-93861967984848 [label = "x " style=filled fillcolor=aquamarine];
-93861967984464 [label = "^ " style=filled fillcolor=yellow];
-93861967984464 -> 93861967984528 [color=black]
-93861967984464 -> 93861967984720 [color=black]
-93861967984528 [label = "* " style=filled fillcolor=yellow];
-93861967984528 -> 93861967984592 [color=black]
-93861967984528 -> 93861967984656 [color=black]
-93861967984592 [label = "5 " style=filled fillcolor=green];
-93861967984656 [label = "x " style=filled fillcolor=aquamarine];
-93861967984720 [label = "2 " style=filled fillcolor=green];
-93861967984400 [label = "+ " style=filled fillcolor=yellow];
-93861967984400 -> 93861967984336 [color=black]
-93861967984400 -> 93861967983312 [color=black]
-93861967984336 [label = "* " style=filled fillcolor=yellow];
-93861967984336 -> 93861967984272 [color=black]
-93861967984336 -> 93861967983376 [color=black]
-93861967984272 [label = "/ " style=filled fillcolor=yellow];
-93861967984272 -> 93861967984208 [color=black]
-93861967984272 -> 93861967983760 [color=black]
-93861967984208 [label = "* " style=filled fillcolor=yellow];
-93861967984208 -> 93861967984016 [color=black]
-93861967984208 -> 93861967983952 [color=black]
-93861967984016 [label = "-1 " style=filled fillcolor=green];
-93861967983952 [label = "sin " style=filled fillcolor=yellow];
-93861967983952 -> 93861967983888 [color=black]
-93861967983888 [label = "x " style=filled fillcolor=aquamarine];
-93861967983760 [label = "cos " style=filled fillcolor=yellow];
-93861967983760 -> 93861967983824 [color=black]
-93861967983824 [label = "x " style=filled fillcolor=aquamarine];
-93861967983376 [label = "^ " style=filled fillcolor=yellow];
-93861967983376 -> 93861967983440 [color=black]
-93861967983376 -> 93861967983632 [color=black]
-93861967983440 [label = "* " style=filled fillcolor=yellow];
-93861967983440 -> 93861967983504 [color=black]
-93861967983440 -> 93861967983568 [color=black]
-93861967983504 [label = "5 " style=filled fillcolor=green];
-93861967983568 [label = "x " style=filled fillcolor=aquamarine];
-93861967983632 [label = "2 " style=filled fillcolor=green];
-93861967983312 [label = "* " style=filled fillcolor=yellow];
-93861967983312 -> 93861967983248 [color=black]
-93861967983312 -> 93861967981232 [color=black]
-93861967983248 [label = "* " style=filled fillcolor=yellow];
-93861967983248 -> 93861967983184 [color=black]
-93861967983248 -> 93861967982864 [color=black]
-93861967983184 [label = "^ " style=filled fillcolor=yellow];
-93861967983184 -> 93861967982992 [color=black]
-93861967983184 -> 93861967982928 [color=black]
-93861967982992 [label = "* " style=filled fillcolor=yellow];
-93861967982992 -> 93861967983056 [color=black]
-93861967982992 -> 93861967983120 [color=black]
-93861967983056 [label = "5 " style=filled fillcolor=green];
-93861967983120 [label = "x " style=filled fillcolor=aquamarine];
-93861967982928 [label = "2 " style=filled fillcolor=green];
-93861967982864 [label = "* " style=filled fillcolor=yellow];
-93861967982864 -> 93861967982736 [color=black]
-93861967982864 -> 93861967981872 [color=black]
-93861967982736 [label = "/ " style=filled fillcolor=yellow];
-93861967982736 -> 93861967982672 [color=black]
-93861967982736 -> 93861967982000 [color=black]
-93861967982672 [label = "5 " style=filled fillcolor=green];
-93861967982000 [label = "* " style=filled fillcolor=yellow];
-93861967982000 -> 93861967982064 [color=black]
-93861967982000 -> 93861967982128 [color=black]
-93861967982064 [label = "5 " style=filled fillcolor=green];
-93861967982128 [label = "x " style=filled fillcolor=aquamarine];
-93861967981872 [label = "2 " style=filled fillcolor=green];
-93861967981232 [label = "ln " style=filled fillcolor=yellow];
-93861967981232 -> 93861967981296 [color=black]
-93861967981296 [label = "cos " style=filled fillcolor=yellow];
-93861967981296 -> 93861967981360 [color=black]
-93861967981360 [label = "x " style=filled fillcolor=aquamarine];
-93861967981040 [label = "ln " style=filled fillcolor=yellow];
-93861967981040 -> 93861967981104 [color=black]
-93861967981104 [label = "x " style=filled fillcolor=aquamarine];
-93861967980976 [label = "* " style=filled fillcolor=yellow];
-93861967980976 -> 93861967980912 [color=black]
-93861967980976 -> 93861967980272 [color=black]
-93861967980912 [label = "/ " style=filled fillcolor=yellow];
-93861967980912 -> 93861967980848 [color=black]
-93861967980912 -> 93861967980784 [color=black]
-93861967980848 [label = "1 " style=filled fillcolor=green];
-93861967980784 [label = "x " style=filled fillcolor=aquamarine];
-93861967980272 [label = "^ " style=filled fillcolor=yellow];
-93861967980272 -> 93861967980336 [color=black]
-93861967980272 -> 93861967980464 [color=black]
-93861967980336 [label = "cos " style=filled fillcolor=yellow];
-93861967980336 -> 93861967980400 [color=black]
-93861967980400 [label = "x " style=filled fillcolor=aquamarine];
-93861967980464 [label = "^ " style=filled fillcolor=yellow];
-93861967980464 -> 93861967980528 [color=black]
-93861967980464 -> 93861967980720 [color=black]
-93861967980528 [label = "* " style=filled fillcolor=yellow];
-93861967980528 -> 93861967980592 [color=black]
-93861967980528 -> 93861967980656 [color=black]
-93861967980592 [label = "5 " style=filled fillcolor=green];
-93861967980656 [label = "x " style=filled fillcolor=aquamarine];
-93861967980720 [label = "2 " style=filled fillcolor=green];
-93861967980208 [label = "^ " style=filled fillcolor=yellow];
-93861967980208 -> 93861967980080 [color=black]
-93861967980208 -> 93861967980016 [color=black]
-93861967980080 [label = "ln " style=filled fillcolor=yellow];
-93861967980080 -> 93861967980144 [color=black]
-93861967980144 [label = "x " style=filled fillcolor=aquamarine];
-93861967980016 [label = "2 " style=filled fillcolor=green];
-93861967979952 [label = "cos " style=filled fillcolor=yellow];
-93861967979952 -> 93861967979248 [color=black]
-93861967979248 [label = "/ " style=filled fillcolor=yellow];
-93861967979248 -> 93861967979312 [color=black]
-93861967979248 -> 93861967979824 [color=black]
-93861967979312 [label = "^ " style=filled fillcolor=yellow];
-93861967979312 -> 93861967979376 [color=black]
-93861967979312 -> 93861967979504 [color=black]
-93861967979376 [label = "cos " style=filled fillcolor=yellow];
-93861967979376 -> 93861967979440 [color=black]
-93861967979440 [label = "x " style=filled fillcolor=aquamarine];
-93861967979504 [label = "^ " style=filled fillcolor=yellow];
-93861967979504 -> 93861967979568 [color=black]
-93861967979504 -> 93861967979760 [color=black]
-93861967979568 [label = "* " style=filled fillcolor=yellow];
-93861967979568 -> 93861967979632 [color=black]
-93861967979568 -> 93861967979696 [color=black]
-93861967979632 [label = "5 " style=filled fillcolor=green];
-93861967979696 [label = "x " style=filled fillcolor=aquamarine];
-93861967979760 [label = "2 " style=filled fillcolor=green];
-93861967979824 [label = "ln " style=filled fillcolor=yellow];
-93861967979824 -> 93861967979888 [color=black]
-93861967979888 [label = "x " style=filled fillcolor=aquamarine];
+81393024 [label = "* " style=filled fillcolor=yellow];
+81393024 -> 81392912 [color=black]
+81393024 -> 81383952 [color=black]
+81393024 -> 81371776 [color=gray]
+81392912 [label = "/ " style=filled fillcolor=yellow];
+81392912 -> 81392800 [color=black]
+81392912 -> 81384400 [color=black]
+81392912 -> 81393024 [color=gray]
+81392800 [label = "- " style=filled fillcolor=yellow];
+81392800 -> 81392688 [color=black]
+81392800 -> 81385744 [color=black]
+81392800 -> 81392912 [color=gray]
+81392688 [label = "* " style=filled fillcolor=yellow];
+81392688 -> 81392576 [color=black]
+81392688 -> 81385856 [color=black]
+81392688 -> 81392800 [color=gray]
+81392576 [label = "* " style=filled fillcolor=yellow];
+81392576 -> 81392464 [color=black]
+81392576 -> 81391568 [color=black]
+81392576 -> 81392688 [color=gray]
+81392464 [label = "^ " style=filled fillcolor=yellow];
+81392464 -> 81392240 [color=black]
+81392464 -> 81391680 [color=black]
+81392464 -> 81392576 [color=gray]
+81392240 [label = "cos " style=filled fillcolor=yellow];
+81392240 -> 81392352 [color=black]
+81392240 -> 81392464 [color=gray]
+81392352 [label = "x " style=filled fillcolor=aquamarine];
+81392352 -> 81392240 [color=gray]
+81391680 [label = "^ " style=filled fillcolor=yellow];
+81391680 -> 81391792 [color=black]
+81391680 -> 81392128 [color=black]
+81391680 -> 81392464 [color=gray]
+81391792 [label = "* " style=filled fillcolor=yellow];
+81391792 -> 81391904 [color=black]
+81391792 -> 81392016 [color=black]
+81391792 -> 81391680 [color=gray]
+81391904 [label = "5 " style=filled fillcolor=green];
+81391904 -> 81391792 [color=gray]
+81392016 [label = "x " style=filled fillcolor=aquamarine];
+81392016 -> 81391792 [color=gray]
+81392128 [label = "2 " style=filled fillcolor=green];
+81392128 -> 81391680 [color=gray]
+81391568 [label = "+ " style=filled fillcolor=yellow];
+81391568 -> 81391456 [color=black]
+81391568 -> 81389664 [color=black]
+81391568 -> 81392576 [color=gray]
+81391456 [label = "* " style=filled fillcolor=yellow];
+81391456 -> 81391344 [color=black]
+81391456 -> 81389776 [color=black]
+81391456 -> 81391568 [color=gray]
+81391344 [label = "/ " style=filled fillcolor=yellow];
+81391344 -> 81391008 [color=black]
+81391344 -> 81390448 [color=black]
+81391344 -> 81391456 [color=gray]
+81391008 [label = "* " style=filled fillcolor=yellow];
+81391008 -> 81390896 [color=black]
+81391008 -> 81390784 [color=black]
+81391008 -> 81391344 [color=gray]
+81390896 [label = "-1 " style=filled fillcolor=green];
+81390896 -> 81391008 [color=gray]
+81390784 [label = "sin " style=filled fillcolor=yellow];
+81390784 -> 81390672 [color=black]
+81390784 -> 81391008 [color=gray]
+81390672 [label = "x " style=filled fillcolor=aquamarine];
+81390672 -> 81390784 [color=gray]
+81390448 [label = "cos " style=filled fillcolor=yellow];
+81390448 -> 81390560 [color=black]
+81390448 -> 81391344 [color=gray]
+81390560 [label = "x " style=filled fillcolor=aquamarine];
+81390560 -> 81390448 [color=gray]
+81389776 [label = "^ " style=filled fillcolor=yellow];
+81389776 -> 81389888 [color=black]
+81389776 -> 81390224 [color=black]
+81389776 -> 81391456 [color=gray]
+81389888 [label = "* " style=filled fillcolor=yellow];
+81389888 -> 81390000 [color=black]
+81389888 -> 81390112 [color=black]
+81389888 -> 81389776 [color=gray]
+81390000 [label = "5 " style=filled fillcolor=green];
+81390000 -> 81389888 [color=gray]
+81390112 [label = "x " style=filled fillcolor=aquamarine];
+81390112 -> 81389888 [color=gray]
+81390224 [label = "2 " style=filled fillcolor=green];
+81390224 -> 81389776 [color=gray]
+81389664 [label = "* " style=filled fillcolor=yellow];
+81389664 -> 81389552 [color=black]
+81389664 -> 81386192 [color=black]
+81389664 -> 81391568 [color=gray]
+81389552 [label = "* " style=filled fillcolor=yellow];
+81389552 -> 81389440 [color=black]
+81389552 -> 81388768 [color=black]
+81389552 -> 81389664 [color=gray]
+81389440 [label = "^ " style=filled fillcolor=yellow];
+81389440 -> 81389104 [color=black]
+81389440 -> 81388992 [color=black]
+81389440 -> 81389552 [color=gray]
+81389104 [label = "* " style=filled fillcolor=yellow];
+81389104 -> 81389216 [color=black]
+81389104 -> 81389328 [color=black]
+81389104 -> 81389440 [color=gray]
+81389216 [label = "5 " style=filled fillcolor=green];
+81389216 -> 81389104 [color=gray]
+81389328 [label = "x " style=filled fillcolor=aquamarine];
+81389328 -> 81389104 [color=gray]
+81388992 [label = "2 " style=filled fillcolor=green];
+81388992 -> 81389440 [color=gray]
+81388768 [label = "* " style=filled fillcolor=yellow];
+81388768 -> 81388656 [color=black]
+81388768 -> 81387312 [color=black]
+81388768 -> 81389552 [color=gray]
+81388656 [label = "/ " style=filled fillcolor=yellow];
+81388656 -> 81388544 [color=black]
+81388656 -> 81387536 [color=black]
+81388656 -> 81388768 [color=gray]
+81388544 [label = "5 " style=filled fillcolor=green];
+81388544 -> 81388656 [color=gray]
+81387536 [label = "* " style=filled fillcolor=yellow];
+81387536 -> 81387648 [color=black]
+81387536 -> 81387760 [color=black]
+81387536 -> 81388656 [color=gray]
+81387648 [label = "5 " style=filled fillcolor=green];
+81387648 -> 81387536 [color=gray]
+81387760 [label = "x " style=filled fillcolor=aquamarine];
+81387760 -> 81387536 [color=gray]
+81387312 [label = "2 " style=filled fillcolor=green];
+81387312 -> 81388768 [color=gray]
+81386192 [label = "ln " style=filled fillcolor=yellow];
+81386192 -> 81386304 [color=black]
+81386192 -> 81389664 [color=gray]
+81386304 [label = "cos " style=filled fillcolor=yellow];
+81386304 -> 81386416 [color=black]
+81386304 -> 81386192 [color=gray]
+81386416 [label = "x " style=filled fillcolor=aquamarine];
+81386416 -> 81386304 [color=gray]
+81385856 [label = "ln " style=filled fillcolor=yellow];
+81385856 -> 81385968 [color=black]
+81385856 -> 81392688 [color=gray]
+81385968 [label = "x " style=filled fillcolor=aquamarine];
+81385968 -> 81385856 [color=gray]
+81385744 [label = "* " style=filled fillcolor=yellow];
+81385744 -> 81385632 [color=black]
+81385744 -> 81384512 [color=black]
+81385744 -> 81392800 [color=gray]
+81385632 [label = "/ " style=filled fillcolor=yellow];
+81385632 -> 81385520 [color=black]
+81385632 -> 81385408 [color=black]
+81385632 -> 81385744 [color=gray]
+81385520 [label = "1 " style=filled fillcolor=green];
+81385520 -> 81385632 [color=gray]
+81385408 [label = "x " style=filled fillcolor=aquamarine];
+81385408 -> 81385632 [color=gray]
+81384512 [label = "^ " style=filled fillcolor=yellow];
+81384512 -> 81384624 [color=black]
+81384512 -> 81384848 [color=black]
+81384512 -> 81385744 [color=gray]
+81384624 [label = "cos " style=filled fillcolor=yellow];
+81384624 -> 81384736 [color=black]
+81384624 -> 81384512 [color=gray]
+81384736 [label = "x " style=filled fillcolor=aquamarine];
+81384736 -> 81384624 [color=gray]
+81384848 [label = "^ " style=filled fillcolor=yellow];
+81384848 -> 81384960 [color=black]
+81384848 -> 81385296 [color=black]
+81384848 -> 81384512 [color=gray]
+81384960 [label = "* " style=filled fillcolor=yellow];
+81384960 -> 81385072 [color=black]
+81384960 -> 81385184 [color=black]
+81384960 -> 81384848 [color=gray]
+81385072 [label = "5 " style=filled fillcolor=green];
+81385072 -> 81384960 [color=gray]
+81385184 [label = "x " style=filled fillcolor=aquamarine];
+81385184 -> 81384960 [color=gray]
+81385296 [label = "2 " style=filled fillcolor=green];
+81385296 -> 81384848 [color=gray]
+81384400 [label = "^ " style=filled fillcolor=yellow];
+81384400 -> 81384176 [color=black]
+81384400 -> 81384064 [color=black]
+81384400 -> 81392912 [color=gray]
+81384176 [label = "ln " style=filled fillcolor=yellow];
+81384176 -> 81384288 [color=black]
+81384176 -> 81384400 [color=gray]
+81384288 [label = "x " style=filled fillcolor=aquamarine];
+81384288 -> 81384176 [color=gray]
+81384064 [label = "2 " style=filled fillcolor=green];
+81384064 -> 81384400 [color=gray]
+81383952 [label = "cos " style=filled fillcolor=yellow];
+81383952 -> 81382720 [color=black]
+81383952 -> 81393024 [color=gray]
+81382720 [label = "/ " style=filled fillcolor=yellow];
+81382720 -> 81382832 [color=black]
+81382720 -> 81383728 [color=black]
+81382720 -> 81383952 [color=gray]
+81382832 [label = "^ " style=filled fillcolor=yellow];
+81382832 -> 81382944 [color=black]
+81382832 -> 81383168 [color=black]
+81382832 -> 81382720 [color=gray]
+81382944 [label = "cos " style=filled fillcolor=yellow];
+81382944 -> 81383056 [color=black]
+81382944 -> 81382832 [color=gray]
+81383056 [label = "x " style=filled fillcolor=aquamarine];
+81383056 -> 81382944 [color=gray]
+81383168 [label = "^ " style=filled fillcolor=yellow];
+81383168 -> 81383280 [color=black]
+81383168 -> 81383616 [color=black]
+81383168 -> 81382832 [color=gray]
+81383280 [label = "* " style=filled fillcolor=yellow];
+81383280 -> 81383392 [color=black]
+81383280 -> 81383504 [color=black]
+81383280 -> 81383168 [color=gray]
+81383392 [label = "5 " style=filled fillcolor=green];
+81383392 -> 81383280 [color=gray]
+81383504 [label = "x " style=filled fillcolor=aquamarine];
+81383504 -> 81383280 [color=gray]
+81383616 [label = "2 " style=filled fillcolor=green];
+81383616 -> 81383168 [color=gray]
+81383728 [label = "ln " style=filled fillcolor=yellow];
+81383728 -> 81383840 [color=black]
+81383728 -> 81382720 [color=gray]
+81383840 [label = "x " style=filled fillcolor=aquamarine];
+81383840 -> 81383728 [color=gray]
 }
