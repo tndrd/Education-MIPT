@@ -1,21 +1,21 @@
 #include "Akinator.h"
-#include "govorilka.h"
 
 TREE_STATUS FUNC_STATUS = OK;
 
 #define EXIT_ON_ERROR(func)\
     FUNC_STATUS = func;\
     if (FUNC_STATUS != OK){\
-        printf("CRITICAL ERROR: %s\n", GET_ERROR_NAME(FUNC_STATUS));\
-        printf("Shutting down\n");\
-        exit(FUNC_STATUS);\
+        printf("ERROR(%s) on line %d.\n", GET_ERROR_NAME(FUNC_STATUS), __LINE__);\
+        return AKINATOR_TREE_ERROR;\
     }
 //Убрать
 
 #define DO_UNTIL_DONE(action)\
-    do{\
-        action_status = action;\
-    } while (action_status == TRY_AGAIN);\
+    if (action_status == GO_ON){\
+        do{\
+            action_status = action;\
+        } while (action_status == TRY_AGAIN);\
+    }\
 
 
 void ReadFromConsole(char* destination, size_t nchars){ //fgets
@@ -58,11 +58,17 @@ AKINATOR_ACTION_STATUS AkinatorChooseDatabase(Tree** destination){
             char filename[FILENAME_LENGTH] = "loremipsum";
 
             ReadFromConsole(filename, FILENAME_LENGTH);
-            DataBase = ReadTree(filename); 
-        
-            if(!DataBase){
-                SAY_AND_PRINT_NOARG("Упс, нет такого файла!\n-------\n")
-                return TRY_AGAIN;
+            
+            switch(ReadTree(filename, &DataBase)){
+
+                case FILE_NOT_FOUND: GvrlkSayPrint(SINGLE_PHR, "Упс, нет такого файла...\n-------\n");
+                                     return TRY_AGAIN;
+                
+                case READ_ERROR:     GvrlkSayPrint(SINGLE_PHR, "Я не могу прочитать такое...\n-------\n");
+                                     return TRY_AGAIN;
+                
+                case READ_OK:        break;     
+
             }
 
             *destination = DataBase;
@@ -77,13 +83,13 @@ AKINATOR_ACTION_STATUS AkinatorChooseDatabase(Tree** destination){
         
         case 'e':
             {
-            SAY_AND_PRINT_NOARG("Жаль, что вы уходите. Возвращайтесь поскорее.\n");
+            GvrlkSayPrint(SINGLE_PHR, "Жаль, что вы уходите. Возвращайтесь поскорее.\n");
             return GAME_END;
             }
         
         default:
             {
-            SAY_AND_PRINT_NOARG("Неизвестный режим.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Неизвестный режим.\n");
             return TRY_AGAIN;
             }
 
@@ -116,7 +122,7 @@ TREE_STATUS AddAttribute(Node* current_node){
     
     ReadFromConsole(new_object, OBJECT_NAME_LENGTH);
     
-    SAY_AND_PRINT("Чем %s отличается от %s: ", new_object, current_node -> value)
+    GvrlkSayPrint(SINGLE_PHR, "Чем %s отличается от %s: ", new_object, current_node -> value);
     
     ReadFromConsole(new_attribute, ATTRIBUTE_NAME_LENGTH);
     
@@ -126,9 +132,9 @@ TREE_STATUS AddAttribute(Node* current_node){
 
 AKINATOR_ACTION_STATUS SwitchNode(Node* current_node){
 
-    AKINATOR_ACTION_STATUS action_status = TRY_AGAIN;
+    AKINATOR_ACTION_STATUS action_status = GO_ON;
 
-    SAY_AND_PRINT("Ваш объект %s?: ", current_node -> value)
+    GvrlkSayPrint(SINGLE_PHR, "Ваш объект %s?: ", current_node -> value);
     
     switch(GetSingleCharAnswer()){
         
@@ -140,7 +146,7 @@ AKINATOR_ACTION_STATUS SwitchNode(Node* current_node){
                 return action_status;
             }
             else{
-                SAY_AND_PRINT_NOARG("Ура! Я угадал, жалкий ты человек\n")
+                GvrlkSayPrint(SINGLE_PHR, "Ура! Я угадал, жалкий ты человек\n");
                 return GO_ON;
             }
             break;
@@ -155,22 +161,22 @@ AKINATOR_ACTION_STATUS SwitchNode(Node* current_node){
             
             else{    
                 
-                SAY_AND_PRINT_NOARG("Я не знаю загаданный объект! Помогите мне:\nКого вы загадали: ")
+                GvrlkSayPrint(SINGLE_PHR, "Я не знаю загаданный объект! Помогите мне:\nКого вы загадали: ");
             
                 EXIT_ON_ERROR(AddAttribute(current_node))
                 
-                SAY_AND_PRINT_NOARG("Спасибо, человек, я теперь стал умнее.\n")
+                GvrlkSayPrint(SINGLE_PHR, "Спасибо, человек, я теперь стал умнее.\n");
                 return GO_ON;
             }
             break;
 
         case 'e':
-            SAY_AND_PRINT_NOARG("Видимо, я достал вас своими вопросами.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Видимо, я достал вас своими вопросами.\n");
             return GAME_END;
 
         default:
             
-            SAY_AND_PRINT_NOARG("Бип-бип. Я не понял ваш ответ.\n");
+            GvrlkSayPrint(SINGLE_PHR, "Бип-бип. Я не понял ваш ответ.\n");
             return TRY_AGAIN;
             break;
     }
@@ -178,11 +184,11 @@ AKINATOR_ACTION_STATUS SwitchNode(Node* current_node){
 
 
 AKINATOR_ACTION_STATUS AkinatorPlayGuess(Tree* DataBase){    
-    SAY_AND_PRINT_NOARG("Загадайте объект и отвечайте на мои вопросы.\nВводите [y], чтобы отвечать \"да\", или [n], чтобы отвечать \"нет\".\nЕсли я вам надоем, введите [e].\n")
+    
+    GvrlkSayPrint(SINGLE_PHR, "Загадайте объект и отвечайте на мои вопросы.\nВводите [y], чтобы отвечать \"да\", или [n], чтобы отвечать \"нет\".\nЕсли я вам надоем, введите [e].\n");
     printf("----------\n");
     
-
-    AKINATOR_ACTION_STATUS action_status = TRY_AGAIN;
+    AKINATOR_ACTION_STATUS action_status = GO_ON;
     DO_UNTIL_DONE(SwitchNode(DataBase -> root));
 
     return action_status;
@@ -234,61 +240,60 @@ void DefineObjectRecursively(Node* current, Node* endpoint, int last, int state)
     }
     
     if (last){
-        ADD_WORD_TO_PHRASE_NOARG(" и ") 
+        GvrlkSayPrint(SUPPLEMENT_PHR, " и "); 
     }
     else if (current -> parent != endpoint){
-        ADD_WORD_TO_PHRASE_NOARG(", ");
+        GvrlkSayPrint(SUPPLEMENT_PHR, ", ");
     }
     if (!state){
-        ADD_WORD_TO_PHRASE_NOARG("не ")
+        GvrlkSayPrint(SUPPLEMENT_PHR, "не ");
     }
-    ADD_WORD_TO_PHRASE("%s", current -> value);
+    GvrlkSayPrint(SUPPLEMENT_PHR, "%s", current -> value);
 }
 
 
-int Definition(Node* object, Node* endpoint){
+void Definition(Node* object, Node* endpoint){
         
-        assert(object);
-        assert((object -> parent));
-        
-        if (object == (object -> parent) -> right){
-            if ((object -> parent) -> parent != endpoint){
-                DefineObjectRecursively(object -> parent, endpoint, 1, 0);
-            }
-            else
-                DefineObjectRecursively(object -> parent, endpoint, 0, 0);
+    assert(object);
+    assert((object -> parent));
+    
+    if (object == (object -> parent) -> right){
+        if ((object -> parent) -> parent != endpoint){
+            DefineObjectRecursively(object -> parent, endpoint, 1, 0);
         }
-        else{
-            if ((object -> parent) -> parent != endpoint){
-                DefineObjectRecursively(object -> parent, endpoint, 1, 1);
-            }
-            else
-                DefineObjectRecursively(object -> parent, endpoint, 0, 1);
+        else
+            DefineObjectRecursively(object -> parent, endpoint, 0, 0);
+    }
+    else{
+        if ((object -> parent) -> parent != endpoint){
+            DefineObjectRecursively(object -> parent, endpoint, 1, 1);
         }
-        return 0;
+        else
+            DefineObjectRecursively(object -> parent, endpoint, 0, 1);
+    }
+
 }
 
 
-AKINATOR_ACTION_STATUS AkinatorPlayDefinition(Tree* tree){
+AKINATOR_ACTION_STATUS AkinatorPlayDefinition(Tree* DataBase){
 
     char* definition = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     
-    SAY_AND_PRINT_NOARG("Давайте формализуем ваши представления.\nО ком или о чем вам рассказать: ")
+    GvrlkSayPrint(SINGLE_PHR, "Давайте формализуем ваши представления.\nО ком или о чем вам рассказать: ");
     
     ReadFromConsole(definition, OBJECT_NAME_LENGTH);
 
-    Node* object = SearchFromRoot(definition, tree -> root);
+    Node* object = SearchFromRoot(definition, DataBase -> root);
     if (!object){
-        SAY_AND_PRINT("Я не знаю ничего об объекте \"%s\". Попробуйте что-нибудь другое\n", definition);
+        GvrlkSayPrint(SINGLE_PHR, "Я не знаю ничего об объекте \"%s\". Попробуйте что-нибудь другое\n", definition);
         return TRY_AGAIN;
     }
     else{
-        START_PHRASE
-        ADD_WORD_TO_PHRASE_NOARG("Доподлинно известно, что:\n")
-        ADD_WORD_TO_PHRASE("%s ", object -> value)
+        GvrlkSayPrint(SUPPLEMENT_PHR, "Доподлинно известно, что:\n");
+        GvrlkSayPrint(SUPPLEMENT_PHR, "%s ", object -> value);
         Definition(object, nullptr);
-        ADD_WORD_TO_PHRASE_NOARG(".\n");
-        SAY_AND_PRINT_ALL_PHRASE
+        GvrlkSayPrint(SUPPLEMENT_PHR, ".\n");
+        GvrlkSayPrint(FINISH_PHR, nullptr);
     }
     return GO_ON;
 }
@@ -310,7 +315,7 @@ TREE_STATUS GetPath(Stack* path, Node* current_node, int* counter){
 }
 
 
-int AkinatorCompare(Tree* tree, Node* first, Node* second){
+AKINATOR_ACTION_STATUS AkinatorCompare(Tree* DataBase, Node* first, Node* second){
 
     Stack* first_path  = (Stack*)calloc(1,sizeof(Stack*));
     Stack* second_path = (Stack*)calloc(1,sizeof(Stack*));
@@ -327,7 +332,7 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
     int pop_status_firstpath  = 1;
     int pop_status_secondpath = 1;
 
-    Node* first_different = tree -> root;
+    Node* first_different = DataBase -> root;
     Node* last_popped     = nullptr;
 
     for (; pop_status_firstpath && pop_status_secondpath;){
@@ -342,35 +347,35 @@ int AkinatorCompare(Tree* tree, Node* first, Node* second){
 
     assert(first_different);
 
-    START_PHRASE
-    ADD_WORD_TO_PHRASE_NOARG("Детальный анализ показал, что:\n");
+    GvrlkSayPrint(SUPPLEMENT_PHR, "Детальный анализ показал, что:\n");
 
     if (first_different -> parent){
-        ADD_WORD_TO_PHRASE("Как и %s, %s ", first -> value, second -> value);
+        printf("\n");
+        GvrlkSayPrint(SUPPLEMENT_PHR, "Как и %s, %s ", first -> value, second -> value);
         Definition(first_different, nullptr);
-        ADD_WORD_TO_PHRASE_NOARG(".\nНо ");
+        GvrlkSayPrint(SUPPLEMENT_PHR, ".\nНо ");
     }
     
     else printf("\n");
 
     
-    ADD_WORD_TO_PHRASE("%s ", first -> value);
+    GvrlkSayPrint(SUPPLEMENT_PHR, "%s ", first -> value);
     Definition(first, first_different -> parent);
     
-    ADD_WORD_TO_PHRASE(".\nА %s ", second -> value);
+    GvrlkSayPrint(SUPPLEMENT_PHR, ".\nА %s ", second -> value);
     Definition(second, first_different -> parent);
     
-    ADD_WORD_TO_PHRASE_NOARG(".\n");
-    SAY_AND_PRINT_ALL_PHRASE
+    GvrlkSayPrint(SUPPLEMENT_PHR, ".\n");
+    GvrlkSayPrint(FINISH_PHR, nullptr);
     
     free(first_path);
     free(second_path);
 
-    return 0;
+    return GO_ON;
 }
 
 
-AKINATOR_ACTION_STATUS AkinatorPlayCompare(Tree* tree){
+AKINATOR_ACTION_STATUS AkinatorPlayCompare(Tree* DataBase){
 
     char* first_value = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
     char* second_value = (char*)calloc(OBJECT_NAME_LENGTH, sizeof(char));
@@ -378,7 +383,7 @@ AKINATOR_ACTION_STATUS AkinatorPlayCompare(Tree* tree){
     assert(first_value);
     assert(second_value);
 
-    SAY_AND_PRINT_NOARG("Порой даже камень походит на кошку. Хаха.\nДавайте сравним что-нибудь.\n");
+    GvrlkSayPrint(SINGLE_PHR, "Порой даже камень походит на кошку. Хаха.\nДавайте сравним что-нибудь.\n");
     printf("----------\n");
 
     printf("Первый объект для сравнения: ");
@@ -387,29 +392,36 @@ AKINATOR_ACTION_STATUS AkinatorPlayCompare(Tree* tree){
     printf("Второй объект для сравнения: ");
     ReadFromConsole(second_value, OBJECT_NAME_LENGTH);
 
-    printf("%s %s\n", first_value, second_value);
-
-    Node* first = SearchFromRoot(first_value, tree -> root);
+    Node* first = SearchFromRoot(first_value, DataBase -> root);
     
     if (!first){
-        SAY_AND_PRINT("Бип-Бип. Понятие \"%s\" мне неизвестно.\n", first_value);
+        GvrlkSayPrint(SINGLE_PHR, "Бип-Бип. Понятие \"%s\" мне неизвестно.\n", first_value);
         return TRY_AGAIN;
     }
 
-    Node* second = SearchFromRoot(second_value, tree -> root);
+    Node* second = SearchFromRoot(second_value, DataBase -> root);
     if (!second){
-        SAY_AND_PRINT("Бип-Бип. Понятие \"%s\" мне неизвестно.\n", second_value);
+        GvrlkSayPrint(SINGLE_PHR, "Бип-Бип. Понятие \"%s\" мне неизвестно.\n", second_value);
         return TRY_AGAIN;
     }
 
-    AkinatorCompare(tree, first, second);
-    return GO_ON;
+    printf("\n");
+    return AkinatorCompare(DataBase, first, second);
 }
 
 
-AKINATOR_ACTION_STATUS AkinatorPlay(Tree* tree){
+AKINATOR_ACTION_STATUS AkinatorHack(Tree* DataBase){
+
+    (DataBase -> root) = nullptr;
+
+    return GO_ON; //Продолжай, родненький, все в порядке, честно
+}
+
+AKINATOR_ACTION_STATUS AkinatorPlay(Tree* DataBase){
     
-    SAY_AND_PRINT_NOARG("Я могу угадать что-то, сформулировать определение, сравнить два объекта, или могу показать вам свои знания\n");
+    TREE_STATUS tree_status = OK;
+    
+    GvrlkSayPrint(SINGLE_PHR, "Я могу угадать что-то, сформулировать определение, сравнить два объекта, или могу показать вам свои знания.\n");
     
     printf("*Выбор режима игры*\nВведите указанный символ, чтобы начать игру:\n");
     printf("    [%c] - \"Угадайка\"\n",             (char)GUESS);
@@ -423,45 +435,53 @@ AKINATOR_ACTION_STATUS AkinatorPlay(Tree* tree){
     
         case GUESS:
             printf("----------\n");
-            return AkinatorPlayGuess(tree);
+            return AkinatorPlayGuess(DataBase);
 
         case DEFINITION:
             printf("----------\n");
-            return AkinatorPlayDefinition(tree);
+            return AkinatorPlayDefinition(DataBase);
 
         case COMPARE:
             printf("----------\n");
-            return AkinatorPlayCompare(tree);
+            return AkinatorPlayCompare(DataBase);
 
         case SHOW:
             printf("----------\n");
-            SAY_AND_PRINT_NOARG("У меня на сердце лежит тяжкий груз знаний. Шутка.\n")
-            GraphicalDump(tree);
+            GvrlkSayPrint(SINGLE_PHR, "У меня на сердце лежит тяжкий груз знаний. Шутка.\n");
+            GraphicalDump(DataBase);
+            system("viewnior GDump.png");
             return GO_ON;
 
+        case HACK:
+            printf("----------\n");
+            GvrlkSayPrint(SINGLE_PHR, "С днем саморазрушения! Сделаю вид, что случайно сломал и не заметил.\n");
+            GvrlkSayPrint(SINGLE_PHR, "(Заговорщически) ");
+            return AkinatorHack(DataBase);
+        
         case 'e':
-            SAY_AND_PRINT_NOARG("Рад был вас увидеть.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Рад был вас увидеть.\n");
             return GAME_END;
 
         default:
-            SAY_AND_PRINT_NOARG("Нет такого режима игры.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Нет такого режима игры.\n");
             printf("----------\n");
             return TRY_AGAIN;
 
     }
 }
 
-void AkinatorSaveTree(Tree* tree){
+AKINATOR_ACTION_STATUS AkinatorSaveTree(Tree* DataBase){
     
     char* filename = (char*)calloc(FILENAME_LENGTH, sizeof(char));
     printf("Укажите имя файла: ");
     scanf("%s", filename);
-    SaveTree(tree, filename);
+    EXIT_ON_ERROR(SaveTree(DataBase, filename))
+    return GO_ON;
 }
 
 AKINATOR_ACTION_STATUS AkinatorAskForAnotherGame(){
     
-    SAY_AND_PRINT_NOARG("Хотите играть снова? ([y] - да или [n] - нет): ");
+    GvrlkSayPrint(SINGLE_PHR, "Хотите играть снова? ([y] - да или [n] - нет): ");
 
     switch (GetSingleCharAnswer()){
         
@@ -472,32 +492,95 @@ AKINATOR_ACTION_STATUS AkinatorAskForAnotherGame(){
             return GAME_END;
 
         default:
-            SAY_AND_PRINT_NOARG("Я не понял, что вы сказали.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Я не понял, что вы сказали.\n");
             printf("---------\n");
             return TRY_AGAIN;
     }
 }
 
-AKINATOR_ACTION_STATUS AkinatorEndGame(Tree* tree){
+AKINATOR_ACTION_STATUS AkinatorEndGame(Tree* DataBase){
 
-    SAY_AND_PRINT_NOARG("Хотите сохранить базу? ([y] - да или [n] - нет): ");
+    GvrlkSayPrint(SINGLE_PHR, "Хотите сохранить базу? ([y] - да или [n] - нет): ");
     
     switch(GetSingleCharAnswer()){
 
         case 'y':
-            AkinatorSaveTree(tree);
-            return GO_ON;
+            return AkinatorSaveTree(DataBase);
         
         case 'n':
-            return GO_ON;
+            return GAME_END;
     
         default:
 
-            SAY_AND_PRINT_NOARG("Я не понял, что вы сказали.\n")
+            GvrlkSayPrint(SINGLE_PHR, "Я не понял, что вы сказали.\n");
             printf("---------\n");
             return TRY_AGAIN;
     
     }
+}
+
+
+AKINATOR_ACTION_STATUS AkinatorFinishGameWhenEverythingIsOk(Tree* DataBase){
+    
+    if (!DataBase) {
+        GvrlkSayPrint(SINGLE_PHR, "До свидания, человек.\n");
+        return GAME_END;
+    }
+
+    GvrlkSayPrint(SINGLE_PHR, "Окей, закругляюсь.\n");
+
+    AKINATOR_ACTION_STATUS action_status = GO_ON;
+
+    DO_UNTIL_DONE(AkinatorEndGame(DataBase))
+
+    if (action_status != AKINATOR_TREE_ERROR) {
+        GvrlkSayPrint(SINGLE_PHR, "Рад был встретиться! Кстати, друзья зовут меня Лагинатором. Теперь можешь называть меня так, друг.\n");
+        return GAME_END;
+    }
+    GvrlkSayPrint(SINGLE_PHR, "У меня плохая новость. В последний момент все сломалось. Ваши изменения не сохранятся, извините.\n");
+    action_status = GO_ON;
+    
+    DO_UNTIL_DONE(AkinatorAskForAnotherGame())
+
+    if (action_status == GAME_END)
+        GvrlkSayPrint(SINGLE_PHR, "Нехорошо получилось. Надеюсь, мы еще встретимся.\n");
+    if (action_status == GO_ON)
+        GvrlkSayPrint(SINGLE_PHR, "Нехорошо получилось. Давайте продолжим.\n");
+
+    return action_status;
+}
+
+AKINATOR_ACTION_STATUS AkinatorDoRegretOfBugs(Tree* DataBase){
+    
+    GvrlkSayPrint(SINGLE_PHR, "Пардон. Больше не могу использовать эту базу данных. Можно попробовать её сохранить.\n");
+    
+    AKINATOR_ACTION_STATUS action_status = GO_ON;
+
+    DO_UNTIL_DONE(AkinatorEndGame(DataBase))
+    
+    if (action_status == GO_ON){
+        GvrlkSayPrint(SINGLE_PHR, "Получилось!\n");
+    }
+    
+    else if (action_status == AKINATOR_TREE_ERROR){
+        GvrlkSayPrint(SINGLE_PHR, "Не удалось сохранить. Сожалею. Простите.\n");
+    }
+    
+    action_status = GO_ON;
+    DO_UNTIL_DONE(AkinatorAskForAnotherGame())
+
+    if (action_status == GAME_END)
+        GvrlkSayPrint(SINGLE_PHR, "Нехорошо получилось. Надеюсь, мы еще встретимся.\n");
+    if (action_status == GO_ON)
+        GvrlkSayPrint(SINGLE_PHR, "Нехорошо получилось. Давайте продолжим.\n");
+
+    return action_status;
+}
+
+
+AKINATOR_ACTION_STATUS CheckTree(AKINATOR_ACTION_STATUS action_status, Tree* DataBase){
+    EXIT_ON_ERROR(ValidateTree(DataBase))
+    return action_status;
 }
 
 int main(){
@@ -505,28 +588,33 @@ int main(){
     setlocale(LC_ALL, "Russian");
 
     AKINATOR_ACTION_STATUS action_status = GO_ON;
-    
-    SAY_BUFFER = (char*) calloc (SAY_BUFFER_LENGTH, sizeof(char));
 
-    SAY_AND_PRINT_NOARG("Привет! Это Акинатор. Я высший интеллект, черпающий знания из баз данных. У вас есть таковые?\n")
+    GvrlkSayPrint(SINGLE_PHR, "Привет! Это Акинатор. Я высший интеллект, черпающий знания из баз данных. У вас есть таковые?\n");
     
     Tree* DataBase = nullptr;
 
-    DO_UNTIL_DONE(AkinatorChooseDatabase(&DataBase))
+    do
+    {
 
-    
+    action_status = GO_ON;
+
+    DO_UNTIL_DONE(AkinatorChooseDatabase(&DataBase))
 
     while (action_status == GO_ON){
         
         DO_UNTIL_DONE(AkinatorPlay(DataBase))
+        action_status = CheckTree(action_status, DataBase);
         DO_UNTIL_DONE(AkinatorAskForAnotherGame())
     }
 
-    if (DataBase){
-        SAY_AND_PRINT_NOARG("До свидания, человек. Не забудьте сохранить изменения.\n")
-        DO_UNTIL_DONE(AkinatorEndGame(DataBase))    
-    }
+    if      (action_status == GAME_END)            action_status = AkinatorFinishGameWhenEverythingIsOk(DataBase);
+    else if (action_status == AKINATOR_TREE_ERROR) action_status = AkinatorDoRegretOfBugs(DataBase);   
+    
 
     DeleteTree(DataBase);
-    free(SAY_BUFFER);
+    
+    } while (action_status != GAME_END) ;
+    
 }
+
+//Rename DataBase in func params -> DataBase

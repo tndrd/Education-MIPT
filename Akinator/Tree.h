@@ -17,6 +17,7 @@ enum TREE_STATUS{
     WRONG_TREE_PTR = -10,
     WRONG_PARENT_PTR = -11,
     TOO_MANY_NODES_FOR_CURRENT_SIZE = -12,
+    NO_ROOT = -13
 };
 
 struct Node;
@@ -35,11 +36,16 @@ struct Tree{
     int size = 0;
 };
 
+enum TREE_READ_RESULT{
+    FILE_NOT_FOUND,
+    READ_ERROR,
+    READ_OK
+};
+
 
 const size_t FILENAME_LENGTH = 40;
 const size_t OBJECT_NAME_LENGTH = 40;
 const size_t ATTRIBUTE_NAME_LENGTH = 40;
-const size_t SAY_BUFFER_LENGTH = 1024;
 const float  SPEECH_SPEED = 1.5;
 
 
@@ -63,7 +69,7 @@ TREE_STATUS SaveTree(Tree* tree, const char* filename);
 
 Node* ReadNode(Tree* tree, char** ptr);
 
-Tree* ReadTree(char* filename);
+TREE_READ_RESULT ReadTree(char* filename, Tree** new_tree_ptr);
 
 TREE_STATUS ValidateNode(Node* node, int* counter_ptr);
 

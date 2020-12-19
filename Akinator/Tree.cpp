@@ -11,8 +11,6 @@ TREE_STATUS check_status = OK;
         return check_status;\
     }
 
-
-
 #define CASE_ERROR(error_code) case error_code: return #error_code;
 
 
@@ -31,6 +29,7 @@ const char* GET_ERROR_NAME(TREE_STATUS status){
         CASE_ERROR(INVALID_NODE_VALUE_PTR)
         CASE_ERROR(WRONG_TREE_PTR)
         CASE_ERROR(WRONG_PARENT_PTR)
+        CASE_ERROR(NO_ROOT)
         default: return "Unknown Error";
     }
 }
@@ -141,8 +140,7 @@ TREE_STATUS GraphicalDump(Tree* tree){
     
     fprintf(fp, "}");
     fclose(fp);
-    system("dot -Tpng show -n -o show.png");
-    system("viewnior show.png");
+    system("dot -Tpng show -n -o GDump.png");
     return OK;
 }
 
@@ -215,8 +213,9 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
         new_node -> left  = nullptr;
         new_node -> right = nullptr;
     }
+    
     else if(node_type == '?'){
-        
+
         *ptr = strchr(*ptr + 1, '[');
         
         new_node  -> left  =  ReadNodeRecursively(tree, ptr);
@@ -224,6 +223,7 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
         if(!new_node -> left) return nullptr;
         
         (new_node -> left) -> parent = new_node;
+
 
         *ptr = strchr(*ptr + 1, '[');
         
@@ -233,27 +233,42 @@ Node* ReadNodeRecursively(Tree* tree, char** ptr){
     
         (new_node -> right) -> parent = new_node;
     }
+
     return new_node;
 }
 
 
-Tree* ReadTree(char* filename){
+TREE_READ_RESULT ReadTree(char* filename, Tree** new_tree_ptr){
     
     assert(filename);
     
-    Tree* new_tree = (Tree*)calloc(1, sizeof(Tree));
-    
     char* buffer   = ReadFile(filename);
-    if (!buffer) return nullptr;
+    if (!buffer) return FILE_NOT_FOUND;
     
     char* first_node_ptr = strchr(buffer, '[');
-    if (!first_node_ptr) return nullptr;
-
-    new_tree -> root = ReadNodeRecursively(new_tree, &first_node_ptr);
     
+    if (!first_node_ptr){
+        free(buffer);
+        return READ_ERROR;
+    }
+
+    Tree* new_tree = (Tree*)calloc(1, sizeof(Tree));
+
+    Node* root = ReadNodeRecursively(new_tree, &first_node_ptr);
+    
+    if (!root){
+        free(new_tree);
+        free(buffer);
+        return READ_ERROR;
+    }
+    
+    
+    new_tree -> root = root;
+    (*new_tree_ptr) = new_tree;
+
     free(buffer);
 
-    return new_tree;
+    return READ_OK;
 }
 
 
@@ -307,10 +322,11 @@ TREE_STATUS ValidateNode(Node* node, int* counter_ptr){
     return child_status;
 }
 
+
 TREE_STATUS ValidateTree(Tree* thou){    
     
     int counter = 0;
-    if (!thou) return INVALID_POINTER;
-    
+    if (!thou)           return INVALID_POINTER;
+    if (!(thou -> root)) return NO_ROOT;
     return ValidateNode(thou -> root, &counter);
 }
