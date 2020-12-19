@@ -1,223 +1,223 @@
 digraph G {
-81393024 [label = "* " style=filled fillcolor=yellow];
-81393024 -> 81392912 [color=black]
-81393024 -> 81383952 [color=black]
-81393024 -> 81371776 [color=gray]
-81392912 [label = "/ " style=filled fillcolor=yellow];
-81392912 -> 81392800 [color=black]
-81392912 -> 81384400 [color=black]
-81392912 -> 81393024 [color=gray]
-81392800 [label = "- " style=filled fillcolor=yellow];
-81392800 -> 81392688 [color=black]
-81392800 -> 81385744 [color=black]
-81392800 -> 81392912 [color=gray]
-81392688 [label = "* " style=filled fillcolor=yellow];
-81392688 -> 81392576 [color=black]
-81392688 -> 81385856 [color=black]
-81392688 -> 81392800 [color=gray]
-81392576 [label = "* " style=filled fillcolor=yellow];
-81392576 -> 81392464 [color=black]
-81392576 -> 81391568 [color=black]
-81392576 -> 81392688 [color=gray]
-81392464 [label = "^ " style=filled fillcolor=yellow];
-81392464 -> 81392240 [color=black]
-81392464 -> 81391680 [color=black]
-81392464 -> 81392576 [color=gray]
-81392240 [label = "cos " style=filled fillcolor=yellow];
-81392240 -> 81392352 [color=black]
-81392240 -> 81392464 [color=gray]
-81392352 [label = "x " style=filled fillcolor=aquamarine];
-81392352 -> 81392240 [color=gray]
-81391680 [label = "^ " style=filled fillcolor=yellow];
-81391680 -> 81391792 [color=black]
-81391680 -> 81392128 [color=black]
-81391680 -> 81392464 [color=gray]
-81391792 [label = "* " style=filled fillcolor=yellow];
-81391792 -> 81391904 [color=black]
-81391792 -> 81392016 [color=black]
-81391792 -> 81391680 [color=gray]
-81391904 [label = "5 " style=filled fillcolor=green];
-81391904 -> 81391792 [color=gray]
-81392016 [label = "x " style=filled fillcolor=aquamarine];
-81392016 -> 81391792 [color=gray]
-81392128 [label = "2 " style=filled fillcolor=green];
-81392128 -> 81391680 [color=gray]
-81391568 [label = "+ " style=filled fillcolor=yellow];
-81391568 -> 81391456 [color=black]
-81391568 -> 81389664 [color=black]
-81391568 -> 81392576 [color=gray]
-81391456 [label = "* " style=filled fillcolor=yellow];
-81391456 -> 81391344 [color=black]
-81391456 -> 81389776 [color=black]
-81391456 -> 81391568 [color=gray]
-81391344 [label = "/ " style=filled fillcolor=yellow];
-81391344 -> 81391008 [color=black]
-81391344 -> 81390448 [color=black]
-81391344 -> 81391456 [color=gray]
-81391008 [label = "* " style=filled fillcolor=yellow];
-81391008 -> 81390896 [color=black]
-81391008 -> 81390784 [color=black]
-81391008 -> 81391344 [color=gray]
-81390896 [label = "-1 " style=filled fillcolor=green];
-81390896 -> 81391008 [color=gray]
-81390784 [label = "sin " style=filled fillcolor=yellow];
-81390784 -> 81390672 [color=black]
-81390784 -> 81391008 [color=gray]
-81390672 [label = "x " style=filled fillcolor=aquamarine];
-81390672 -> 81390784 [color=gray]
-81390448 [label = "cos " style=filled fillcolor=yellow];
-81390448 -> 81390560 [color=black]
-81390448 -> 81391344 [color=gray]
-81390560 [label = "x " style=filled fillcolor=aquamarine];
-81390560 -> 81390448 [color=gray]
-81389776 [label = "^ " style=filled fillcolor=yellow];
-81389776 -> 81389888 [color=black]
-81389776 -> 81390224 [color=black]
-81389776 -> 81391456 [color=gray]
-81389888 [label = "* " style=filled fillcolor=yellow];
-81389888 -> 81390000 [color=black]
-81389888 -> 81390112 [color=black]
-81389888 -> 81389776 [color=gray]
-81390000 [label = "5 " style=filled fillcolor=green];
-81390000 -> 81389888 [color=gray]
-81390112 [label = "x " style=filled fillcolor=aquamarine];
-81390112 -> 81389888 [color=gray]
-81390224 [label = "2 " style=filled fillcolor=green];
-81390224 -> 81389776 [color=gray]
-81389664 [label = "* " style=filled fillcolor=yellow];
-81389664 -> 81389552 [color=black]
-81389664 -> 81386192 [color=black]
-81389664 -> 81391568 [color=gray]
-81389552 [label = "* " style=filled fillcolor=yellow];
-81389552 -> 81389440 [color=black]
-81389552 -> 81388768 [color=black]
-81389552 -> 81389664 [color=gray]
-81389440 [label = "^ " style=filled fillcolor=yellow];
-81389440 -> 81389104 [color=black]
-81389440 -> 81388992 [color=black]
-81389440 -> 81389552 [color=gray]
-81389104 [label = "* " style=filled fillcolor=yellow];
-81389104 -> 81389216 [color=black]
-81389104 -> 81389328 [color=black]
-81389104 -> 81389440 [color=gray]
-81389216 [label = "5 " style=filled fillcolor=green];
-81389216 -> 81389104 [color=gray]
-81389328 [label = "x " style=filled fillcolor=aquamarine];
-81389328 -> 81389104 [color=gray]
-81388992 [label = "2 " style=filled fillcolor=green];
-81388992 -> 81389440 [color=gray]
-81388768 [label = "* " style=filled fillcolor=yellow];
-81388768 -> 81388656 [color=black]
-81388768 -> 81387312 [color=black]
-81388768 -> 81389552 [color=gray]
-81388656 [label = "/ " style=filled fillcolor=yellow];
-81388656 -> 81388544 [color=black]
-81388656 -> 81387536 [color=black]
-81388656 -> 81388768 [color=gray]
-81388544 [label = "5 " style=filled fillcolor=green];
-81388544 -> 81388656 [color=gray]
-81387536 [label = "* " style=filled fillcolor=yellow];
-81387536 -> 81387648 [color=black]
-81387536 -> 81387760 [color=black]
-81387536 -> 81388656 [color=gray]
-81387648 [label = "5 " style=filled fillcolor=green];
-81387648 -> 81387536 [color=gray]
-81387760 [label = "x " style=filled fillcolor=aquamarine];
-81387760 -> 81387536 [color=gray]
-81387312 [label = "2 " style=filled fillcolor=green];
-81387312 -> 81388768 [color=gray]
-81386192 [label = "ln " style=filled fillcolor=yellow];
-81386192 -> 81386304 [color=black]
-81386192 -> 81389664 [color=gray]
-81386304 [label = "cos " style=filled fillcolor=yellow];
-81386304 -> 81386416 [color=black]
-81386304 -> 81386192 [color=gray]
-81386416 [label = "x " style=filled fillcolor=aquamarine];
-81386416 -> 81386304 [color=gray]
-81385856 [label = "ln " style=filled fillcolor=yellow];
-81385856 -> 81385968 [color=black]
-81385856 -> 81392688 [color=gray]
-81385968 [label = "x " style=filled fillcolor=aquamarine];
-81385968 -> 81385856 [color=gray]
-81385744 [label = "* " style=filled fillcolor=yellow];
-81385744 -> 81385632 [color=black]
-81385744 -> 81384512 [color=black]
-81385744 -> 81392800 [color=gray]
-81385632 [label = "/ " style=filled fillcolor=yellow];
-81385632 -> 81385520 [color=black]
-81385632 -> 81385408 [color=black]
-81385632 -> 81385744 [color=gray]
-81385520 [label = "1 " style=filled fillcolor=green];
-81385520 -> 81385632 [color=gray]
-81385408 [label = "x " style=filled fillcolor=aquamarine];
-81385408 -> 81385632 [color=gray]
-81384512 [label = "^ " style=filled fillcolor=yellow];
-81384512 -> 81384624 [color=black]
-81384512 -> 81384848 [color=black]
-81384512 -> 81385744 [color=gray]
-81384624 [label = "cos " style=filled fillcolor=yellow];
-81384624 -> 81384736 [color=black]
-81384624 -> 81384512 [color=gray]
-81384736 [label = "x " style=filled fillcolor=aquamarine];
-81384736 -> 81384624 [color=gray]
-81384848 [label = "^ " style=filled fillcolor=yellow];
-81384848 -> 81384960 [color=black]
-81384848 -> 81385296 [color=black]
-81384848 -> 81384512 [color=gray]
-81384960 [label = "* " style=filled fillcolor=yellow];
-81384960 -> 81385072 [color=black]
-81384960 -> 81385184 [color=black]
-81384960 -> 81384848 [color=gray]
-81385072 [label = "5 " style=filled fillcolor=green];
-81385072 -> 81384960 [color=gray]
-81385184 [label = "x " style=filled fillcolor=aquamarine];
-81385184 -> 81384960 [color=gray]
-81385296 [label = "2 " style=filled fillcolor=green];
-81385296 -> 81384848 [color=gray]
-81384400 [label = "^ " style=filled fillcolor=yellow];
-81384400 -> 81384176 [color=black]
-81384400 -> 81384064 [color=black]
-81384400 -> 81392912 [color=gray]
-81384176 [label = "ln " style=filled fillcolor=yellow];
-81384176 -> 81384288 [color=black]
-81384176 -> 81384400 [color=gray]
-81384288 [label = "x " style=filled fillcolor=aquamarine];
-81384288 -> 81384176 [color=gray]
-81384064 [label = "2 " style=filled fillcolor=green];
-81384064 -> 81384400 [color=gray]
-81383952 [label = "cos " style=filled fillcolor=yellow];
-81383952 -> 81382720 [color=black]
-81383952 -> 81393024 [color=gray]
-81382720 [label = "/ " style=filled fillcolor=yellow];
-81382720 -> 81382832 [color=black]
-81382720 -> 81383728 [color=black]
-81382720 -> 81383952 [color=gray]
-81382832 [label = "^ " style=filled fillcolor=yellow];
-81382832 -> 81382944 [color=black]
-81382832 -> 81383168 [color=black]
-81382832 -> 81382720 [color=gray]
-81382944 [label = "cos " style=filled fillcolor=yellow];
-81382944 -> 81383056 [color=black]
-81382944 -> 81382832 [color=gray]
-81383056 [label = "x " style=filled fillcolor=aquamarine];
-81383056 -> 81382944 [color=gray]
-81383168 [label = "^ " style=filled fillcolor=yellow];
-81383168 -> 81383280 [color=black]
-81383168 -> 81383616 [color=black]
-81383168 -> 81382832 [color=gray]
-81383280 [label = "* " style=filled fillcolor=yellow];
-81383280 -> 81383392 [color=black]
-81383280 -> 81383504 [color=black]
-81383280 -> 81383168 [color=gray]
-81383392 [label = "5 " style=filled fillcolor=green];
-81383392 -> 81383280 [color=gray]
-81383504 [label = "x " style=filled fillcolor=aquamarine];
-81383504 -> 81383280 [color=gray]
-81383616 [label = "2 " style=filled fillcolor=green];
-81383616 -> 81383168 [color=gray]
-81383728 [label = "ln " style=filled fillcolor=yellow];
-81383728 -> 81383840 [color=black]
-81383728 -> 81382720 [color=gray]
-81383840 [label = "x " style=filled fillcolor=aquamarine];
-81383840 -> 81383728 [color=gray]
+94607190558176 [label = "* " style=filled fillcolor=yellow];
+94607190558176 -> 94607190558112 [color=black]
+94607190558176 -> 94607190552896 [color=black]
+94607190558176 -> 94607190551344 [color=gray]
+94607190558112 [label = "/ " style=filled fillcolor=yellow];
+94607190558112 -> 94607190558048 [color=black]
+94607190558112 -> 94607190553152 [color=black]
+94607190558112 -> 94607190558176 [color=gray]
+94607190558048 [label = "- " style=filled fillcolor=yellow];
+94607190558048 -> 94607190557984 [color=black]
+94607190558048 -> 94607190553920 [color=black]
+94607190558048 -> 94607190558112 [color=gray]
+94607190557984 [label = "* " style=filled fillcolor=yellow];
+94607190557984 -> 94607190557920 [color=black]
+94607190557984 -> 94607190553984 [color=black]
+94607190557984 -> 94607190558048 [color=gray]
+94607190557920 [label = "* " style=filled fillcolor=yellow];
+94607190557920 -> 94607190557856 [color=black]
+94607190557920 -> 94607190557344 [color=black]
+94607190557920 -> 94607190557984 [color=gray]
+94607190557856 [label = "^ " style=filled fillcolor=yellow];
+94607190557856 -> 94607190557728 [color=black]
+94607190557856 -> 94607190557408 [color=black]
+94607190557856 -> 94607190557920 [color=gray]
+94607190557728 [label = "cos " style=filled fillcolor=yellow];
+94607190557728 -> 94607190557792 [color=black]
+94607190557728 -> 94607190557856 [color=gray]
+94607190557792 [label = "x " style=filled fillcolor=aquamarine];
+94607190557792 -> 94607190557728 [color=gray]
+94607190557408 [label = "^ " style=filled fillcolor=yellow];
+94607190557408 -> 94607190557472 [color=black]
+94607190557408 -> 94607190557664 [color=black]
+94607190557408 -> 94607190557856 [color=gray]
+94607190557472 [label = "* " style=filled fillcolor=yellow];
+94607190557472 -> 94607190557536 [color=black]
+94607190557472 -> 94607190557600 [color=black]
+94607190557472 -> 94607190557408 [color=gray]
+94607190557536 [label = "5 " style=filled fillcolor=green];
+94607190557536 -> 94607190557472 [color=gray]
+94607190557600 [label = "x " style=filled fillcolor=aquamarine];
+94607190557600 -> 94607190557472 [color=gray]
+94607190557664 [label = "2 " style=filled fillcolor=green];
+94607190557664 -> 94607190557408 [color=gray]
+94607190557344 [label = "+ " style=filled fillcolor=yellow];
+94607190557344 -> 94607190557280 [color=black]
+94607190557344 -> 94607190556256 [color=black]
+94607190557344 -> 94607190557920 [color=gray]
+94607190557280 [label = "* " style=filled fillcolor=yellow];
+94607190557280 -> 94607190557216 [color=black]
+94607190557280 -> 94607190556320 [color=black]
+94607190557280 -> 94607190557344 [color=gray]
+94607190557216 [label = "/ " style=filled fillcolor=yellow];
+94607190557216 -> 94607190557024 [color=black]
+94607190557216 -> 94607190556704 [color=black]
+94607190557216 -> 94607190557280 [color=gray]
+94607190557024 [label = "* " style=filled fillcolor=yellow];
+94607190557024 -> 94607190556960 [color=black]
+94607190557024 -> 94607190556896 [color=black]
+94607190557024 -> 94607190557216 [color=gray]
+94607190556960 [label = "-1 " style=filled fillcolor=green];
+94607190556960 -> 94607190557024 [color=gray]
+94607190556896 [label = "sin " style=filled fillcolor=yellow];
+94607190556896 -> 94607190556832 [color=black]
+94607190556896 -> 94607190557024 [color=gray]
+94607190556832 [label = "x " style=filled fillcolor=aquamarine];
+94607190556832 -> 94607190556896 [color=gray]
+94607190556704 [label = "cos " style=filled fillcolor=yellow];
+94607190556704 -> 94607190556768 [color=black]
+94607190556704 -> 94607190557216 [color=gray]
+94607190556768 [label = "x " style=filled fillcolor=aquamarine];
+94607190556768 -> 94607190556704 [color=gray]
+94607190556320 [label = "^ " style=filled fillcolor=yellow];
+94607190556320 -> 94607190556384 [color=black]
+94607190556320 -> 94607190556576 [color=black]
+94607190556320 -> 94607190557280 [color=gray]
+94607190556384 [label = "* " style=filled fillcolor=yellow];
+94607190556384 -> 94607190556448 [color=black]
+94607190556384 -> 94607190556512 [color=black]
+94607190556384 -> 94607190556320 [color=gray]
+94607190556448 [label = "5 " style=filled fillcolor=green];
+94607190556448 -> 94607190556384 [color=gray]
+94607190556512 [label = "x " style=filled fillcolor=aquamarine];
+94607190556512 -> 94607190556384 [color=gray]
+94607190556576 [label = "2 " style=filled fillcolor=green];
+94607190556576 -> 94607190556320 [color=gray]
+94607190556256 [label = "* " style=filled fillcolor=yellow];
+94607190556256 -> 94607190556192 [color=black]
+94607190556256 -> 94607190554176 [color=black]
+94607190556256 -> 94607190557344 [color=gray]
+94607190556192 [label = "* " style=filled fillcolor=yellow];
+94607190556192 -> 94607190556128 [color=black]
+94607190556192 -> 94607190555744 [color=black]
+94607190556192 -> 94607190556256 [color=gray]
+94607190556128 [label = "^ " style=filled fillcolor=yellow];
+94607190556128 -> 94607190555936 [color=black]
+94607190556128 -> 94607190555872 [color=black]
+94607190556128 -> 94607190556192 [color=gray]
+94607190555936 [label = "* " style=filled fillcolor=yellow];
+94607190555936 -> 94607190556000 [color=black]
+94607190555936 -> 94607190556064 [color=black]
+94607190555936 -> 94607190556128 [color=gray]
+94607190556000 [label = "5 " style=filled fillcolor=green];
+94607190556000 -> 94607190555936 [color=gray]
+94607190556064 [label = "x " style=filled fillcolor=aquamarine];
+94607190556064 -> 94607190555936 [color=gray]
+94607190555872 [label = "2 " style=filled fillcolor=green];
+94607190555872 -> 94607190556128 [color=gray]
+94607190555744 [label = "* " style=filled fillcolor=yellow];
+94607190555744 -> 94607190555680 [color=black]
+94607190555744 -> 94607190554816 [color=black]
+94607190555744 -> 94607190556192 [color=gray]
+94607190555680 [label = "/ " style=filled fillcolor=yellow];
+94607190555680 -> 94607190555616 [color=black]
+94607190555680 -> 94607190554944 [color=black]
+94607190555680 -> 94607190555744 [color=gray]
+94607190555616 [label = "5 " style=filled fillcolor=green];
+94607190555616 -> 94607190555680 [color=gray]
+94607190554944 [label = "* " style=filled fillcolor=yellow];
+94607190554944 -> 94607190555008 [color=black]
+94607190554944 -> 94607190555072 [color=black]
+94607190554944 -> 94607190555680 [color=gray]
+94607190555008 [label = "5 " style=filled fillcolor=green];
+94607190555008 -> 94607190554944 [color=gray]
+94607190555072 [label = "x " style=filled fillcolor=aquamarine];
+94607190555072 -> 94607190554944 [color=gray]
+94607190554816 [label = "2 " style=filled fillcolor=green];
+94607190554816 -> 94607190555744 [color=gray]
+94607190554176 [label = "ln " style=filled fillcolor=yellow];
+94607190554176 -> 94607190554240 [color=black]
+94607190554176 -> 94607190556256 [color=gray]
+94607190554240 [label = "cos " style=filled fillcolor=yellow];
+94607190554240 -> 94607190554304 [color=black]
+94607190554240 -> 94607190554176 [color=gray]
+94607190554304 [label = "x " style=filled fillcolor=aquamarine];
+94607190554304 -> 94607190554240 [color=gray]
+94607190553984 [label = "ln " style=filled fillcolor=yellow];
+94607190553984 -> 94607190554048 [color=black]
+94607190553984 -> 94607190557984 [color=gray]
+94607190554048 [label = "x " style=filled fillcolor=aquamarine];
+94607190554048 -> 94607190553984 [color=gray]
+94607190553920 [label = "* " style=filled fillcolor=yellow];
+94607190553920 -> 94607190553856 [color=black]
+94607190553920 -> 94607190553216 [color=black]
+94607190553920 -> 94607190558048 [color=gray]
+94607190553856 [label = "/ " style=filled fillcolor=yellow];
+94607190553856 -> 94607190553792 [color=black]
+94607190553856 -> 94607190553728 [color=black]
+94607190553856 -> 94607190553920 [color=gray]
+94607190553792 [label = "1 " style=filled fillcolor=green];
+94607190553792 -> 94607190553856 [color=gray]
+94607190553728 [label = "x " style=filled fillcolor=aquamarine];
+94607190553728 -> 94607190553856 [color=gray]
+94607190553216 [label = "^ " style=filled fillcolor=yellow];
+94607190553216 -> 94607190553280 [color=black]
+94607190553216 -> 94607190553408 [color=black]
+94607190553216 -> 94607190553920 [color=gray]
+94607190553280 [label = "cos " style=filled fillcolor=yellow];
+94607190553280 -> 94607190553344 [color=black]
+94607190553280 -> 94607190553216 [color=gray]
+94607190553344 [label = "x " style=filled fillcolor=aquamarine];
+94607190553344 -> 94607190553280 [color=gray]
+94607190553408 [label = "^ " style=filled fillcolor=yellow];
+94607190553408 -> 94607190553472 [color=black]
+94607190553408 -> 94607190553664 [color=black]
+94607190553408 -> 94607190553216 [color=gray]
+94607190553472 [label = "* " style=filled fillcolor=yellow];
+94607190553472 -> 94607190553536 [color=black]
+94607190553472 -> 94607190553600 [color=black]
+94607190553472 -> 94607190553408 [color=gray]
+94607190553536 [label = "5 " style=filled fillcolor=green];
+94607190553536 -> 94607190553472 [color=gray]
+94607190553600 [label = "x " style=filled fillcolor=aquamarine];
+94607190553600 -> 94607190553472 [color=gray]
+94607190553664 [label = "2 " style=filled fillcolor=green];
+94607190553664 -> 94607190553408 [color=gray]
+94607190553152 [label = "^ " style=filled fillcolor=yellow];
+94607190553152 -> 94607190553024 [color=black]
+94607190553152 -> 94607190552960 [color=black]
+94607190553152 -> 94607190558112 [color=gray]
+94607190553024 [label = "ln " style=filled fillcolor=yellow];
+94607190553024 -> 94607190553088 [color=black]
+94607190553024 -> 94607190553152 [color=gray]
+94607190553088 [label = "x " style=filled fillcolor=aquamarine];
+94607190553088 -> 94607190553024 [color=gray]
+94607190552960 [label = "2 " style=filled fillcolor=green];
+94607190552960 -> 94607190553152 [color=gray]
+94607190552896 [label = "cos " style=filled fillcolor=yellow];
+94607190552896 -> 94607190552192 [color=black]
+94607190552896 -> 94607190558176 [color=gray]
+94607190552192 [label = "/ " style=filled fillcolor=yellow];
+94607190552192 -> 94607190552256 [color=black]
+94607190552192 -> 94607190552768 [color=black]
+94607190552192 -> 94607190552896 [color=gray]
+94607190552256 [label = "^ " style=filled fillcolor=yellow];
+94607190552256 -> 94607190552320 [color=black]
+94607190552256 -> 94607190552448 [color=black]
+94607190552256 -> 94607190552192 [color=gray]
+94607190552320 [label = "cos " style=filled fillcolor=yellow];
+94607190552320 -> 94607190552384 [color=black]
+94607190552320 -> 94607190552256 [color=gray]
+94607190552384 [label = "x " style=filled fillcolor=aquamarine];
+94607190552384 -> 94607190552320 [color=gray]
+94607190552448 [label = "^ " style=filled fillcolor=yellow];
+94607190552448 -> 94607190552512 [color=black]
+94607190552448 -> 94607190552704 [color=black]
+94607190552448 -> 94607190552256 [color=gray]
+94607190552512 [label = "* " style=filled fillcolor=yellow];
+94607190552512 -> 94607190552576 [color=black]
+94607190552512 -> 94607190552640 [color=black]
+94607190552512 -> 94607190552448 [color=gray]
+94607190552576 [label = "5 " style=filled fillcolor=green];
+94607190552576 -> 94607190552512 [color=gray]
+94607190552640 [label = "x " style=filled fillcolor=aquamarine];
+94607190552640 -> 94607190552512 [color=gray]
+94607190552704 [label = "2 " style=filled fillcolor=green];
+94607190552704 -> 94607190552448 [color=gray]
+94607190552768 [label = "ln " style=filled fillcolor=yellow];
+94607190552768 -> 94607190552832 [color=black]
+94607190552768 -> 94607190552192 [color=gray]
+94607190552832 [label = "x " style=filled fillcolor=aquamarine];
+94607190552832 -> 94607190552768 [color=gray]
 }

@@ -555,11 +555,12 @@ void DeleteSubtree(Node* root){
 
 
 void DeleteTree(Tree* tree){
+    
     DeleteSubtree(tree -> root);
 
-    for (int n_var = 0; n_var < VAR_NAME_ARR_SIZE; n_var++) free(VAR_NAME_ARR[n_var]);
+    //for (int n_var = 0; n_var < VAR_NAME_ARR_SIZE; n_var++) free(VAR_NAME_ARR[n_var]);
 
-    free(VAR_NAME_ARR);
+    //free(VAR_NAME_ARR);
     free(tree);
 }
 
@@ -631,7 +632,8 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         (*simplify_counter_ptr)++;\
         break;\
     }\
-*/    
+    
+*/
 
 #define REMOVE_OPERATOR_IF_LEFT_NODE_EQUALS(term) \
     if ((node -> left) -> type == CONST && (node -> left) -> value == term){\
@@ -660,6 +662,7 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         (*simplify_counter_ptr)++;\
         break;\
     }\
+
 
 #define REMOVE_OPERATOR_IF_RIGHT_NODE_EQUALS(term) \
     if ((node -> right) -> type == CONST && (node -> right) -> value == term){\

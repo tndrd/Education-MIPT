@@ -148,9 +148,14 @@ Tree* DifferentiateTree(Tree* src_tree){
 
     (tree -> variables).size     = (src_tree -> variables).size;
     (tree -> variables).capacity = (src_tree -> variables).capacity; 
-    
-    (tree -> variables).name_arr = (src_tree -> variables).name_arr;  
+    (tree -> variables).name_arr = (src_tree -> variables).name_arr;
 
+
+    /*
+    (tree -> variables).name_arr = (char**)calloc((tree -> variables).capacity, sizeof(char*));  
+
+    for (int n_var = 0; n_var < )
+    */
     (tree -> root) = d(src_tree -> root);
     
     return tree; 

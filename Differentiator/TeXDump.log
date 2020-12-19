@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.12.14)  19 DEC 2020 16:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.12.14)  19 DEC 2020 16:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -407,13 +407,6 @@ See the caption package documentation for explanation.
 Type X to quit or <RETURN> to proceed,
 or enter new name. (Default extension: sty)
 
-Enter file name: cstvar
-
-! LaTeX Error: File `cstvar.sty' not found.
-
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
-
 Enter file name: 
 (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-06-03 L3 backend support: PDF mode
@@ -507,10 +500,10 @@ Overfull \hbox (81.63911pt too wide) detected at line 38
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./TeXDump.aux) ) 
 Here is how much of TeX's memory you used:
- 4891 strings out of 480478
- 68055 string characters out of 5905958
+ 4889 strings out of 480478
+ 68039 string characters out of 5905958
  322358 words of memory out of 5000000
- 20868 multiletter control sequences out of 15000+600000
+ 20867 multiletter control sequences out of 15000+600000
  541998 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  38i,14n,43p,564b,207s stack positions out of 5000i,500n,10000p,200000b,80000s
