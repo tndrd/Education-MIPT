@@ -1,4 +1,5 @@
 #include "exprtree.cpp"
+#include <time.h>
 
 const double e = 2.71828;
 
@@ -47,7 +48,21 @@ Node* CopyNode(Node* source_node, Tree* dst_tree, Node* parent){
     return new_node;
 }
 
-#define d(arg) Diff(tree, arg, n_var)
+char* GetRandomTransitionPhrase(MyText* tr_phrases){
+    return ((tr_phrases -> lines)[rand() % (tr_phrases -> n_lines)]).pointer;
+}
+
+void PrintDiffTransition(FILE* fp, Node* src_node, Node* diff_node, MyText* tr_phrases){
+    fprintf(fp, "%s:\\\n", GetRandomTransitionPhrase(tr_phrases));
+    fprintf(fp, "\n \\begin{equation}\n \\Big(");
+    TeXDumpNodeRecursively(fp, src_node, -1);
+    fprintf(fp, "\\Big) \' = ");
+    TeXDumpNode(fp, diff_node);
+    SimplifyNodeQuiet(fp, diff_node);
+    fprintf(fp, "\n \\end{equation}");
+}
+
+#define d(arg) Diff(tree, arg, n_var, fp, tr_phrases)
 
 #define L node -> left
 #define R node -> right
@@ -76,9 +91,11 @@ Node* CopyNode(Node* source_node, Tree* dst_tree, Node* parent){
 
 #define NEG(expr) MULTIPLY(CONSTANT(-1), expr)
 
-Node* Diff (Tree* tree, Node* node, int n_var){
+#define SET_DIFF(expr) diff_node = expr; break;
 
-    Node* rdiff = nullptr;
+Node* Diff (Tree* tree, Node* node, int n_var, FILE* fp, MyText* tr_phrases){
+
+    Node* diff_node = nullptr;
 
     switch(node -> type){
 
@@ -95,73 +112,76 @@ Node* Diff (Tree* tree, Node* node, int n_var){
 
             switch ((OPERATION)(node -> value)){
 
-                case ADD: return ADDITION(d(L), d(R));
+                case ADD:  SET_DIFF ( ADDITION(d(L), d(R)) )
                 
-                case SUB:  return SUBTRACT(d(L), d(R));
+                case SUB:  SET_DIFF ( SUBTRACT(d(L), d(R)) )
 
-                case MUL:  return dMUL(L,R);
+                case MUL:  SET_DIFF ( dMUL(L,R) )
                 
-                case DIV:  return DIVISION(SUBTRACT(MULTIPLY(d(L), cR), MULTIPLY(d(R), cL)), EXPONENT(cR, CONSTANT(2)));
+                case DIV:  SET_DIFF ( DIVISION(SUBTRACT(MULTIPLY(d(L), cR), MULTIPLY(d(R), cL)), EXPONENT(cR, CONSTANT(2))) )
                 
-                case LN:   return DIVISION(d(R), cR);
+                case LN:   SET_DIFF ( DIVISION(d(R), cR) )
 
-                case EXP:  return MULTIPLY(EXPONENT(cL, cR), dMUL(LOGN(L), R));
+                case EXP:  SET_DIFF ( MULTIPLY(EXPONENT(cL, cR), dMUL(LOGN(L), R)) )
                         
-                case SIN:  return MULTIPLY(d(R), COSINUS(cR));
+                case SIN:  SET_DIFF ( MULTIPLY(d(R), COSINUS(cR)) )
 
-                case COS:  return MULTIPLY(d(R), NEG(SINUS(cR)));
+                case COS:  SET_DIFF ( MULTIPLY(d(R), NEG(SINUS(cR))) )
 
-                case TAN:  return DIVISION(d(R), EXPONENT(COSINUS(cR), CONSTANT(2)));
+                case TAN:  SET_DIFF ( DIVISION(d(R), EXPONENT(COSINUS(cR), CONSTANT(2))) )
 
-                case COT:  return NEG(DIVISION(d(R), EXPONENT(SINUS(cR), CONSTANT(2))));
+                case COT:  SET_DIFF ( NEG(DIVISION(d(R), EXPONENT(SINUS(cR), CONSTANT(2)))) )
 
-                case ATAN: return DIVISION(d(R), ADDITION(CONSTANT(1), EXPONENT(cR,CONSTANT(2))));
+                case ATAN: SET_DIFF ( DIVISION(d(R), ADDITION(CONSTANT(1), EXPONENT(cR,CONSTANT(2)))) )
 
-                case ACOT: return NEG(DIVISION(d(R), ADDITION(CONSTANT(1), EXPONENT(cR,CONSTANT(2)))));
+                case ACOT: SET_DIFF ( NEG(DIVISION(d(R), ADDITION(CONSTANT(1), EXPONENT(cR,CONSTANT(2))))) )
 
-                case ASIN: return DIVISION(d(R), EXPONENT(SUBTRACT(CONSTANT(1), EXPONENT(cR, CONSTANT(2))), CONSTANT(0.5)));
+                case ASIN: SET_DIFF ( DIVISION(d(R), EXPONENT(SUBTRACT(CONSTANT(1), EXPONENT(cR, CONSTANT(2))), CONSTANT(0.5))) )
 
-                case ACOS: return NEG(DIVISION(d(R), EXPONENT(SUBTRACT(CONSTANT(1), EXPONENT(cR, CONSTANT(2))), CONSTANT(0.5))));
+                case ACOS: SET_DIFF ( NEG(DIVISION(d(R), EXPONENT(SUBTRACT(CONSTANT(1), EXPONENT(cR, CONSTANT(2))), CONSTANT(0.5)))) )
 
                 default:
                     printf("Unknown operation");
                     exit(0);
-
-
-
-
             }
+            break;
+
 
         default:
+            printf("WTF?\n");
             exit(1);  
-
-
-
     }
+
+    PrintDiffTransition(fp, node, diff_node, tr_phrases);
+    return diff_node;
+    
 }
 
-
-Tree* DifferentiateTree(Tree* src_tree){
+Tree* DifferentiateTree(Tree* src_tree, FILE* fp, MyText* tr_phrases){
 
     Tree* tree = (Tree*)calloc(1, sizeof(Tree));
     int n_var = 0;
 
     (tree -> variables).size     = (src_tree -> variables).size;
     (tree -> variables).capacity = (src_tree -> variables).capacity; 
-    (tree -> variables).name_arr = (src_tree -> variables).name_arr;
-
-
-    /*
+   
     (tree -> variables).name_arr = (char**)calloc((tree -> variables).capacity, sizeof(char*));  
 
-    for (int n_var = 0; n_var < )
-    */
+    for (int n_var = 0; n_var < (tree -> variables).size; n_var++){
+        (tree -> variables).name_arr[n_var] = (char*)calloc(MAX_VAR_NAME_LENGTH, sizeof(char));
+        strcpy((tree -> variables).name_arr[n_var], (src_tree -> variables).name_arr[n_var]);
+    }
+    
     (tree -> root) = d(src_tree -> root);
     
     return tree; 
 }
 
 int main(){
+
+    srand(time(NULL));
+
+    MyText* tr_phrases = GetText("transitions.txt");
 
     char* filename = (char*)calloc(40, sizeof(char));
     printf("Open: ");
@@ -186,7 +206,7 @@ int main(){
     //GraphicalDump(tree);
     
     
-    Tree* diff_tree = DifferentiateTree(tree);
+    Tree* diff_tree = DifferentiateTree(tree, fp, tr_phrases);
     fprintf(fp, "Теперь продифференцируем:\\\\\n");
     TeXDumpExpressionTree(fp, diff_tree);
     //GraphicalDump(diff_tree);

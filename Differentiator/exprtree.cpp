@@ -558,9 +558,9 @@ void DeleteTree(Tree* tree){
     
     DeleteSubtree(tree -> root);
 
-    //for (int n_var = 0; n_var < VAR_NAME_ARR_SIZE; n_var++) free(VAR_NAME_ARR[n_var]);
+    for (int n_var = 0; n_var < VAR_NAME_ARR_SIZE; n_var++) free(VAR_NAME_ARR[n_var]);
 
-    //free(VAR_NAME_ARR);
+    free(VAR_NAME_ARR);
     free(tree);
 }
 
@@ -568,10 +568,13 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
     
     printf("%p\n", node);
     fflush(stdout);
-    
+    if (!node) return;
+
     if ((node -> type) == OPER){
-        if ((node -> left) && (node -> left) -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
-        if ((node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right, simplify_counter_ptr);
+        if ((node -> left)  && (node -> left)  -> type == OPER)  RecursiveNodeConstantFolding(node -> left,  simplify_counter_ptr);
+        if ((node -> right) && (node -> right) -> type == OPER)  RecursiveNodeConstantFolding(node -> right, simplify_counter_ptr);
+
+        if (node -> right){
 
         if ((!(node -> left) || (node -> left) -> type == CONST) && (node -> right) -> type == CONST){
             
@@ -583,6 +586,8 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
             node -> right = nullptr;
 
             (*simplify_counter_ptr)++;
+        }
+
         }
     }
 }
@@ -646,7 +651,7 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         }\
         else{\
             \
-            assert(node == (node -> parent) -> right || node == (node -> parent) -> left);\
+            if(!(node == (node -> parent) -> right || node == (node -> parent) -> left)) {GraphicalDumpDebug(node->tree); printf("%p parent: %p <- %p -> %p\n", node, (node -> parent) -> left, (node -> parent), (node -> parent) -> right ); abort();}\
 \
             if (node == (node -> parent) -> right){\
                 (node -> parent) -> right = node -> right;\
@@ -675,7 +680,7 @@ void RecursiveNodeConstantFolding(Node* node, int* simplify_counter_ptr){
         }\
         else{\
             \
-            assert(node == (node -> parent) -> right || node == (node -> parent) -> left);\
+            if(!(node == (node -> parent) -> right || node == (node -> parent) -> left)) {GraphicalDumpDebug(node->tree); printf("%p parent: %p <- %p -> %p\n", node, (node -> parent) -> left, (node -> parent), (node -> parent) -> right ); abort();}\
 \
             if (node == (node -> parent) -> right){\
                 (node -> parent) -> right = node -> left;\
@@ -781,16 +786,14 @@ void SimplifyTree(FILE* fp, Tree* tree){
 
         printf("Folding constants...\n");
         RecursiveNodeConstantFolding   (tree -> root, &constant_simplify_counter);
-        if (constant_simplify_counter > 0) TeXDumpExpressionTree(fp, tree);
 
         printf("Folding obvious...\n");
         SimplifyObviousNodesRecursively(tree -> root, &obvious_simplify_counter);
-        if (obvious_simplify_counter > 0) TeXDumpExpressionTree(fp, tree);
+        if (obvious_simplify_counter + constant_simplify_counter > 0) TeXDumpExpressionTree(fp, tree);
         
     } while ((constant_simplify_counter + obvious_simplify_counter) > 0);
     
 }
-
 
 #define DEF_OPERATION(operation_name, operator, priority, tex_operator, tex_op_type)\
     case operation_name:\
@@ -827,14 +830,43 @@ int TeXDumpNodeRecursively(FILE* fp, Node* node, char prev_priority){
 
 #undef DEF_OPERATION
 
-void TeXDumpExpressionTree(FILE* fp, Tree* tree){
+void TeXDumpNode(FILE* fp, Node* node){
 
-    fprintf(fp, "\\begin{equation}");
-    TeXDumpNodeRecursively(fp, tree -> root, -1);
-    fprintf(fp, "\\end{equation}\n");
+    fprintf(fp, "\n\\begin{equation}\n");
+    TeXDumpNodeRecursively(fp, node, -1);
+    fprintf(fp, "\n\\end{equation}\n");
+}
+
+void TeXDumpExpressionTree(FILE* fp, Tree* tree){
+    TeXDumpNode(fp, tree -> root);
 }
 
 
+void TeXSupplementEquation(FILE* fp, Node* node){
+    fprintf(fp, " = ");
+    TeXDumpNodeRecursively(fp, node, -1);
+}
+
+
+void SimplifyNodeQuiet(FILE* fp, Node* node){
+
+    int constant_simplify_counter = 0;
+    int obvious_simplify_counter = 0;
+
+    do{
+        constant_simplify_counter = 0;
+        obvious_simplify_counter = 0;
+
+        printf("Folding constants...\n");
+        RecursiveNodeConstantFolding   (node, &constant_simplify_counter);
+
+        printf("Folding obvious...\n");
+        SimplifyObviousNodesRecursively(node, &obvious_simplify_counter);
+        if (obvious_simplify_counter + constant_simplify_counter > 0) TeXSupplementEquation(fp, node);
+        
+    } while ((constant_simplify_counter + obvious_simplify_counter) > 0);
+
+}
 /*
 int main(){
 
