@@ -1,0 +1,28 @@
+LexTex Grammar:
+ 
+program ::= declaration{declaration}
+
+declaration ::= '[', identificator, '(', {identificator}, ')', '=', identificator, ']' , '\eqdef', command_block
+
+identificator ::= literal{literal}[_literal{number|literal}]
+
+command_block ::= '[', {var_init}command{command}, ']'
+
+command ::= (call | loop | condition_block | var_claim), (',' | ':' | '\rightarrow')
+
+var_init  ::= '\exists' '=' expression
+var_claim ::= identificator ':=' expression
+
+expression ::= T1 {('+' | '-') T1}
+T1 ::= T2 {('*' | '/') T2}
+T2 ::= identificator | call | P
+P  ::= '('expression')' | number
+number ::= ('1'-'9'){'0'-'9'}
+
+call ::= identificator, ['(', {expression,} ,')']
+
+loop ::= TODO
+
+condition_block ::= '[','\forall', condition, ']', '\Rightarrow', command_block
+
+condition ::=  

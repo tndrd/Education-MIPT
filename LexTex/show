@@ -1,0 +1,20 @@
+digraph structs {
+rankdir=LR rank=same;
+0 [shape=record, fillcolor=aquamarine rank = same style=filled label="    abc | {IDER | 0}" ];
+1 [shape=record, fillcolor=yellow rank = same style=filled label="    + | {  OPER | 0 }" ];
+2 [shape=record, fillcolor=green rank = same style=filled label="    2.000000 | { CONSTANT }" ];
+3 [shape=record, fillcolor=yellow rank = same style=filled label="    - | {  OPER | 1 }" ];
+4 [shape=record, fillcolor=green rank = same style=filled label="    3.000000 | { CONSTANT }" ];
+5 [shape=record, fillcolor=yellow rank = same style=filled label="    ( | {  OPER | 4 }" ];
+6 [shape=record, fillcolor=yellow rank = same style=filled label="    ( | {  OPER | 4 }" ];
+7 [shape=record, fillcolor=yellow rank = same style=filled label="    ) | {  OPER | 5 }" ];
+8 [shape=record, fillcolor=pink rank = same style=filled label="    \exists | {  KWRD | 8 }" ];
+0 -> 1
+1 -> 2
+2 -> 3
+3 -> 4
+4 -> 5
+5 -> 6
+6 -> 7
+7 -> 8
+}
