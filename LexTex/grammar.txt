@@ -15,8 +15,8 @@ var_claim ::= identificator ':=' expression
 
 expression ::= T1 {('+' | '-') T1}
 T1 ::= T2 {('*' | '/') T2}
-T2 ::= identificator | call | P
-P  ::= '('expression')' | number
+T2 ::= identificator | call | P | number
+P  ::= '('expression')'
 number ::= ('1'-'9'){'0'-'9'}
 
 call ::= identificator, ['(', {expression,} ,')']

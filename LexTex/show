@@ -1,20 +1,48 @@
-digraph structs {
-rankdir=LR rank=same;
-0 [shape=record, fillcolor=aquamarine rank = same style=filled label="    abc | {IDER | 0}" ];
-1 [shape=record, fillcolor=yellow rank = same style=filled label="    + | {  OPER | 0 }" ];
-2 [shape=record, fillcolor=green rank = same style=filled label="    2.000000 | { CONSTANT }" ];
-3 [shape=record, fillcolor=yellow rank = same style=filled label="    - | {  OPER | 1 }" ];
-4 [shape=record, fillcolor=green rank = same style=filled label="    3.000000 | { CONSTANT }" ];
-5 [shape=record, fillcolor=yellow rank = same style=filled label="    ( | {  OPER | 4 }" ];
-6 [shape=record, fillcolor=yellow rank = same style=filled label="    ( | {  OPER | 4 }" ];
-7 [shape=record, fillcolor=yellow rank = same style=filled label="    ) | {  OPER | 5 }" ];
-8 [shape=record, fillcolor=pink rank = same style=filled label="    \exists | {  KWRD | 8 }" ];
-0 -> 1
-1 -> 2
-2 -> 3
-3 -> 4
-4 -> 5
-5 -> 6
-6 -> 7
-7 -> 8
+digraph G {
+rankdir=TD;
+94450657971616 [shape=record, fillcolor=lightgray rank = same style=filled label="    {DEC | {  OPER | 14 }}" ];
+94450657971616 -> 94450657970560 [color=black]
+94450657970560 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {1 | VAR} " ];
+94450657971616 -> 94450657971568 [color=black]
+94450657971568 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657971568 -> 94450657971232 [color=black]
+94450657971232 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657971232 -> 94450657971040 [color=black]
+94450657971040 [shape=record, fillcolor=lightgray rank = same style=filled label="    {VAR_CLAIM | {  OPER | 20 }}" ];
+94450657971040 -> 94450657970608 [color=black]
+94450657970608 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {2 | VAR} " ];
+94450657971040 -> 94450657970992 [color=black]
+94450657970992 [shape=record, fillcolor=lightgray rank = same style=filled label="    {ADD | {  OPER | 0 }}" ];
+94450657970992 -> 94450657970656 [color=black]
+94450657970656 [shape=record, fillcolor=green rank = same style=filled label="    {23.000000 | CONSTANT} " ];
+94450657970992 -> 94450657970944 [color=black]
+94450657970944 [shape=record, fillcolor=yellow rank = same style=filled label="    {3 | FUNC} " ];
+94450657970944 -> 94450657970896 [color=black]
+94450657970896 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657970896 -> 94450657970800 [color=black]
+94450657970800 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657970800 -> 94450657970704 [color=black]
+94450657970704 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {1 | VAR} " ];
+94450657970800 -> 94450657970752 [color=black]
+94450657970752 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {4 | VAR} " ];
+94450657970896 -> 94450657970848 [color=black]
+94450657970848 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {5 | VAR} " ];
+94450657971232 -> 94450657971184 [color=black]
+94450657971184 [shape=record, fillcolor=lightgray rank = same style=filled label="    {VAR_CLAIM | {  OPER | 20 }}" ];
+94450657971184 -> 94450657971088 [color=black]
+94450657971088 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {6 | VAR} " ];
+94450657971184 -> 94450657971136 [color=black]
+94450657971136 [shape=record, fillcolor=green rank = same style=filled label="    {15.000000 | CONSTANT} " ];
+94450657971568 -> 94450657971520 [color=black]
+94450657971520 [shape=record, fillcolor=yellow rank = same style=filled label="    {3 | FUNC} " ];
+94450657971520 -> 94450657971472 [color=black]
+94450657971472 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657971472 -> 94450657971376 [color=black]
+94450657971376 [shape=record, fillcolor=lightgray rank = same style=filled label="    {LR | {  OPER | 2 }}" ];
+94450657971376 -> 94450657971280 [color=black]
+94450657971280 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {1 | VAR} " ];
+94450657971376 -> 94450657971328 [color=black]
+94450657971328 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {4 | VAR} " ];
+94450657971472 -> 94450657971424 [color=black]
+94450657971424 [shape=record, fillcolor=aquamarine rank = same style=filled label="    {5 | VAR} " ];
 }
