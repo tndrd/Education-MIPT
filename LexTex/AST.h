@@ -7,25 +7,18 @@
 
 #include "../Onegin/onegin.h"
 
-typedef unsigned char Lexem_ID;
 typedef const char*   Lexem_String; 
 
-const Lexem_ID UNKNOWN_LEXEM_ID     = '?';
-const Lexem_ID LEXEM_INPUT_ERROR_ID = 0;
-
-Lexem_String UNKNOWN_LEXEM_STRING   = "UNKNOWN";
+Lexem_String UNKNOWN_LEXEM_STRING = "UNKNOWN";
 
 const size_t INITIAL_NAMETABLE_CAPACITY = 10;
 
-enum Lexem_Type{
+enum AST_Unit_Type{
 
     OPERATOR   = 'O',
     IDENTIFIER = 'I',
-    FUNC       = 'F',
-    EMPTY      = 'U',
+    EMPTY      = '~',
     CONSTANT   = 'C',
-    KEYWORD    = 'K',
-    VAR        = 'V',
 };
 
 enum LexAnalysis_Status{
@@ -44,12 +37,13 @@ enum LexAnalysis_Status{
     LEX_ANALYSIS_UNDEFINED
 };
 
-enum INLINE_IDENTIFICATORS{
+enum Operator_ID{
     
-    #define LEXEM(type, ID, string) ID,
+    #define LEXEM(ID, string) ID,
     #include "LexemList.h"
-    LAST_LEXEM
     #undef  LEXEM
+
+    UNKNOWN_LEXEM = '~',
 };
 
 enum LR_Flag{
@@ -66,37 +60,63 @@ enum CompareResult{
 
 struct Lexem{
 
-    Lexem_Type type = EMPTY;
-
-    Lexem* left  = nullptr;
-    Lexem* right = nullptr;
+    AST_Unit_Type type = EMPTY;
 
     union Lexem_Container{
-        Lexem_ID ID = '~';
-        double   value;
+        Operator_ID ID = UNKNOWN_LEXEM;
+        double      value;
+        char*       identifier_name;
     }container;  
 };
 
-struct Identifier{
-    char* name  = nullptr;
-    Lexem_ID ID = UNKNOWN_LEXEM_ID;
+enum AST_Operator_ID{
+    
+    #define AST_OPERATOR(name, format) AST_ ## name,
+    #include "ASTOperatorsList.h"
+    #undef AST_OPERATOR
+
+    UNKNOWN_NODE = '~'
 };
 
-struct NameTable{
-    size_t      capacity    = INITIAL_NAMETABLE_CAPACITY;
-    size_t      size        = 0;
-    Identifier* identifiers = nullptr;
+struct AST_Node{
+
+    AST_Unit_Type type = EMPTY;
+
+    AST_Node* left  = nullptr;
+    AST_Node* right = nullptr;
+
+    union Node_Container{
+        AST_Operator_ID ID = UNKNOWN_NODE;
+        double   value;
+        char*    identifier_name;
+    }container;  
 };
 
-#define ID_OF(lexem)    ((lexem -> container).ID)
-#define VALUE_OF(lexem) ((lexem -> container).value)
+struct Variable{
+
+    int offset = 0;
+    char*  name   = nullptr;
+};
+
+struct VarNameTable{
+    
+    Variable* vars     = nullptr;
+    size_t    size   = 0;
+    size_t    capacity = INITIAL_NAMETABLE_CAPACITY;
+};
+
+#define ID_OF(lexem)       ((lexem -> container).ID)
+#define VALUE_OF(lexem)    ((lexem -> container).value)
+#define IDR_NAME_OF(lexem) ((lexem -> container).identifier_name)
+
 #define TYPE_OF(lexem)  (lexem -> type)
 
-#define LEXEM_ID(n_lexem)   ID_OF   ((lexems_list -> lexems)[n_lexem])
-#define LEXEM_VAL(n_lexem)  VALUE_OF((lexems_list -> lexems)[n_lexem])
-#define LEXEM_TYPE(n_lexem) TYPE_OF ((lexems_list -> lexems)[n_lexem])
+#define LEXEM_ID(n_lexem)        ID_OF      ((lexems_list -> lexems)[n_lexem])
+#define LEXEM_VAL(n_lexem)       VALUE_OF   ((lexems_list -> lexems)[n_lexem])
+#define LEXEM_IDR_NAME(n_lexem)  IDR_NAME_OF((lexems_list -> lexems)[n_lexem])
+#define LEXEM_TYPE(n_lexem)      TYPE_OF    ((lexems_list -> lexems)[n_lexem])
 
-#define INL_NAME(n_lexem)   GetLexemString(LEXEM_ID(n_lexem)) 
+#define INL_NAME(n_lexem)   GetOperatorString(LEXEM_ID(n_lexem)) 
 #define IDR_NAME(n_lexem)  (((lexems_list -> name_table) -> identifiers)[LEXEM_ID(n_lexem)]).name    
 
 enum AST_Error{
@@ -116,79 +136,102 @@ enum AST_Error{
     FILE_OPEN_ERROR                 = -15
 };
 
-struct Node{
-    
-    Lexem_Type type = EMPTY;
-    
-    Node* left  = nullptr;
-    Node* right = nullptr; 
-    
-    double value = 0;
-};
 
 struct LexemsList{
 
     Lexem**            lexems     = nullptr;
     size_t             size   = 0;
     LexAnalysis_Status status     = LEX_ANALYSIS_UNDEFINED;
-    NameTable*         name_table = nullptr;
 };
 
 struct Tree{
-    Lexem* root  = nullptr;
+    AST_Node* root  = nullptr;
     size_t size = 0;
 };
 
-
+CompareResult NEW_CompareWithOperator(char* caret, const char* inline_string);
 void AddLexem(LexemsList* lexem_list, Lexem* lexem);
-Lexem_ID GetLexemID(char* kw_string);
-Lexem_String GetLexemString(Lexem_ID kw_id);
-Node* CreateNode(Lexem_Type type, double value, Node* left, Node* right);
-AST_Error AttachNode(Tree* tree, LR_Flag dest_flag, Node* attaching_node, Node* destination_node);
-AST_Error DumpNode(FILE* fp, Lexem* node);
-AST_Error GraphicalDump(Tree* tree);
-AST_Error ValidateTree(Tree* tree);
-AST_Error ValidateNodeRecursively(Tree* tree, Node* node, int* nodes_counter);
+void PrintLexem(Lexem* lexem, size_t n_lexem, LexAnalysis_Status status, size_t n_char);
+Operator_ID GetLexemID(char* kw_string);
+Lexem_String GetOperatorString(Operator_ID kw_id);
+Lexem_String GetOperatorName(Operator_ID current_id);
 const char* GetLexAnalysisStatus(LexAnalysis_Status current_result);
+
+AST_Error ValidateTree(Tree* tree);
+AST_Error ValidateNodeRecursively(Tree* tree, AST_Node* node, int* nodes_counter);
+
 
 LexemsList* LexAnalysis(char* code_buffer);
 void LexGraphicalDump(LexemsList* lexems_list);
-Lexem* CreateLexem(Lexem_Type type, Lexem_ID ID, Lexem* left, Lexem* right);
-LexAnalysis_Status GetLexem(NameTable* name_table, Lexem** lexem_ptr, char** caret);
+LexAnalysis_Status GetLexem(Lexem** lexem_ptr, char** caret);
 CompareResult CompareWithOperator(char* caret, const char* inline_string);
 CompareResult CompareWithKeyword(char* caret, const char* inline_string);
 CompareResult CompareWithIdentifier(char* caret, const char* inline_string);
 void MoveCaretNextLexem(char** caret);
 double FoldConstant(char** caret);
+Lexem* CreateOperatorLexem(Operator_ID ID);
 Lexem* CreateConstantLexem(double value);
-Lexem_String GetLexemID_Name(Lexem_ID current_id);
+Lexem* CreateIdentifierLexem(char* idr_name);
+Lexem* CreateEmptyLexem();
+Lexem_String GetLexemID_Name(Operator_ID current_id);
 
-NameTable* CreateNameTable();
-LexAnalysis_Status AddIdentifier(NameTable* name_table, char* name, Lexem_ID* ID);
 int IsPossibleIdentifierChar(char chr);
 LexAnalysis_Status GetIdentifier(char** caret, char** name_ptr);
-LexAnalysis_Status ProcessIdentifier(NameTable* name_table, char** caret, size_t* ID);
 
+AST_Node* CreateOperatorNode(AST_Operator_ID ID, AST_Node* left, AST_Node* right);
+AST_Node* CreateConstantNode(double value, AST_Node* left, AST_Node* right);
+AST_Node* CreateIdentifierNode(char* idr_name, AST_Node* left, AST_Node* right);
 
-Lexem* GetInnerFunctionCode(Tree* tree);
-Lexem* GetDeclVarEnum(Tree* tree);
-Lexem* GetDec(Tree* tree);
-Lexem* GetLogic(Tree* tree);
-Lexem* GetCodeline(Tree* tree);
-Lexem* GetCondition(Tree* tree);
-Lexem* GetVarClaim(Tree* tree);
-Lexem* GetCall(Tree* tree);
-Lexem* GetEnum(Tree* tree);
-Lexem* GetP(Tree* tree);
-Lexem* GetVar(Tree* tree);
-Lexem* GetT2(Tree* tree);
-Lexem* GetT1(Tree* tree);
-Lexem* GetN(Tree* tree);
-Lexem* GetE(Tree* tree);
-Lexem* GetG(LexemsList* dest_lexems_list, Tree* tree);
+AST_Node* GetInnerFunctionCode();
+AST_Node* GetDeclVarEnum();
+AST_Node* GetDec();
+AST_Node* GetLogic();
+AST_Node* GetCodeline();
+AST_Node* GetCondition();
+AST_Node* GetLoop();
+AST_Node* GetVarClaim();
+AST_Node* GetCall();
+AST_Node* GetEnum();
+AST_Node* GetP();
+AST_Node* GetKeyword();
+AST_Node* GetInput();
+AST_Node* GetVar();
+AST_Node* GetMod();
+AST_Node* GetT2();
+AST_Node* GetT1();
+AST_Node* GetN();
+AST_Node* GetE();
+AST_Node* GetG(LexemsList* dest_lexems_list);
 
-int LexemIsOperator(int lexem_number, Lexem_ID operator_id);
-int LexemIsKeyword(int lexem_number, Lexem_ID keyword_id);
+int LexemIsOperator(int lexem_number, Operator_ID operator_id);
+int LexemIsKeyword(int lexem_number, Operator_ID keyword_id);
 
-void RequireOperator(Lexem_ID operator_id);
+AST_Error DumpNode(FILE* fp, AST_Node* node);
+AST_Error GraphicalDump(Tree* tree);
+
+int NodeIsOperator(AST_Node* node, AST_Operator_ID operator_id);
+void GenerateASM(Tree* tree, char* filename);
+
+int NameTableAddVar(VarNameTable* name_table, char* var_name);
+int NameTableCheckVar(VarNameTable* name_table, char* var_name);
+int NameTableProcessVar(VarNameTable* name_table, char* var_name);
+void NameTableDump(VarNameTable* name_table);
+
+void GenerateDec(FILE* fp, AST_Node* node);
+void GenerateStatement(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateLineOperator(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateAssign(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateExpression(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateVarValue(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateMathOperator(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateVarImp(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateReturn(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateCall(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateFuncCallParams(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateCondition(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateLoop(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GeneratePrint(FILE* fp, VarNameTable* name_table, AST_Node* node);
+void GenerateDot(FILE* fp, VarNameTable* name_table, AST_Node* node);
+
+void RequireOperator(Operator_ID operator_id);
 void SyntaxError();

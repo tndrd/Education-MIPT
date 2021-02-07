@@ -1,0 +1,14 @@
+[main()] \eqdef [
+
+    DrawPoint(1, 2);
+    plot;
+]
+
+[DrawPoint(x, y)] \eqdef [
+    
+    see x;
+    see y;
+    see 0;
+
+    \nabla y \cdot 200 + x; 
+]

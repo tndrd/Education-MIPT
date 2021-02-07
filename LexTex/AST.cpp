@@ -5,7 +5,7 @@
 //Constant Folding
 
 
-int main(){
+int main() {
     /*
     Tree* tree = (Tree*)calloc(1, sizeof(Tree));
     
@@ -36,40 +36,41 @@ int main(){
 
     LexemsList* lexed = LexAnalysis(expression);
     
-    if (lexed -> status == LEX_ANALYSIS_OK){
+    if (lexed -> status == LEX_ANALYSIS_OK) {
         printf("Lexical analysis complete, showing diagram...\n");
         LexGraphicalDump(lexed);
-
+        
         Tree* tree = (Tree*)calloc(1,sizeof(Tree));
-        tree -> root = GetG(lexed, tree);
+        tree -> root = GetG(lexed);
         GraphicalDump(tree);
+        GenerateASM(tree, "test.myasm");
+        
     }
     
     return 0;
 }
 
-void LexGraphicalDump(LexemsList* lexems_list){
+void LexGraphicalDump(LexemsList* lexems_list) {
 
     FILE* fp = fopen("show", "w");   
     
     fprintf(fp, "digraph structs {\nrankdir=LR rank=same;\n");
     
-    for(size_t n_lexem = 0; n_lexem < (lexems_list -> size) - 1; n_lexem++){
+    for(size_t n_lexem = 0; n_lexem < (lexems_list -> size) - 1; n_lexem++) {
 
-        switch(LEXEM_TYPE(n_lexem)){
+        switch(LEXEM_TYPE(n_lexem)) {
 
-            case OPERATOR:   fprintf(fp, "%d [shape=record, fillcolor=yellow rank = same style=filled label=\"    %s | {  OPER | %u }\" ];\n",
-                                   n_lexem, GetLexemID_Name(LEXEM_ID(n_lexem)), LEXEM_ID(n_lexem)); break;
-            case KEYWORD:    fprintf(fp, "%d [shape=record, fillcolor=pink rank = same style=filled label=\"    %s | {  KWRD | %u }\" ];\n",
-                                   n_lexem, GetLexemID_Name(LEXEM_ID(n_lexem)), LEXEM_ID(n_lexem)); break;
-            case CONSTANT:   fprintf(fp, "%d [shape=record, fillcolor=green rank = same style=filled label=\"    %lf | { CONSTANT }\" ];\n",
-                                   n_lexem, LEXEM_VAL(n_lexem)); break;
-            case IDENTIFIER: fprintf(fp, "%d [shape=record, fillcolor=aquamarine rank = same style=filled label=\"    %s | {IDER | %u}\" ];\n",
-                                   n_lexem, IDR_NAME(n_lexem), LEXEM_ID(n_lexem)); break;
+            case OPERATOR:   fprintf(fp, "%d [shape=record, fillcolor=lightgray rank = same style=filled label=\"    %s | {%d}\" ];\n",
+                                   n_lexem, GetOperatorName(LEXEM_ID(n_lexem)), n_lexem); break;
+            case CONSTANT:   fprintf(fp, "%d [shape=record, fillcolor=green rank = same style=filled label=\"    %lf| {%d}\" ];\n",
+                                   n_lexem, LEXEM_VAL(n_lexem), n_lexem); break;
+            case IDENTIFIER: fprintf(fp, "%d [shape=record, fillcolor=aquamarine rank = same style=filled label=\"    %s| {%d}\" ];\n",
+                                   n_lexem, LEXEM_IDR_NAME(n_lexem), n_lexem); break;
+        
         }
 
     }
-    for(size_t n_lexem = 0; n_lexem < (lexems_list -> size) - 1; n_lexem++) fprintf(fp, "%d -> %d\n", n_lexem, n_lexem+1);
+    for(size_t n_lexem = 0; n_lexem < (lexems_list -> size) - 2; n_lexem++) fprintf(fp, "%d -> %d\n", n_lexem, n_lexem+1);
     fprintf(fp, "}");
     fclose(fp);
     
@@ -82,20 +83,37 @@ void LexGraphicalDump(LexemsList* lexems_list){
     #define LEXLIST_SIZE     (lexem_list -> size) 
     #define FINAL_STATUS (lexem_list -> status)
 
-void AddLexem(LexemsList* lexem_list, Lexem* lexem){
+void AddLexem(LexemsList* lexem_list, Lexem* lexem) {
     
     LEXEMS = (Lexem**)realloc(LEXEMS, (LEXLIST_SIZE+1)*sizeof(Lexem*));
     LEXEMS[LEXLIST_SIZE] = lexem;    
     LEXLIST_SIZE++;
 }
 
+void PrintLexem(Lexem* lexem, size_t n_lexem, LexAnalysis_Status status, size_t n_char) {
+    
+    printf("#%d %s {%p} at %d ", n_lexem, GetLexAnalysisStatus(status), lexem, n_char);
+        
+    if (lexem && status == TOKEN_OK) {
 
-LexemsList* LexAnalysis(char* code_buffer){
+        switch(TYPE_OF(lexem)) {
+                    
+            case OPERATOR:   printf(": %c / %s\n", TYPE_OF(lexem), GetOperatorString(ID_OF(lexem))); break;
+
+            case IDENTIFIER: printf(": %c / %s\n", TYPE_OF(lexem), IDR_NAME_OF(lexem)); break;
+
+            case CONSTANT:   printf(": %c / %lf\n",TYPE_OF(lexem), VALUE_OF(lexem)); break;
+
+        }   
+
+    }
+}
+
+LexemsList* LexAnalysis(char* code_buffer) {
     
     char* caret               = code_buffer;
     char* prev_caret_position = caret;
 
-    NameTable* name_table = CreateNameTable();
     Lexem*  current_lexem = nullptr; 
     
     LexemsList* lexem_list  = (LexemsList*)calloc(1, sizeof(LexemsList));
@@ -104,27 +122,16 @@ LexemsList* LexAnalysis(char* code_buffer){
     LEXLIST_SIZE     = 0;  
     FINAL_STATUS = LEX_ANALYSIS_OK;
 
-    LexAnalysis_Status LexStatus = GetLexem(name_table, &current_lexem, &caret);
+    LexAnalysis_Status LexStatus = GetLexem(&current_lexem, &caret);
 
-    for (; LexStatus != END_OF_CODE && LEXLIST_SIZE < 50; LexStatus = GetLexem(name_table, &current_lexem, &caret)){ 
+    for (; LexStatus != END_OF_CODE && LEXLIST_SIZE < 1000; LexStatus = GetLexem(&current_lexem, &caret)) { 
         
-        printf("#%d %s {%p} at %d ",LEXLIST_SIZE, GetLexAnalysisStatus(LexStatus), current_lexem, prev_caret_position - code_buffer);
-        
-        if (current_lexem && LexStatus == TOKEN_OK){
+        PrintLexem(current_lexem, LEXLIST_SIZE, LexStatus, prev_caret_position - code_buffer);
 
-            switch(TYPE_OF(current_lexem)){
-                
-                case OPERATOR: case KEYWORD: printf(": %c / %s\n", TYPE_OF(current_lexem), GetLexemString(ID_OF(current_lexem))); break;
-
-                case IDENTIFIER:             printf(": %c / %d / %s\n", TYPE_OF(current_lexem), ID_OF(current_lexem), (name_table -> identifiers)[ID_OF(current_lexem)].name); break;
-
-                case CONSTANT:               printf(": %c / %lf\n",TYPE_OF(current_lexem), VALUE_OF(current_lexem)); break;
-
-            }
-
+        if (current_lexem && LexStatus == TOKEN_OK) {
             AddLexem(lexem_list, current_lexem);
         }
-        
+
         else{
             printf("\n");
             FINAL_STATUS = LEX_ANALYSIS_FAILED;
@@ -132,58 +139,24 @@ LexemsList* LexAnalysis(char* code_buffer){
 
         prev_caret_position = caret;
         
-
     }
 
-    lexem_list -> name_table = name_table;
-    AddLexem(lexem_list, CreateLexem(EMPTY, LAST_LEXEM, nullptr, nullptr));
+    AddLexem(lexem_list, CreateEmptyLexem());
 
     return lexem_list;
 }
 
-NameTable* CreateNameTable(){
-    
-    NameTable* newNameTable     = (NameTable*)calloc(1, sizeof(NameTable));
-    newNameTable -> identifiers = (Identifier*)calloc(1,INITIAL_NAMETABLE_CAPACITY * sizeof(Identifier));
-    newNameTable -> size        = 0;
-    newNameTable -> capacity    = INITIAL_NAMETABLE_CAPACITY;
-    return newNameTable;
-}
-
-LexAnalysis_Status AddIdentifier(NameTable* name_table, char* name, Lexem_ID* ID){
-
-    if (!name_table) return BAD_NAMETABLE_PTR;
-    if (!name)       return BAD_NAME_PTR;
-
-    if ((name_table) -> size == (name_table) -> capacity){
-        Identifier* resizedIdentifiers = (Identifier*)realloc(((name_table) -> identifiers), ((name_table) -> capacity) * 2 * sizeof(Identifier));
-        if (!resizedIdentifiers) return OUT_OF_MEM;
-        
-        (name_table) -> identifiers  = resizedIdentifiers;
-        ((name_table) -> capacity)*=2; 
-    }
-    
-    Identifier* new_identifier = ((name_table) -> identifiers) + ((name_table) -> size);
-
-    new_identifier -> ID   = ((name_table) -> size);
-    *ID = new_identifier -> ID;
-    new_identifier -> name = name;
-    
-    ((name_table) -> size)++;
-    return IDENTIFIER_ADDITION_OK;
-}
-
-int IsPossibleIdentifierChar(char chr){
+int IsPossibleIdentifierChar(char chr) {
     return isalpha(chr) || isdigit(chr) || chr == '_';
 }
 
-LexAnalysis_Status GetIdentifier(char** caret, char** name_ptr){
+LexAnalysis_Status GetIdentifier(char** caret, char** name_ptr) {
 
     if (!caret)    return BAD_CARET_POINTER;
     if (!(*caret)) return BAD_CARET_POSITION;
     if (!name_ptr) return BAD_NAME_PTR;
 
-    if (!isalpha(**caret) && (**caret) != '\\') return BAD_LEXEM;
+    if (!isalpha(**caret) && (**caret) != '\\' && (**caret) != '_') return BAD_LEXEM;
 
     size_t identifier_size = 1;
 
@@ -202,64 +175,14 @@ LexAnalysis_Status GetIdentifier(char** caret, char** name_ptr){
     return TOKEN_OK;
 }
 
-LexAnalysis_Status ProcessIdentifier(NameTable* name_table, char** caret, Lexem_ID* ID){
-    
-    if (!caret)    return BAD_CARET_POINTER;
-    if (!(*caret)) return BAD_CARET_POSITION;
-    
-    for (size_t n_identifier = 0; n_identifier < (name_table -> size); n_identifier++){
-        if (CompareWithIdentifier(*caret, ((name_table -> identifiers)[n_identifier]).name) == MATCH){
-            *ID = ((name_table -> identifiers)[n_identifier]).ID;
-            (*caret) += strlen(((name_table -> identifiers)[n_identifier]).name);
-            return TOKEN_OK;
-        }
-    }
-    
-    
-    char* newName                = nullptr;
-    LexAnalysis_Status GetStatus = GetIdentifier(caret, &newName); 
-    if (GetStatus != TOKEN_OK) return GetStatus;
-    return AddIdentifier(name_table, newName, ID);
-}
-
-CompareResult CompareWithOperator(char* caret, const char* inline_string){
+CompareResult CompareWithIdentifier(char* caret, const char* inline_string) {
 
     if (!caret)         return BAD_FIRST_PTR;
     if (!inline_string) return BAD_SECOND_PTR;
 
     int n_char = 0;
 
-    for (; !isalpha(caret[n_char]) && !isdigit(caret[n_char]) && caret[n_char] && inline_string[n_char] ; n_char++){
-        if (caret[n_char] != inline_string[n_char]) return DIFFERENT;
-    }
-
-    if (inline_string[n_char] == '\0') return MATCH;
-    else                               return DIFFERENT;
-}
-
-CompareResult CompareWithKeyword(char* caret, const char* inline_string){
-
-    if (!caret)         return BAD_FIRST_PTR;
-    if (!inline_string) return BAD_SECOND_PTR;
-
-    int n_char = 0;
-
-    for (; (isalpha(caret[n_char]) || caret[n_char] == '\\' || caret[n_char] == '!') && inline_string[n_char] ; n_char++){
-        if (caret[n_char] != inline_string[n_char]) return DIFFERENT;
-    }
-
-    if (inline_string[n_char] == '\0' && (!isalpha(caret[n_char]))) return MATCH;
-    else                                                            return DIFFERENT;
-}
-
-CompareResult CompareWithIdentifier(char* caret, const char* inline_string){
-
-    if (!caret)         return BAD_FIRST_PTR;
-    if (!inline_string) return BAD_SECOND_PTR;
-
-    int n_char = 0;
-
-    for (; caret[n_char] && inline_string[n_char] ; n_char++){
+    for (; caret[n_char] && inline_string[n_char] ; n_char++) {
         if (caret[n_char] != inline_string[n_char]) return DIFFERENT;
     }
 
@@ -267,49 +190,70 @@ CompareResult CompareWithIdentifier(char* caret, const char* inline_string){
     else                                                                             return DIFFERENT;
 }
 
-void MoveCaretNextLexem(char** caret){
+CompareResult CompareWithOperator(char* caret, const char* inline_string) {
+
+    if (!caret)         return BAD_FIRST_PTR;
+    if (!inline_string) return BAD_SECOND_PTR;
+
+    int n_char = 0;
+
+    for (; caret[n_char] == inline_string[n_char] && inline_string[n_char] && (caret[n_char]); n_char++);
+
+    if (inline_string[n_char] == '\0') return MATCH;
+    else                               return DIFFERENT;
+}
+
+void MoveCaretNextLexem(char** caret) {
     for (; isspace(**caret) && (**caret) != '\0'; (*caret)++);
 }
 
-double FoldConstant(char** caret){
+double FoldConstant(char** caret) {
 
     double val = 0;
 
-    for (;isdigit(**caret); (*caret)++){
+    for (;isdigit(**caret); (*caret)++) {
         val = val*10 + **caret - '0';
+    }
+    
+    if (**caret == '.') {
+
+        int n_digits = 1;
+
+        (*caret)++;
+        for (;isdigit(**caret); (*caret)++) {
+            val += (**caret - '0') * pow(10, -(n_digits));
+            n_digits++;
+        }        
+
     }
     return val;
 }
 
-LexAnalysis_Status GetLexem(NameTable* name_table, Lexem** lexem_ptr, char** caret){
+LexAnalysis_Status GetLexem(Lexem** lexem_ptr, char** caret) {
 
     if (!lexem_ptr)         return BAD_LEXEM_POINTER;
     if (!caret)             return BAD_CARET_POINTER;
     if (!(*caret))          return BAD_CARET_POSITION;
     if (**caret == '\0')    return END_OF_CODE;
 
-    Lexem_ID Identifier_ID = 0;
+    char* Identifier_name = nullptr;
 
-    #define LEXEM(type, ID, inline_string)                                                    \
-        else if ((type == OPERATOR && CompareWithOperator(*caret, inline_string) == MATCH) || \
-                 (type == KEYWORD  && CompareWithKeyword (*caret, inline_string) == MATCH))   \
-            {                                                                                 \
-            *lexem_ptr = CreateLexem(type, ID, nullptr, nullptr);                             \
-            (*caret)+=strlen(inline_string);                                                  \
-            if (!(*lexem_ptr)) return OUT_OF_MEM;                                             \
-            }                                                                                 \
+    #define LEXEM(ID, inline_string)                                                    \
+        else if (CompareWithOperator(*caret, inline_string) == MATCH) {                 \
+            *lexem_ptr = CreateOperatorLexem(ID);                                       \
+            (*caret)+=strlen(inline_string);                                            \
+            if (!(*lexem_ptr)) return OUT_OF_MEM;                                       \
+        }                                                                               \
 
-    if (0) printf("Ouch!\n");  //  Initial condition just to pass through it, required for DSL "LEXEM" macro checks
-    
-    #include "LexemList.h"
-    
-    else if (isdigit(**caret)) {
+    if (isdigit(**caret)) {
         *lexem_ptr = CreateConstantLexem(FoldConstant(caret));
         if (!(*lexem_ptr)) return OUT_OF_MEM;
     }
+    
+    #include "LexemList.h"
 
-    else if (ProcessIdentifier(name_table, caret, &Identifier_ID) != BAD_LEXEM){
-        *lexem_ptr = CreateLexem(IDENTIFIER, Identifier_ID, nullptr, nullptr);
+    else if (GetIdentifier(caret, &Identifier_name) != BAD_LEXEM) {
+        *lexem_ptr = CreateIdentifierLexem(Identifier_name);
         if (!(*lexem_ptr)) return OUT_OF_MEM;
     }
 
@@ -325,11 +269,11 @@ LexAnalysis_Status GetLexem(NameTable* name_table, Lexem** lexem_ptr, char** car
     return TOKEN_OK;
 }
 
-const char* GetLexAnalysisStatus(LexAnalysis_Status current_result){
+const char* GetLexAnalysisStatus(LexAnalysis_Status current_result) {
 
     #define CASE_RESULT(result) case result: return #result;
 
-    switch(current_result){
+    switch(current_result) {
     CASE_RESULT(TOKEN_OK)
     CASE_RESULT(END_OF_CODE)
     CASE_RESULT(BAD_CARET_POINTER)
@@ -343,22 +287,30 @@ const char* GetLexAnalysisStatus(LexAnalysis_Status current_result){
     #undef CASE_RESULT
 }
 
-Lexem* CreateLexem(Lexem_Type type, Lexem_ID ID, Lexem* left, Lexem* right){
+Lexem* CreateEmptyLexem() {
+
+    Lexem* newLexem = (Lexem*)calloc(1,sizeof(Lexem));
+    if (!newLexem) return nullptr;
+
+    TYPE_OF (newLexem) = EMPTY;
+
+    return newLexem;
+
+}
+
+Lexem* CreateOperatorLexem(Operator_ID ID) {
     
     Lexem* newLexem = (Lexem*)calloc(1,sizeof(Lexem));
 
     if (!newLexem) return nullptr;
 
-    TYPE_OF(newLexem) = type;
+    TYPE_OF (newLexem) = OPERATOR;
     ID_OF(newLexem)   = ID;
-
-    newLexem -> left  = left;
-    newLexem -> right = right;
 
     return newLexem;
 }
 
-Lexem* CreateConstantLexem(double value){
+Lexem* CreateConstantLexem(double value) {
     
     Lexem* newLexem = (Lexem*)calloc(1,sizeof(Lexem));
 
@@ -367,31 +319,26 @@ Lexem* CreateConstantLexem(double value){
     TYPE_OF (newLexem) = CONSTANT;
     VALUE_OF(newLexem) = value;
 
-    newLexem -> left  = nullptr;
-    newLexem -> right = nullptr;
+    return newLexem;
+}
+
+Lexem* CreateIdentifierLexem(char* idr_name) {
+    
+    Lexem* newLexem = (Lexem*)calloc(1,sizeof(Lexem));
+
+    if (!newLexem || !idr_name) return nullptr;
+
+    TYPE_OF    (newLexem) = IDENTIFIER;
+    IDR_NAME_OF(newLexem) = idr_name;
 
     return newLexem;
 }
 
-Lexem_ID GetLexemID(char* kw_string){
+Lexem_String GetOperatorString(Operator_ID current_id) {
     
-    if (!kw_string) return LEXEM_INPUT_ERROR_ID;
+    #define LEXEM(ID, keyword) case ID: return keyword;
 
-    #define LEXEM(type, ID, keyword)\
-        else if (!strcmp(keyword, kw_string)) return ID;
-    
-    if(0) return UNKNOWN_LEXEM_ID; 
-    #include "LexemList.h"
-    else  return UNKNOWN_LEXEM_ID;
-
-    #undef LEXEM
-}
-
-Lexem_String GetLexemString(Lexem_ID current_id){
-    
-    #define LEXEM(type, ID, keyword) case ID: return keyword;
-
-    switch(current_id){
+    switch(current_id) {
         #include "LexemList.h"
         default: return UNKNOWN_LEXEM_STRING;
     }
@@ -399,11 +346,11 @@ Lexem_String GetLexemString(Lexem_ID current_id){
     #undef LEXEM
 }
 
-Lexem_String GetLexemID_Name(Lexem_ID current_id){
+Lexem_String GetOperatorName(Operator_ID current_id) {
     
-    #define LEXEM(type, ID, keyword) case ID: return #ID;
+    #define LEXEM(ID, keyword) case ID: return #ID;
 
-    switch(current_id){
+    switch(current_id) {
         #include "LexemList.h"
         default: return UNKNOWN_LEXEM_STRING;
     }
@@ -411,68 +358,117 @@ Lexem_String GetLexemID_Name(Lexem_ID current_id){
     #undef LEXEM
 }
 
+
+
+/*
 #define AST_CHECK                                   \
     AST_Error check_result = ValidateTree(tree);    \
     if(check_result != AST_OK) return check_result; \
+*/
 
-#define READ_IF_NOT_ALREADY(lexem_name, interm_func)      \
-    if (!lexem_name) lexem_name = interm_func(tree); \
+#define READ_IF_NOT_ALREADY(node_name, interm_func)      \
+    if (!node_name) node_name = interm_func(); \
+
+
 
 LexemsList* lexems_list = nullptr;
 int    n_lexem     = 0;
 
-void RequireOperator(Lexem_ID operator_id){
-    if (LexemIsOperator(n_lexem, operator_id)) n_lexem++;
-    else {printf("Expected %s, got %c type: ",GetLexemString(operator_id), LEXEM_TYPE(n_lexem)); SyntaxError();}
-}
-void RequireKeyword(Lexem_ID keyword_id){
-    if (LexemIsKeyword(n_lexem, keyword_id)) n_lexem++;
-    else {printf("Expected %s, got %c type: ",GetLexemString(keyword_id), LEXEM_TYPE(n_lexem)); SyntaxError();}
+
+AST_Node* CreateOperatorNode(AST_Operator_ID ID, AST_Node* left, AST_Node* right) {
+    
+    AST_Node* newNode = (AST_Node*)calloc(1,sizeof(AST_Node));
+
+    if (!newNode) return nullptr;
+
+    TYPE_OF(newNode) = OPERATOR;
+    ID_OF(newNode)   = ID;
+
+    newNode -> left  = left;
+    newNode -> right = right;
+
+    return newNode;
 }
 
-int LexemIsOperator(int lexem_number, Lexem_ID operator_id){
+AST_Node* CreateConstantNode(double value, AST_Node* left, AST_Node* right) {
+    
+    AST_Node* newNode = (AST_Node*)calloc(1,sizeof(AST_Node));
+
+    if (!newNode) return nullptr;
+
+    TYPE_OF (newNode) = CONSTANT;
+    VALUE_OF(newNode) = value;
+
+    newNode -> left  = left;
+    newNode -> right = right;
+
+    return newNode;
+}
+
+AST_Node* CreateIdentifierNode(char* idr_name, AST_Node* left, AST_Node* right) {
+    
+    AST_Node* newNode = (AST_Node*)calloc(1,sizeof(AST_Node));
+
+    if (!newNode || !idr_name) return nullptr;
+
+    TYPE_OF    (newNode) = IDENTIFIER;
+    IDR_NAME_OF(newNode) = idr_name;
+
+    newNode -> left  = left;
+    newNode -> right = right;
+
+    return newNode;
+}
+
+void RequireOperator(Operator_ID operator_id) {
+    if (LexemIsOperator(n_lexem, operator_id)) n_lexem++;
+    else {printf("Expected %s, got %c type: ",GetOperatorString(operator_id), LEXEM_TYPE(n_lexem)); SyntaxError();}
+}
+
+int LexemIsOperator(int lexem_number, Operator_ID operator_id) {
     return (LEXEM_TYPE(lexem_number) == OPERATOR && LEXEM_ID(lexem_number) == operator_id);
 }
 
-int LexemIsKeyword(int lexem_number, Lexem_ID keyword_id){
-    return (LEXEM_TYPE(lexem_number) == KEYWORD && LEXEM_ID(lexem_number) == keyword_id);
-}
-
-int CheckEndOfCode(int lexem_number){
+int CheckEndOfCode(int lexem_number) {
     return (LEXEM_TYPE(lexem_number) == EMPTY);
 }
 
-void SyntaxError(){
+void SyntaxError() {
     
     printf("Syntax error on #%d lexem\n", n_lexem);
     exit(0);
 }
 
-Lexem* GetDec(Tree* tree){
+AST_Node* GetDec() {
 
-    if(LexemIsOperator(n_lexem, LBRACKET_SQUARE)){ 
+    if(LexemIsOperator(n_lexem, LBRACKET_SQUARE)) { 
         
         n_lexem++;
 
-        if (LEXEM_TYPE(n_lexem) == IDENTIFIER){
+        if (LEXEM_TYPE(n_lexem) == IDENTIFIER) {
+            
+            char* func_name = LEXEM_IDR_NAME(n_lexem);
+            
             n_lexem++;
             
             RequireOperator(LBRACKET_ROUND);
             
-            Lexem* vars = GetDeclVarEnum(tree);
+            AST_Node* vars = GetDeclVarEnum();
             
             RequireOperator(RBRACKET_ROUND);
             RequireOperator(RBRACKET_SQUARE);
             
-            RequireKeyword(EQDEF);
+            RequireOperator(EQDEF);
 
             RequireOperator(LBRACKET_SQUARE);
 
-            Lexem* code = GetInnerFunctionCode(tree);
+            AST_Node* code = GetInnerFunctionCode();
 
             RequireOperator(RBRACKET_SQUARE);
 
-            return CreateLexem(OPERATOR, DEC, vars, code);
+            AST_Node* func_implementation = CreateIdentifierNode(func_name, vars, code);
+
+            return CreateOperatorNode(AST_FUNC_DEC, func_implementation, GetDec());
             
         }
 
@@ -483,202 +479,254 @@ Lexem* GetDec(Tree* tree){
     else return nullptr;
 }
 
-Lexem* GetDeclVarEnum(Tree* tree){
+AST_Node* GetDeclVarEnum() {
     
-    Lexem* arg      = GetVar(tree); //T1
+    AST_Node* arg      = GetVar();
 
-    while (LexemIsOperator(n_lexem, COMMA)){
+    if (LexemIsOperator(n_lexem, COMMA)) {
 
         n_lexem++;
-        arg = CreateLexem(OPERATOR, LR, arg, GetVar(tree));
-        (tree -> size)++;
+        
+        arg = CreateOperatorNode(AST_FUNC_IMP_PARAM, GetDeclVarEnum(), arg);
 
     }
 
     return arg;
 }
 
-Lexem* GetCondition(Tree* tree){
+AST_Node* GetCondition() {
 
-    if (LexemIsOperator(n_lexem, LBRACKET_SQUARE) && LexemIsKeyword(n_lexem+1, FORALL)){
+    if (LexemIsOperator(n_lexem, LBRACKET_SQUARE) && !LexemIsOperator(n_lexem+1, FORALL)) {
+        
+        n_lexem++;
+
+        AST_Node* condition = GetLogic();
+        
+        RequireOperator(RBRACKET_SQUARE);
+        RequireOperator (CONDITION_RIGHT_ARROW);
+        RequireOperator(LBRACKET_SQUARE);
+
+        AST_Node* inner_code = GetInnerFunctionCode();
+        RequireOperator(RBRACKET_SQUARE);
+
+        return CreateOperatorNode(AST_CONDITION, condition, inner_code);
+    }
+
+    else return nullptr;
+}
+
+AST_Node* GetLoop() {
+
+    if (LexemIsOperator(n_lexem, LBRACKET_SQUARE) && LexemIsOperator(n_lexem+1, FORALL)) {
         
         n_lexem+=2;
 
-        Lexem* condition = GetLogic(tree);
+        AST_Node* condition = GetLogic();
         
         RequireOperator(RBRACKET_SQUARE);
-        RequireKeyword (CONDITION_RIGHT_ARROW);
+        RequireOperator (CONDITION_RIGHT_ARROW);
         RequireOperator(LBRACKET_SQUARE);
 
-        Lexem* inner_code = GetCodeline(tree);
+        AST_Node* inner_code = GetInnerFunctionCode();
         RequireOperator(RBRACKET_SQUARE);
 
-        return CreateLexem(KEYWORD, IF, condition, inner_code);
+        return CreateOperatorNode(AST_LOOP, condition, inner_code);
     }
 
     else return nullptr;
 }
 
-Lexem* GetReturn(Tree* tree){
+AST_Node* GetKeyword() {
     
-    if (LexemIsKeyword(n_lexem, RETURN)){
+    #define KEYWORD(id)                                             \
+    if (LexemIsOperator(n_lexem, id)) {                             \
+        n_lexem++;                                                  \
+        return CreateOperatorNode(AST_ ## id, GetLogic(), nullptr); \
+    }                                                               \
+
+    KEYWORD(RETURN)
+    KEYWORD(PRINT)
+    KEYWORD(DOT)
+    
+    if (LexemIsOperator(n_lexem, SHOW)) {                             
+        n_lexem++;                                                    
+        return CreateOperatorNode(AST_SHOW, nullptr, nullptr);        
+    }
+
+    else return nullptr;
+}
+
+AST_Node* GetVarInit() {
+    
+    if (LexemIsOperator(n_lexem, VAR_INIT)) {
 
         n_lexem++;
         
-        Lexem* new_var = GetVar(tree);
+        AST_Node* new_var = GetVar();
 
         RequireOperator(EQ);
 
-        (tree -> size)++;
-        return CreateLexem(OPERATOR, RETURN, new_var, GetLogic(tree));
-    }
-
-    else return nullptr;
-}
-
-Lexem* GetVarInit(Tree* tree){
-    
-    if (LexemIsKeyword(n_lexem, VAR_INIT)){
-
-        n_lexem++;
         
-        Lexem* new_var = GetVar(tree);
-
-        RequireOperator(EQ);
-
-        (tree -> size)++;
-        return CreateLexem(OPERATOR, VAR_INIT, new_var, GetLogic(tree));
+        return CreateOperatorNode(AST_VAR_ASGN, new_var, GetLogic());
     }
 
     else return nullptr;
 
 }
 
-Lexem* GetVarClaim(Tree* tree){
+AST_Node* GetVarClaim() {
 
-    Lexem* dest_var = GetVar(tree);
+    AST_Node* dest_var = GetVar();
     if (!dest_var) return nullptr;
 
     RequireOperator(EQ);
     
-    (tree -> size)++;
-    return CreateLexem(OPERATOR, VAR_CLAIM, dest_var, GetLogic(tree));
+    return CreateOperatorNode(AST_VAR_ASGN, dest_var, GetLogic());
 
 }
 
-Lexem* GetN(Tree* tree){
+AST_Node* GetN() {
     
-    if (LEXEM_TYPE(n_lexem) == CONSTANT){
+    if (LEXEM_TYPE(n_lexem) == CONSTANT) {
         n_lexem++;
-        (tree -> size)++;
-        return CreateConstantLexem(LEXEM_VAL(n_lexem - 1));
+        
+        return CreateConstantNode(LEXEM_VAL(n_lexem - 1), nullptr, nullptr);
     }
     else return nullptr;
 }
 
-Lexem* GetLogic(Tree* tree){
+AST_Node* GetLogic() {
 
-    Lexem* lvalue = GetE(tree); //T1
-    Lexem* rvalue = nullptr;
+    AST_Node* lvalue = GetE(); //T1
+    AST_Node* rvalue = nullptr;
 
     int current_operator = n_lexem;
 
-    while (LexemIsOperator(n_lexem, GR_THEN) || LexemIsOperator(n_lexem, LR_THEN) || LexemIsOperator(n_lexem, EQ)){
+    while (LexemIsOperator(n_lexem, GR_THEN) || LexemIsOperator(n_lexem, LR_THEN) || LexemIsOperator(n_lexem, EQ)) {
 
         current_operator = n_lexem;
         n_lexem++;
-        rvalue = GetE(tree);
+        rvalue = GetE();
 
-        if      (LEXEM_ID(current_operator) == GR_THEN) lvalue = CreateLexem(OPERATOR, GR_THEN, lvalue, rvalue);
-        else if (LEXEM_ID(current_operator) == LR_THEN) lvalue = CreateLexem(OPERATOR, LR_THEN, lvalue, rvalue);
-        else                                            lvalue = CreateLexem(OPERATOR, EQ_COMP, lvalue, rvalue);
+        if      (LEXEM_ID(current_operator) == GR_THEN) lvalue = CreateOperatorNode(AST_GR_THEN, lvalue, rvalue);
+        else if (LEXEM_ID(current_operator) == LR_THEN) lvalue = CreateOperatorNode(AST_LR_THEN, lvalue, rvalue);
+        else                                            lvalue = CreateOperatorNode(AST_EQ, lvalue, rvalue);
 
-        (tree -> size)++;
+        
 
-        //tree -> root = lvalue; // TEMP
+        // -> root = lvalue; // TEMP
     }
 
     return lvalue;
 }
 
-Lexem* GetE(Tree* tree){
+AST_Node* GetE() {
 
-    Lexem* lvalue = GetT1(tree); //T1
-    Lexem* rvalue = nullptr;
+    AST_Node* lvalue = GetT1(); //T1
+    AST_Node* rvalue = nullptr;
 
     int current_operator = n_lexem;
 
-    while (LexemIsOperator(n_lexem, ADD) || LexemIsOperator(n_lexem, SUB)){
+    while (LexemIsOperator(n_lexem, ADD) || LexemIsOperator(n_lexem, SUB)) {
 
         current_operator = n_lexem;
         n_lexem++;
-        rvalue = GetT1(tree);
+        rvalue = GetT1();
 
-        if   (LEXEM_ID(current_operator) == ADD) lvalue = CreateLexem(OPERATOR, ADD, lvalue, rvalue);
-        else                                     lvalue = CreateLexem(OPERATOR, SUB, lvalue, rvalue);
+        if   (LEXEM_ID(current_operator) == ADD) lvalue = CreateOperatorNode(AST_ADD, lvalue, rvalue);
+        else                                     lvalue = CreateOperatorNode(AST_SUB, lvalue, rvalue);
 
-        (tree -> size)++;
+        
 
-        //tree -> root = lvalue; // TEMP
+        // -> root = lvalue; // TEMP
     }
 
     return lvalue;
 }
 
-Lexem* GetT1(Tree* tree){
+AST_Node* GetT1() {
 
-    Lexem* lvalue = GetT2(tree); //T1
-    Lexem* rvalue = nullptr;
+    AST_Node* lvalue = GetMod(); //T1
+    AST_Node* rvalue = nullptr;
 
     int current_operator = n_lexem;
 
-    while (LexemIsOperator(n_lexem, MUL) || LexemIsOperator(n_lexem, DIV)){
+    while (LexemIsOperator(n_lexem, MUL) || LexemIsOperator(n_lexem, DIV)) {
 
         current_operator = n_lexem;
         n_lexem++;
-        rvalue = GetT2(tree);
+        rvalue = GetMod();
 
-        if   (LEXEM_ID(current_operator) == MUL) lvalue = CreateLexem(OPERATOR, MUL, lvalue, rvalue);
-        else                                     lvalue = CreateLexem(OPERATOR, DIV, lvalue, rvalue);
+        if   (LEXEM_ID(current_operator) == MUL) lvalue = CreateOperatorNode(AST_MUL, lvalue, rvalue);
+        else                                     lvalue = CreateOperatorNode(AST_DIV, lvalue, rvalue);
 
-        (tree -> size)++;
+        
 
-        //tree -> root = lvalue; // TEMP
+        // -> root = lvalue; // TEMP
     }
 
     return lvalue;
 }
 
-Lexem* GetT2(Tree* tree){
+AST_Node* GetMod() {
 
-    Lexem* result_lexem = nullptr;
-    
-    READ_IF_NOT_ALREADY(result_lexem, GetVar)
-    READ_IF_NOT_ALREADY(result_lexem, GetP)
-    READ_IF_NOT_ALREADY(result_lexem, GetN)
-    READ_IF_NOT_ALREADY(result_lexem, GetCall)
-    
-    return result_lexem;
-}
+    AST_Node* lvalue = GetT2(); //T1
+    AST_Node* rvalue = nullptr;
 
-Lexem* GetVar(Tree* tree){
-    
-    if (LEXEM_TYPE(n_lexem) == IDENTIFIER && !(LexemIsOperator(n_lexem+1, LBRACKET_ROUND))){
+    while (LexemIsOperator(n_lexem, MOD)) {
+
         n_lexem++;
-        (tree -> size)++;
-        return CreateLexem(VAR, LEXEM_ID(n_lexem-1), nullptr, nullptr);
+        rvalue = GetT2();
+
+        lvalue = CreateOperatorNode(AST_MOD, rvalue, lvalue);
     }
-    else return nullptr;
+
+    return lvalue;
 }
 
-Lexem* GetP(Tree* tree){
+AST_Node* GetT2() {
 
-    Lexem* subtree = nullptr;
+    AST_Node* result_node = nullptr;
+    
+    READ_IF_NOT_ALREADY(result_node, GetVar)
+    READ_IF_NOT_ALREADY(result_node, GetP)
+    READ_IF_NOT_ALREADY(result_node, GetN)
+    READ_IF_NOT_ALREADY(result_node, GetCall)
+    READ_IF_NOT_ALREADY(result_node, GetInput)
+    
+    return result_node;
+}
 
-    if (LEXEM_TYPE(n_lexem) == OPERATOR && LEXEM_ID(n_lexem) == LBRACKET_ROUND){
+AST_Node* GetVar() {
+    
+    if (LEXEM_TYPE(n_lexem) == IDENTIFIER && !(LexemIsOperator(n_lexem+1, LBRACKET_ROUND))) {
+        
+        char* var_name = LEXEM_IDR_NAME(n_lexem);
         
         n_lexem++;
-        subtree = GetLogic(tree);
+        
+        return CreateIdentifierNode(var_name, nullptr, nullptr);
+    }
+    else return nullptr;
+}
+
+AST_Node* GetInput(){
+
+    if (LexemIsOperator(n_lexem, INPUT)){
+        n_lexem++;
+        return CreateOperatorNode(AST_INPUT, nullptr, nullptr);
+    }
+    else return nullptr;
+}
+
+AST_Node* GetP() {
+
+    AST_Node* subtree = nullptr;
+
+    if (LEXEM_TYPE(n_lexem) == OPERATOR && LEXEM_ID(n_lexem) == LBRACKET_ROUND) {
+        
+        n_lexem++;
+        subtree = GetLogic();
         RequireOperator(RBRACKET_ROUND);
         return subtree;
     }
@@ -686,139 +734,118 @@ Lexem* GetP(Tree* tree){
     return nullptr;
 }
 
-Lexem* GetCall(Tree* tree){
+AST_Node* GetCall() {
 
-    Lexem* subtree = nullptr;
-
-    if (LEXEM_TYPE(n_lexem) == IDENTIFIER && LexemIsOperator(n_lexem+1, LBRACKET_ROUND)){
+    if (LEXEM_TYPE(n_lexem) == IDENTIFIER && LexemIsOperator(n_lexem+1, LBRACKET_ROUND)) {
         
-        Lexem_ID func_id = LEXEM_ID(n_lexem);
+        char* func_name = LEXEM_IDR_NAME(n_lexem);
         
         n_lexem+=2;
-        (tree -> size)++;
-        subtree = GetEnum(tree);
+        
+        AST_Node* subtree = GetEnum();
+
         RequireOperator(RBRACKET_ROUND);
-        return CreateLexem(FUNC, func_id, nullptr, subtree);
+        
+        subtree = CreateIdentifierNode(func_name, subtree, nullptr); 
+
+        return CreateOperatorNode(AST_FUNC_CALL, subtree, nullptr); 
 
     }
+
     else return nullptr;
 }
 
-Lexem* GetEnum(Tree* tree){
+AST_Node* GetEnum() {
 
-    Lexem* arg      = GetLogic(tree); //T1
+    AST_Node* arg = GetLogic(); //T1
 
-    while (LexemIsOperator(n_lexem, COMMA)){
+    if (LexemIsOperator(n_lexem, COMMA)) {
 
         n_lexem++;
-        arg = CreateLexem(OPERATOR, LR, arg, GetLogic(tree));
-        (tree -> size)++;
-
+        arg = CreateOperatorNode(AST_FUNC_CALL_PARAM,  GetEnum(), arg);
+    
     }
 
     return arg;
 }
 
-Lexem* GetCodeline(Tree* tree){
+AST_Node* GetCodeline() {
     
-    Lexem* result_line = nullptr;
+    AST_Node* result_line = nullptr;
     
     READ_IF_NOT_ALREADY(result_line, GetVarInit)
     READ_IF_NOT_ALREADY(result_line, GetVarClaim)
     READ_IF_NOT_ALREADY(result_line, GetCall)
-    READ_IF_NOT_ALREADY(result_line, GetReturn)
+    READ_IF_NOT_ALREADY(result_line, GetKeyword)
     READ_IF_NOT_ALREADY(result_line, GetCondition)
+    READ_IF_NOT_ALREADY(result_line, GetLoop)
     
     RequireOperator(LR);
 
     return result_line;
 }
 
-Lexem* GetInnerFunctionCode(Tree* tree){
+AST_Node* GetInnerFunctionCode() {
 
-    Lexem* code = GetCodeline(tree);
+    AST_Node* code = GetCodeline();
 
-    while(code && !LexemIsOperator(n_lexem, RBRACKET_SQUARE)){
-        code = CreateLexem(OPERATOR, LR, code, GetCodeline(tree));
-        (tree -> size)++;
+    if (code && !LexemIsOperator(n_lexem, RBRACKET_SQUARE)) {
+        code = CreateOperatorNode(AST_CONCAT, code, GetInnerFunctionCode());
     }
 
     return code;
 }
 
-/*
-Lexem* GetProgram(Lexem** declarations){
-    
-    Lexem* declaration = GetDec(tree); 
-
-    while (!CheckEndOfCode(n_lexem)){
-        
-        declaration = Create
-
-
-    }
-}
-*/
-Lexem* GetG(LexemsList* dest_lexems_list, Tree* tree){
+AST_Node* GetG(LexemsList* dest_lexems_list) {
     
     lexems_list = dest_lexems_list;
     n_lexem = 0;
 
     
 
-    return GetDec(tree);
+    return GetDec();
 }
 
-/*
-AST_Error AttachNode(Tree* tree, LR_Flag dest_flag, Lexem* attaching_node, Lexem* destination_node){
+Lexem_String AST_GetOperatorString(AST_Operator_ID current_id) {
+    
+    #define AST_OPERATOR(ID, keyword) case AST_ ## ID: return keyword;
 
-    if (!destination_node) return INVALID_DEST_POINTER;
-    if (!attaching_node)   return INVALID_SOURCE_POINTER;
-
-    AST_CHECK
-
-    switch(dest_flag){
-        
-        case LEFT:  if (destination_node -> left) return EDGE_ALREADY_EXISTS;
-                    destination_node -> left  = attaching_node; break;
-        
-        case RIGHT: if (destination_node -> right) return EDGE_ALREADY_EXISTS;
-                    destination_node -> right = attaching_node; break;
+    switch(current_id) {
+        #include "ASTOperatorsList.h"
+        default: return "UNKNOWN_NODE";
     }
 
-    tree -> size += 1;
-
-    return ValidateTree(tree);
+    #undef AST_OPERATOR
 }
-*/
 
-AST_Error DumpNode(FILE* fp, Lexem* node){
+Lexem_String AST_GetOperatorName(AST_Operator_ID current_id) {
+    
+    #define AST_OPERATOR(ID, keyword) case AST_ ## ID: return #ID;
+
+    switch(current_id) {
+        #include "ASTOperatorsList.h"
+        default: return "UNKNOWN_NODE";
+    }
+
+    #undef AST_OPERATOR
+}
+
+AST_Error DumpNode(FILE* fp, AST_Node* node) {
 
     if (!node) return INVALID_NODE_POINTER;
     if (!fp)   return INVALID_FILE_POINTER;
 
-    switch(TYPE_OF(node)){
+    switch(TYPE_OF(node)) {
 
-        case CONSTANT:   fprintf(fp, "%ld [shape=record, fillcolor=green rank = same style=filled label=\"    {%lf | CONSTANT} \" ];\n",
+        case CONSTANT:   fprintf(fp, "%ld [shape=record, fillcolor=green rank = same style=filled label=\"    {%lf} \" ];\n",
                                 node, VALUE_OF(node)); break;
                     
-        case OPERATOR:   fprintf(fp, "%ld [shape=record, fillcolor=lightgray rank = same style=filled label=\"    {%s | {  OPER | %u }}\" ];\n",
-                                node, GetLexemID_Name(ID_OF(node)), ID_OF(node)); break;
-        
-        case KEYWORD:    fprintf(fp, "%ld [shape=record, fillcolor=pink rank = same style=filled label=\"    {%s | {  KWRD | %u }}\" ];\n",
-                                node, GetLexemID_Name(ID_OF(node)), ID_OF(node)); break;
+        case OPERATOR:   fprintf(fp, "%ld [shape=record, fillcolor=lightgray rank = same style=filled label=\"    {%s}}\" ];\n",
+                                node, AST_GetOperatorName(ID_OF(node))); break;
 
-        case IDENTIFIER: fprintf(fp, "%ld [shape=record, fillcolor=lightbrown rank = same style=filled label=\"    {%u | IDER} \" ];\n",
-                                node, ID_OF(node)); break;
+        case IDENTIFIER: fprintf(fp, "%ld [shape=record, fillcolor=aquamarine rank = same style=filled label=\"    {%s} \" ];\n",
+                                node, IDR_NAME_OF(node)); break;
         
-        case VAR: fprintf(fp, "%ld [shape=record, fillcolor=aquamarine rank = same style=filled label=\"    {%u | VAR} \" ];\n",
-                                node, ID_OF(node)); break;
-
-        case FUNC: fprintf(fp, "%ld [shape=record, fillcolor=yellow rank = same style=filled label=\"    {%u | FUNC} \" ];\n",
-                                node, ID_OF(node)); break;
-        
-
-        //case VAR:      fprintf(fp, "%ld [label = \"%s \" style=filled fillcolor=aquamarine];\n", node, "VARTEMP"); break; //TODO
 
     }
     
@@ -828,7 +855,7 @@ AST_Error DumpNode(FILE* fp, Lexem* node){
     return AST_OK;
 }
 
-AST_Error GraphicalDump(Tree* tree){
+AST_Error GraphicalDump(Tree* tree) {
 
     if (!tree) return INVALID_TREE_POINTER;
 
@@ -848,9 +875,7 @@ AST_Error GraphicalDump(Tree* tree){
     return AST_OK;
 }
 
-
-/*
-AST_Error ValidateTree(Tree* tree){
+AST_Error ValidateTree(Tree* tree) {
     
     if (!tree)            return INVALID_TREE_POINTER;
     if (tree -> size < 0) return AST_SIZE_LESS_ZERO;
@@ -860,7 +885,7 @@ AST_Error ValidateTree(Tree* tree){
     return ValidateNodeRecursively(tree, tree -> root, &nodes_counter);
 }
 
-AST_Error ValidateNodeRecursively(Tree* tree, Lexem* node, int* nodes_counter){
+AST_Error ValidateNodeRecursively(Tree* tree, AST_Node* node, int* nodes_counter) {
     
     if (!node) return AST_OK;
 
@@ -868,7 +893,7 @@ AST_Error ValidateNodeRecursively(Tree* tree, Lexem* node, int* nodes_counter){
 
     if (node -> left && node -> left == node -> right) return SAME_LEFT_AND_RIGHT_CHILDS;
     if (node -> left == node || node -> right == node)    return NODES_LOOPED;
-    if (*nodes_counter > tree -> size)                    return TOO_MANY_NODES_FOR_CURRENT_SIZE;
+    //if (*nodes_counter > tree -> size)                    return TOO_MANY_NODES_FOR_CURRENT_SIZE;
 
     AST_Error child_check_result = AST_OK;
 
@@ -878,4 +903,375 @@ AST_Error ValidateNodeRecursively(Tree* tree, Lexem* node, int* nodes_counter){
     
     return ValidateNodeRecursively(tree, node -> right, nodes_counter);
 }
-*/
+
+#define POINTER_ERROR   printf("%s pointer error\n", __FUNCTION__)
+#define NODE_TYPE_ERROR printf("%s node_type error\n", __FUNCTION__)
+
+#define CHECK_NODE_OPER(oper) if (!NodeIsOperator(node, oper)) {NODE_TYPE_ERROR; return;}
+#define CHECK_POINTERS        if (!fp || !name_table || !node) {printf("fp {%p} | NT {%p | node {%p}: ", fp, name_table, node); POINTER_ERROR; return;}
+
+int NodeIsOperator(AST_Node* node, AST_Operator_ID operator_id) {
+    return TYPE_OF(node) == OPERATOR && ID_OF(node) == operator_id;
+}
+
+void GenerateASM(Tree* tree, char* filename) {
+
+    FILE* fp = fopen(filename, "w");
+    if (!fp) {printf("Failed to write the file"); return;}
+    
+    fprintf(fp, "push 0\ncall func_main\nhlt\n\n");
+
+    GenerateDec(fp, tree -> root);
+    fclose(fp);
+
+}
+
+int NameTableAddVar(VarNameTable* name_table, char* var_name) {
+
+    if (!name_table || !var_name) {POINTER_ERROR; return -1;}
+    
+    printf("Adding var %s:\n", var_name);
+
+    if (name_table -> size == name_table -> capacity) {
+        
+        Variable* resized = (Variable*)realloc(name_table -> vars, 2 * (name_table -> capacity) * sizeof(Variable));
+        if (!resized) return -1;
+
+        name_table -> vars        = resized;
+        (name_table -> capacity) *= 2; 
+    }
+
+    #define NEW_VAR ((name_table -> vars)[name_table -> size]) 
+
+    int new_offset = (name_table -> size); 
+
+    NEW_VAR.offset = new_offset;
+    NEW_VAR.name   = var_name;
+
+    (name_table -> size)++;
+
+    NameTableDump(name_table);
+
+    return new_offset;
+
+    #undef NEW_VAR
+}
+
+int NameTableCheckVar(VarNameTable* name_table, char* var_name) {
+
+    if (!name_table || !var_name) {POINTER_ERROR; return -1;}
+
+    //printf("Finding var %s:\n", var_name);
+
+    for (size_t n_var = 0; n_var < name_table -> size; n_var++) {
+        if (!strcmp(var_name, (name_table -> vars)[n_var].name)) return (name_table -> vars)[n_var].offset; 
+    }
+
+    //NameTableDump(name_table);
+
+    return -1;
+}
+
+int NameTableProcessVar(VarNameTable* name_table, char* var_name) {
+
+    int var_offset = NameTableCheckVar(name_table, var_name);
+    
+    if (var_offset == -1) {
+        var_offset = NameTableAddVar(name_table, var_name);
+    }
+
+    return var_offset;
+}
+
+void NameTableDump(VarNameTable* name_table){
+
+    printf("NameTable (%d): {\n", name_table -> capacity);
+
+    Variable current_var = {0};
+
+    for (size_t n_var = 0; n_var < name_table -> size; n_var++){
+        
+        current_var = (name_table -> vars)[n_var];
+        printf("  %s : %d,\n", current_var.name, current_var.offset);
+    }
+
+    printf("}\n");
+}
+
+void GenerateDec(FILE* fp, AST_Node* node) {
+    
+    if (!fp || !node) POINTER_ERROR;
+
+    CHECK_NODE_OPER(AST_FUNC_DEC);
+    
+    VarNameTable* name_table = (VarNameTable*)calloc(1, sizeof(VarNameTable));
+
+    name_table -> capacity = INITIAL_NAMETABLE_CAPACITY;
+    name_table -> size = 0;
+    name_table -> vars = (Variable*)calloc(INITIAL_NAMETABLE_CAPACITY, sizeof(Variable));
+
+    AST_Node* func = node -> left;
+
+    fprintf(fp, "func_%s:\n\n", IDR_NAME_OF(func));
+
+    //fprintf(fp, "pop rbx\n");
+
+    if (func -> left) GenerateVarImp(fp, name_table, func -> left);
+
+    //fprintf(fp, "push [rbx]\n");
+
+    GenerateStatement(fp, name_table, func -> right);
+
+    fprintf(fp, "pop rbx\n");
+    fprintf(fp, "return\n");
+
+    
+
+    if (node -> right) GenerateDec(fp, node -> right);
+    
+}
+
+void GenerateStatement(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+    
+    CHECK_POINTERS;
+
+    if (TYPE_OF(node) != OPERATOR) {NODE_TYPE_ERROR; return;}
+    
+    switch (ID_OF(node)) {
+
+        case AST_CONCAT:    GenerateStatement(fp, name_table, node -> left);
+                            GenerateStatement(fp, name_table, node -> right);
+                            break;
+        
+        case AST_CONDITION: GenerateCondition(fp, name_table, node);
+                            break;
+
+        case AST_LOOP:      GenerateLoop(fp, name_table, node);
+                            break;
+        
+        default:            GenerateLineOperator(fp, name_table, node); break; 
+
+    }
+    fprintf(fp, "\n");
+}
+
+void GenerateLineOperator(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+    
+    CHECK_POINTERS;
+
+    if (TYPE_OF(node) != OPERATOR) {NODE_TYPE_ERROR; return;}
+
+    switch (ID_OF(node)) {
+
+        case AST_VAR_ASGN:  GenerateAssign(fp, name_table, node); break;
+        case AST_FUNC_CALL: GenerateCall(fp, name_table, node);   break;
+        case AST_RETURN:    GenerateReturn(fp, name_table, node); break;
+        case AST_PRINT:     GeneratePrint(fp, name_table, node);  break;
+        case AST_DOT:       GenerateDot(fp, name_table, node);    break;
+        case AST_SHOW:      fprintf(fp, "show\n");                break;
+        default:            NODE_TYPE_ERROR;                      break;
+    }
+
+    fprintf(fp, "\n");
+}
+
+void GenerateAssign(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+    CHECK_NODE_OPER(AST_VAR_ASGN);
+    GenerateExpression(fp, name_table, node -> right);
+
+    int var_offset = NameTableProcessVar(name_table, IDR_NAME_OF(node -> left));
+    if (var_offset == -1) {printf("Failed to process var %s\n", IDR_NAME_OF(node -> left)); return;}
+
+    fprintf(fp, "# %s =\n", IDR_NAME_OF(node -> left));
+    fprintf(fp, "pop [ rbx + %d ]\n", var_offset);
+
+}
+
+void GenerateExpression(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+
+    switch(TYPE_OF(node)) {
+
+        case OPERATOR:   if (ID_OF(node) == AST_FUNC_CALL) {
+                            GenerateCall(fp, name_table, node);
+                         }
+                         else if (ID_OF(node) == AST_INPUT) {
+                             fprintf(fp, "in\n");
+                         }
+                         else {
+                            GenerateExpression(fp, name_table, node -> right);
+                            GenerateExpression(fp, name_table, node -> left);
+                            GenerateMathOperator(fp, name_table, node);
+                         }
+                         break;
+        
+        case IDENTIFIER: GenerateVarValue(fp, name_table, node);     break;
+        case CONSTANT:   fprintf(fp, "push %lf\n", VALUE_OF(node));  break;
+        default:         NODE_TYPE_ERROR;                            break;
+    }
+}
+
+void GenerateVarValue(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS
+    
+    int var_offset = NameTableCheckVar(name_table, IDR_NAME_OF(node));
+
+    if(var_offset == -1) {printf("Variable %s is not defined\n", IDR_NAME_OF(node)); return;}
+
+    fprintf(fp, "# %s\npush [ rbx + %d ]\n", IDR_NAME_OF(node), var_offset);
+
+}
+
+void GenerateMathOperator(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS
+
+    #define COMMAND(name) fprintf(fp, "%s\n", name);
+
+    switch(ID_OF(node)) {
+
+        case AST_ADD:     COMMAND("add"); break;
+        case AST_SUB:     COMMAND("sub"); break;
+        case AST_MUL:     COMMAND("mul"); break;
+        case AST_MOD:     COMMAND("mod"); break;
+        case AST_DIV:     COMMAND("div"); break;
+        case AST_EQ:      COMMAND("ce") ; break;
+        case AST_GR_THEN: COMMAND("ca") ; break;
+        case AST_LR_THEN: COMMAND("cb") ; break;
+
+        default: printf("UNKNOWN EXPRESSION OPERATOR\n");
+    }
+}
+
+void GenerateVarImp(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+
+    if (TYPE_OF(node) == IDENTIFIER) {
+        int new_var_offset = NameTableAddVar(name_table, IDR_NAME_OF(node));
+        if(new_var_offset != -1) fprintf(fp, "# %s\npop [ rbx + %d ]\n", IDR_NAME_OF(node), new_var_offset);
+        else printf("Failed adding param %s\n", IDR_NAME_OF(node));
+    }
+    
+    else {
+        CHECK_NODE_OPER(AST_FUNC_IMP_PARAM);
+        GenerateVarImp(fp, name_table, node -> left);
+        GenerateVarImp(fp, name_table, node -> right);
+    }
+} 
+
+void GenerateReturn(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+    CHECK_NODE_OPER(AST_RETURN);
+
+    if (node -> left){
+        GenerateExpression(fp, name_table, node -> left);
+        fprintf(fp, "pop rax\n");
+        fprintf(fp, "pop rbx\n");
+        fprintf(fp, "push rax\n");
+    }
+    else{
+        fprintf(fp, "pop rbx\n");
+    }
+    fprintf(fp, "return\n");
+}
+
+void GeneratePrint(FILE* fp, VarNameTable* name_table, AST_Node* node){
+    
+    CHECK_POINTERS;
+    CHECK_NODE_OPER(AST_PRINT);
+
+    GenerateExpression(fp, name_table, node -> left);
+    fprintf(fp, "out\n");
+}
+
+void GenerateDot(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+    
+    CHECK_POINTERS;
+    CHECK_NODE_OPER(AST_DOT);
+
+    GenerateExpression(fp, name_table, node -> left);
+    fprintf(fp, "draw\n");
+}
+
+void GenerateCall(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+    
+    CHECK_POINTERS;
+
+    node = node -> left;
+    
+
+    if (!node) {printf("EMPTY CALL\n"); return;}
+    if (TYPE_OF(node) != IDENTIFIER) NODE_TYPE_ERROR;
+
+    /*
+    FILE* dump_fp = fopen("call_param.test", "w");
+    DumpNode(dump_fp, node); 
+    system("viewnior show.png");
+    fclose(dump_fp);
+    */
+
+    fprintf(fp, "\n# prev bp\npush rbx\n");
+
+    if (node -> left) GenerateFuncCallParams(fp, name_table, node -> left);
+
+    fprintf(fp, "push rbx\n");
+    fprintf(fp, "push %d\n", name_table -> size);
+    fprintf(fp, "add\n");
+    fprintf(fp, "pop rbx\n");
+    fprintf(fp, "call func_%s\n", IDR_NAME_OF(node));
+}
+
+void GenerateFuncCallParams(FILE* fp, VarNameTable* name_table, AST_Node* node){
+    
+    CHECK_POINTERS;
+
+    if (NodeIsOperator(node, AST_FUNC_CALL_PARAM)) {
+        GenerateFuncCallParams(fp, name_table, node -> right);
+        GenerateFuncCallParams(fp, name_table, node -> left);
+    }
+
+    else {
+        GenerateExpression(fp, name_table, node);
+    }
+}
+
+
+void GenerateCondition(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+    
+    GenerateExpression(fp, name_table, node -> left);
+    fprintf(fp, "push 0\n");
+    fprintf(fp, "je endif_%p\n", node);
+    
+    size_t out_statement_n_vars = name_table -> size;
+    GenerateStatement(fp, name_table, node -> right);    
+    
+    name_table -> size = out_statement_n_vars;
+    fprintf(fp, "endif_%p:\n", node);
+
+}
+
+void GenerateLoop(FILE* fp, VarNameTable* name_table, AST_Node* node) {
+
+    CHECK_POINTERS;
+    
+    fprintf(fp, "loop_%p:\n", node);
+    GenerateExpression(fp, name_table, node -> left);
+    fprintf(fp, "push 0\n");
+    fprintf(fp, "je endif_%p\n", node);
+    
+    size_t out_statement_n_vars = name_table -> size;
+    GenerateStatement(fp, name_table, node -> right);    
+    
+    name_table -> size = out_statement_n_vars;
+    fprintf(fp, "jmp loop_%p\n", node);
+    fprintf(fp, "endif_%p:\n", node);
+
+}

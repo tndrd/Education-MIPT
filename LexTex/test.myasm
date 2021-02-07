@@ -1,0 +1,955 @@
+push 0
+call func_main
+hlt
+
+func_main:
+
+
+# prev bp
+push rbx
+push 100.000000
+push 20.000000
+push 120.000000
+push rbx
+push 0
+add
+pop rbx
+call func_Serpinsky
+
+
+show
+
+
+
+pop rbx
+return
+func_DrawTriangle:
+
+# h
+pop [ rbx + 0 ]
+# y
+pop [ rbx + 1 ]
+# x
+pop [ rbx + 2 ]
+
+# prev bp
+push rbx
+# x
+push [ rbx + 2 ]
+# y
+push [ rbx + 1 ]
+push 0.577000
+# h
+push [ rbx + 0 ]
+mul
+# x
+push [ rbx + 2 ]
+add
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 1 ]
+add
+push rbx
+push 3
+add
+pop rbx
+call func_DrawLine
+
+
+
+# prev bp
+push rbx
+# x
+push [ rbx + 2 ]
+# y
+push [ rbx + 1 ]
+push 0.577000
+# h
+push [ rbx + 0 ]
+mul
+# x
+push [ rbx + 2 ]
+sub
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 1 ]
+add
+push rbx
+push 3
+add
+pop rbx
+call func_DrawLine
+
+
+
+# prev bp
+push rbx
+push 0.577000
+# h
+push [ rbx + 0 ]
+mul
+# x
+push [ rbx + 2 ]
+add
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 1 ]
+add
+push 0.577000
+# h
+push [ rbx + 0 ]
+mul
+# x
+push [ rbx + 2 ]
+sub
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 1 ]
+add
+push rbx
+push 3
+add
+pop rbx
+call func_DrawLine
+
+
+
+
+pop rbx
+return
+func_FillTriangles:
+
+push 20.000000
+# x =
+pop [ rbx + 0 ]
+
+
+push 20.000000
+# y =
+pop [ rbx + 1 ]
+
+
+loop_0x55df0a1d21f0:
+push 180.000000
+# y
+push [ rbx + 1 ]
+cb
+push 0
+je endif_0x55df0a1d21f0
+loop_0x55df0a1d1fe0:
+push 180.000000
+# x
+push [ rbx + 0 ]
+cb
+push 0
+je endif_0x55df0a1d1fe0
+
+# prev bp
+push rbx
+# x
+push [ rbx + 0 ]
+# y
+push [ rbx + 1 ]
+push 10.000000
+push rbx
+push 2
+add
+pop rbx
+call func_DrawTriangle
+
+
+push 20.000000
+# x
+push [ rbx + 0 ]
+add
+# x =
+pop [ rbx + 0 ]
+
+
+
+jmp loop_0x55df0a1d1fe0
+endif_0x55df0a1d1fe0:
+
+push 20.000000
+# y
+push [ rbx + 1 ]
+add
+# y =
+pop [ rbx + 1 ]
+
+
+push 20.000000
+# x =
+pop [ rbx + 0 ]
+
+
+
+
+jmp loop_0x55df0a1d21f0
+endif_0x55df0a1d21f0:
+
+
+
+pop rbx
+return
+func_Serpinsky:
+
+# h
+pop [ rbx + 0 ]
+# y
+pop [ rbx + 1 ]
+# x
+pop [ rbx + 2 ]
+push 7.000000
+# h
+push [ rbx + 0 ]
+ca
+push 0
+je endif_0x55df0a1d3360
+
+# prev bp
+push rbx
+# x
+push [ rbx + 2 ]
+push rbx
+push 3
+add
+pop rbx
+call func_frac
+# x
+push [ rbx + 2 ]
+sub
+# x =
+pop [ rbx + 2 ]
+
+
+
+# prev bp
+push rbx
+# y
+push [ rbx + 1 ]
+push rbx
+push 3
+add
+pop rbx
+call func_frac
+# y
+push [ rbx + 1 ]
+sub
+# y =
+pop [ rbx + 1 ]
+
+
+
+# prev bp
+push rbx
+# h
+push [ rbx + 0 ]
+push rbx
+push 3
+add
+pop rbx
+call func_frac
+# h
+push [ rbx + 0 ]
+sub
+# h =
+pop [ rbx + 0 ]
+
+
+
+# prev bp
+push rbx
+# x
+push [ rbx + 2 ]
+# y
+push [ rbx + 1 ]
+# h
+push [ rbx + 0 ]
+push rbx
+push 3
+add
+pop rbx
+call func_DrawTriangle
+
+
+
+# prev bp
+push rbx
+# x
+push [ rbx + 2 ]
+# y
+push [ rbx + 1 ]
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+push rbx
+push 3
+add
+pop rbx
+call func_Serpinsky
+
+
+
+# prev bp
+push rbx
+push 0.577000
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+mul
+# x
+push [ rbx + 2 ]
+sub
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+# y
+push [ rbx + 1 ]
+add
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+push rbx
+push 3
+add
+pop rbx
+call func_Serpinsky
+
+
+
+# prev bp
+push rbx
+push 0.577000
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+mul
+# x
+push [ rbx + 2 ]
+add
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+# y
+push [ rbx + 1 ]
+add
+push 2.000000
+# h
+push [ rbx + 0 ]
+div
+push rbx
+push 3
+add
+pop rbx
+call func_Serpinsky
+
+
+
+
+
+
+
+
+endif_0x55df0a1d3360:
+
+pop rbx
+return
+func_DrawPoint:
+
+# y
+pop [ rbx + 0 ]
+# x
+pop [ rbx + 1 ]
+# x
+push [ rbx + 1 ]
+push 200.000000
+# y
+push [ rbx + 0 ]
+mul
+add
+draw
+
+
+pop rbx
+return
+func_DrawLine:
+
+# y2
+pop [ rbx + 0 ]
+# x2
+pop [ rbx + 1 ]
+# y1
+pop [ rbx + 2 ]
+# x1
+pop [ rbx + 3 ]
+# y1
+push [ rbx + 2 ]
+# y2
+push [ rbx + 0 ]
+sub
+# dy =
+pop [ rbx + 4 ]
+
+
+# x1
+push [ rbx + 3 ]
+# x2
+push [ rbx + 1 ]
+sub
+# dx =
+pop [ rbx + 5 ]
+
+
+# dx
+push [ rbx + 5 ]
+# dy
+push [ rbx + 4 ]
+div
+# k =
+pop [ rbx + 6 ]
+
+
+# dx
+push [ rbx + 5 ]
+# dx
+push [ rbx + 5 ]
+mul
+# dy
+push [ rbx + 4 ]
+# dy
+push [ rbx + 4 ]
+mul
+ca
+push 0
+je endif_0x55df0a1d49e0
+# y1
+push [ rbx + 2 ]
+# ystart =
+pop [ rbx + 7 ]
+
+
+# y2
+push [ rbx + 0 ]
+# yend =
+pop [ rbx + 8 ]
+
+
+# yend
+push [ rbx + 8 ]
+# ystart
+push [ rbx + 7 ]
+ca
+push 0
+je endif_0x55df0a1d3e10
+# y2
+push [ rbx + 0 ]
+# ystart =
+pop [ rbx + 7 ]
+
+
+# y1
+push [ rbx + 2 ]
+# yend =
+pop [ rbx + 8 ]
+
+
+
+endif_0x55df0a1d3e10:
+
+# ystart
+push [ rbx + 7 ]
+# yi =
+pop [ rbx + 9 ]
+
+
+push 0.000000
+# xi =
+pop [ rbx + 10 ]
+
+
+loop_0x55df0a1d4860:
+push 1.000000
+# yend
+push [ rbx + 8 ]
+add
+# yi
+push [ rbx + 9 ]
+cb
+push 0
+je endif_0x55df0a1d4860
+
+# prev bp
+push rbx
+# yi
+push [ rbx + 9 ]
+# k
+push [ rbx + 6 ]
+# x1
+push [ rbx + 3 ]
+# y1
+push [ rbx + 2 ]
+push rbx
+push 11
+add
+pop rbx
+call func_X
+# xi =
+pop [ rbx + 10 ]
+
+
+push 0.500000
+
+# prev bp
+push rbx
+# xi
+push [ rbx + 10 ]
+push rbx
+push 11
+add
+pop rbx
+call func_frac
+ca
+push 0
+je endif_0x55df0a1d4440
+push 1.000000
+# xi
+push [ rbx + 10 ]
+add
+# xi =
+pop [ rbx + 10 ]
+
+
+endif_0x55df0a1d4440:
+
+
+# prev bp
+push rbx
+# xi
+push [ rbx + 10 ]
+push rbx
+push 11
+add
+pop rbx
+call func_frac
+# xi
+push [ rbx + 10 ]
+sub
+# xi =
+pop [ rbx + 10 ]
+
+
+
+# prev bp
+push rbx
+# xi
+push [ rbx + 10 ]
+# yi
+push [ rbx + 9 ]
+push rbx
+push 11
+add
+pop rbx
+call func_DrawPoint
+
+
+push 1.000000
+# yi
+push [ rbx + 9 ]
+add
+# yi =
+pop [ rbx + 9 ]
+
+
+
+
+
+
+jmp loop_0x55df0a1d4860
+endif_0x55df0a1d4860:
+
+pop rbx
+return
+
+
+
+
+
+
+
+
+endif_0x55df0a1d49e0:
+
+# dx
+push [ rbx + 5 ]
+# dx
+push [ rbx + 5 ]
+mul
+# dy
+push [ rbx + 4 ]
+# dy
+push [ rbx + 4 ]
+mul
+cb
+push 0
+je endif_0x55df0a1d5a90
+# x1
+push [ rbx + 3 ]
+# xstart =
+pop [ rbx + 7 ]
+
+
+# x2
+push [ rbx + 1 ]
+# xend =
+pop [ rbx + 8 ]
+
+
+# xend
+push [ rbx + 8 ]
+# xstart
+push [ rbx + 7 ]
+ca
+push 0
+je endif_0x55df0a1d4e60
+# x2
+push [ rbx + 1 ]
+# xstart =
+pop [ rbx + 7 ]
+
+
+# x1
+push [ rbx + 3 ]
+# xend =
+pop [ rbx + 8 ]
+
+
+
+endif_0x55df0a1d4e60:
+
+# xstart
+push [ rbx + 7 ]
+# xi =
+pop [ rbx + 9 ]
+
+
+push 0.000000
+# yi =
+pop [ rbx + 10 ]
+
+
+loop_0x55df0a1d5910:
+push 1.000000
+# xend
+push [ rbx + 8 ]
+add
+# xi
+push [ rbx + 9 ]
+cb
+push 0
+je endif_0x55df0a1d5910
+
+# prev bp
+push rbx
+# xi
+push [ rbx + 9 ]
+# k
+push [ rbx + 6 ]
+# x1
+push [ rbx + 3 ]
+# y1
+push [ rbx + 2 ]
+push rbx
+push 11
+add
+pop rbx
+call func_Y
+# yi =
+pop [ rbx + 10 ]
+
+
+push 2.000000
+push 1.000000
+div
+
+# prev bp
+push rbx
+# yi
+push [ rbx + 10 ]
+push rbx
+push 11
+add
+pop rbx
+call func_frac
+ca
+push 0
+je endif_0x55df0a1d54f0
+push 1.000000
+# yi
+push [ rbx + 10 ]
+add
+# yi =
+pop [ rbx + 10 ]
+
+
+endif_0x55df0a1d54f0:
+
+
+# prev bp
+push rbx
+# yi
+push [ rbx + 10 ]
+push rbx
+push 11
+add
+pop rbx
+call func_frac
+# yi
+push [ rbx + 10 ]
+sub
+# yi =
+pop [ rbx + 10 ]
+
+
+
+# prev bp
+push rbx
+# xi
+push [ rbx + 9 ]
+# yi
+push [ rbx + 10 ]
+push rbx
+push 11
+add
+pop rbx
+call func_DrawPoint
+
+
+push 1.000000
+# xi
+push [ rbx + 9 ]
+add
+# xi =
+pop [ rbx + 9 ]
+
+
+
+
+
+
+jmp loop_0x55df0a1d5910
+endif_0x55df0a1d5910:
+
+pop rbx
+return
+
+
+
+
+
+
+
+
+endif_0x55df0a1d5a90:
+
+
+
+
+
+pop rbx
+return
+func_Y:
+
+# y1
+pop [ rbx + 0 ]
+# x1
+pop [ rbx + 1 ]
+# k
+pop [ rbx + 2 ]
+# x
+pop [ rbx + 3 ]
+# y1
+push [ rbx + 0 ]
+# x1
+push [ rbx + 1 ]
+# x
+push [ rbx + 3 ]
+sub
+# k
+push [ rbx + 2 ]
+mul
+add
+pop rax
+pop rbx
+push rax
+return
+
+
+pop rbx
+return
+func_X:
+
+# y1
+pop [ rbx + 0 ]
+# x1
+pop [ rbx + 1 ]
+# k
+pop [ rbx + 2 ]
+# y
+pop [ rbx + 3 ]
+# x1
+push [ rbx + 1 ]
+# k
+push [ rbx + 2 ]
+# y1
+push [ rbx + 0 ]
+# y
+push [ rbx + 3 ]
+sub
+div
+add
+pop rax
+pop rbx
+push rax
+return
+
+
+pop rbx
+return
+func_frac:
+
+# a
+pop [ rbx + 0 ]
+# a
+push [ rbx + 0 ]
+push 1.000000
+mod
+pop rax
+pop rbx
+push rax
+return
+
+
+pop rbx
+return
+func_DrawRect:
+
+# h
+pop [ rbx + 0 ]
+# w
+pop [ rbx + 1 ]
+# y
+pop [ rbx + 2 ]
+# x
+pop [ rbx + 3 ]
+
+# prev bp
+push rbx
+# x
+push [ rbx + 3 ]
+# y
+push [ rbx + 2 ]
+# w
+push [ rbx + 1 ]
+# x
+push [ rbx + 3 ]
+add
+# y
+push [ rbx + 2 ]
+push rbx
+push 4
+add
+pop rbx
+call func_DrawLine
+
+
+
+# prev bp
+push rbx
+# x
+push [ rbx + 3 ]
+# y
+push [ rbx + 2 ]
+# x
+push [ rbx + 3 ]
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 2 ]
+add
+push rbx
+push 4
+add
+pop rbx
+call func_DrawLine
+
+
+
+# prev bp
+push rbx
+# w
+push [ rbx + 1 ]
+# x
+push [ rbx + 3 ]
+add
+# y
+push [ rbx + 2 ]
+# w
+push [ rbx + 1 ]
+# x
+push [ rbx + 3 ]
+add
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 2 ]
+add
+push rbx
+push 4
+add
+pop rbx
+call func_DrawLine
+
+
+
+# prev bp
+push rbx
+# x
+push [ rbx + 3 ]
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 2 ]
+add
+# w
+push [ rbx + 1 ]
+# x
+push [ rbx + 3 ]
+add
+# h
+push [ rbx + 0 ]
+# y
+push [ rbx + 2 ]
+add
+push rbx
+push 4
+add
+pop rbx
+call func_DrawLine
+
+
+
+
+
+pop rbx
+return

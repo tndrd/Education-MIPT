@@ -1,5 +1,135 @@
-[g(x)] \eqdef [
-    a = 23 + f(x,y,z);
-    b = 15;
-    f(x,y,z);
+[main()] \eqdef [
+
+    
+    Serpinsky(100, 20, 120);
+    plot;
+]
+
+[DrawTriangle(x, y, h)] \eqdef [
+
+    DrawLine(x, y, x + h \cdot 0.577, y + h);
+    DrawLine(x, y, x - h \cdot 0.577, y + h);
+
+    DrawLine(x + h \cdot 0.577, y + h, x - h \cdot 0.577, y + h); 
+]
+
+[FillTriangles()] \eqdef [
+
+    \exists x = 20;
+    \exists y = 20;
+
+    [\forall y < 180] \Rightarrow [
+
+        [\forall x < 180] \Rightarrow [
+
+            DrawTriangle(x,y, 10);
+            x = x + 20;
+        ];
+
+        y = y + 20;
+        x = 20;
+    ];
+    
+]
+
+[Serpinsky(x, y, h)] \eqdef [
+
+    [h > 7] \Rightarrow [
+        
+        x = x - frac(x);
+        y = y - frac(y);
+        h = h - frac(h);
+
+        DrawTriangle(x, y, h);
+        Serpinsky(x, y, h/2);
+        Serpinsky(x - (h/2) \cdot 0.577, y + h/2, h/2 );
+        Serpinsky(x + (h/2) \cdot 0.577, y + h/2, h/2 );
+    ]; 
+]
+
+[DrawPoint(x, y)] \eqdef [
+
+    \nabla y \cdot 200 + x; 
+]
+
+[DrawLine(x1,y1,x2,y2)] \eqdef [
+
+    \exists dy = y2 - y1;
+    \exists dx = x2 - x1;
+
+    \exists k = dy/dx;
+
+    [dy \cdot dy > dx \cdot dx] \Rightarrow [
+
+        \exists ystart = y1;
+        \exists yend   = y2;
+
+        [ystart > yend] \Rightarrow [ystart = y2; yend = y1;];
+
+        \exists yi = ystart;
+        
+        \exists xi = 0; 
+
+        [\forall yi < yend + 1] \Rightarrow [
+
+            xi = X(yi, k, x1, y1);
+
+            [frac(xi) > 0.5] \Rightarrow [xi = xi + 1;];
+
+            xi = xi - frac(xi);
+            DrawPoint(xi, yi);
+
+            yi = yi + 1;
+        ];
+
+        \exists!;
+
+    ];
+
+    [dy \cdot dy < dx \cdot dx] \Rightarrow [
+
+        \exists xstart = x1;
+        \exists xend   = x2;
+
+        [xstart > xend] \Rightarrow [xstart = x2; xend = x1;];
+
+        \exists xi = xstart;
+        
+        \exists yi = 0; 
+
+        [\forall xi < xend + 1] \Rightarrow [
+
+            yi = Y(xi, k, x1, y1);
+
+            [frac(yi) > 1/2] \Rightarrow [yi = yi + 1;];
+
+            yi = yi - frac(yi);
+            DrawPoint(xi, yi);
+
+            xi = xi + 1;
+        ];
+
+        \exists!;
+
+    ];
+
+]
+
+[Y(x, k, x1, y1)] \eqdef [
+    \exists! k \cdot ( x - x1 ) + y1; 
+]
+
+[X(y, k, x1, y1)] \eqdef [
+    \exists! (y - y1) / k + x1;
+]
+
+[frac(a)] \eqdef [
+    \exists! a mod 1; 
+]
+
+[DrawRect(x,y,w,h)] \eqdef [
+    DrawLine(x,y, x+w, y);
+    DrawLine(x,y, x, y+h);
+    DrawLine(x+w,y, x+w, y+h);
+    DrawLine(x,y+h, x+w, y+h); 
 ]
